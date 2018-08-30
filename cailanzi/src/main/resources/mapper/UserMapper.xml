@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cailanzi.mapper.UserMapper">
+
+    <select id="comgridList" resultType="com.cailanzi.pojo.entities.User">
+        SELECT username,belong_station_no belongStationNo,belong_station_name belongStationName FROM `user`
+        WHERE type=1 AND belong_station_no <![CDATA[ <> ]]> 0
+    </select>
+
+</mapper>

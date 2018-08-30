@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cailanzi.mapper.ProductJdMapper">
+
+    <delete id="truncateProductJd">
+        TRUNCATE TABLE product_jd
+    </delete>
+
+    <select id="comgridJdList" resultType="com.cailanzi.pojo.entities.ProductJd">
+        SELECT a.sku_id skuId,a.sku_name skuName,a.sku_price skuPrice,b.usable_qty stockNum,b.vendibility fixedStatus,a.shop_categories shopCategories
+        FROM product_jd a
+        INNER JOIN product_status b ON b.sku_id=a.sku_id AND b.station_no = #{belongStationNo} AND b.vendibility=0
+        WHERE a.fixed_status = 1
+        <if test="q != null">
+          AND a.sku_name LIKE CONCAT('%',#{q},'%')
+        </if>
+    </select>
+
+    <select id="getProductsByCategoryId" resultType="com.cailanzi.pojo.ProductVo">
+        SELECT a.sku_id skuId,a.sku_name `name`,a.sku_price price,b.usable_qty num,b.vendibility `status`
+        FROM product_jd a
+        INNER JOIN product_status b ON b.sku_id=a.sku_id AND b.station_no = #{stationNo}
+        WHERE a.fixed_status = 1
+        <if test="categoryId != 0">
+          AND a.shop_categories LIKE CONCAT('%',#{categoryId},'%')
+        </if>
+        LIMIT #{startIndex,jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
+    </select>
+
+    <select id="getProductsByPhone" resultType="com.cailanzi.pojo.ProductVo">
+        SELECT a.sku_id skuId,a.name `name`,a.price price,b.usable_qty num,b.vendibility `status`
+        FROM product a
+        INNER JOIN product_status b ON b.sku_id=a.sku_id AND b.station_no = #{stationNo}
+        WHERE a.is_sell = 0 AND a.phone = #{phone} AND a.belong_station_no = #{stationNo}
+        <if test="categoryId != 0">
+            AND a.shop_categories LIKE CONCAT('%',#{categoryId},'%')
+        </if>
+        LIMIT #{startIndex,jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
+    </select>
+
+</mapper>

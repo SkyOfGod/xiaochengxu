@@ -13,12 +13,12 @@ public class OrderListInput {
     private String belongStationNo;
 
     //每页条数,默认：20，超过100也只返回100条
-    private String pageSize;
+    private int pageSize = 20;
     //当前页数,默认：1
-    private String pageNo;
+    private int pageNo = 1;
     //订单号
     private String orderId;
-    //订单状态（20010:锁定，20020:订单取消，20030:订单取消申请，20040:超时未支付系统取消，20050:订单解锁，20060:系统撤销订单，20050:暂停，31000:等待付款，31020:已付款，41000:待处理，32000:等待出库，33040:配送中，33060:已妥投，34000:京东已收款，90000:订单完成）
+    //订单状态
     private String orderStatus;
     //到家门店编码
     private String deliveryStationNo;

@@ -41,6 +41,7 @@
                     $.messager.alert('提示', '登录成功!', 'info',
                         function() {
                             window.location.href="/page/index";
+//                            window.open("/page/index","_self");
                         });
                 }else if(data.status == 400){
                     $.messager.alert('警告', data.msg, 'warning');

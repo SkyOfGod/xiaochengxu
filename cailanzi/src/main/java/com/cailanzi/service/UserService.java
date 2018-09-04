@@ -8,6 +8,7 @@ import com.cailanzi.pojo.UserImport;
 import com.cailanzi.pojo.entities.ProductJd;
 import com.cailanzi.pojo.entities.User;
 import com.cailanzi.utils.MD5Util;
+import com.cailanzi.utils.UserThreadLocal;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;

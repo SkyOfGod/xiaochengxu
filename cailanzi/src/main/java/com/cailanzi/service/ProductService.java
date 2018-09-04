@@ -85,6 +85,15 @@ public class ProductService {
         productJdMapper.insertList(list);
     }
 
+    /*public static void main(String[] args) throws Exception {
+        ProductService productService = new ProductService();
+
+        ProductListInput productListInput = new ProductListInput();
+        JSONObject data = JSONObject.parseObject(productService.getJdProductList(productListInput));
+        JSONArray temp = data.getJSONArray("result");
+        System.out.println(temp);
+    }*/
+
     private String getJdProductList(ProductListInput productListInput) throws Exception {
         log.info("ProductService getJdProductList ProductListInput productListInput={}", productListInput);
         String url = "https://openo2o.jd.com/djapi/pms/querySkuInfos";

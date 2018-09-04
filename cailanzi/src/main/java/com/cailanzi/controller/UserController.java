@@ -4,7 +4,6 @@ import com.cailanzi.Exception.ServiceException;
 import com.cailanzi.pojo.EasyUIResult;
 import com.cailanzi.pojo.SysResult;
 import com.cailanzi.pojo.UserImport;
-import com.cailanzi.pojo.entities.ProductJd;
 import com.cailanzi.pojo.entities.User;
 import com.cailanzi.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**
@@ -68,12 +68,17 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "manageLogin",method = RequestMethod.POST)
-    public SysResult manageLogin(String username, String password){
+    public SysResult manageLogin(String username, String password, HttpSession session){
         log.info("UserController manageLogin username={}",username);
         if(StringUtils.isBlank(username)||StringUtils.isBlank(password)){
             return SysResult.build(400,"数据不能为空");
         }
-        return userService.login(username,password,0);
+        SysResult sysResult = userService.login(username,password,0);
+        if(sysResult.getData()!=null){
+            User user = (User) sysResult.getData();
+            session.setAttribute("sign",user.getSign());
+        }
+        return sysResult;
     }
 
     @RequestMapping("userPage")

@@ -22,7 +22,7 @@ public class ProductJd {
     private Long skuId;
     private String outSkuId;
     private String skuName;
-    private Float skuPrice;
+    private Integer skuPrice;
     private String upcCode;
     private Long categoryId;
     private String shopCategories;

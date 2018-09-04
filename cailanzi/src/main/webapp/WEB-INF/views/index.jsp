@@ -24,9 +24,16 @@
 	         	</ul>
          	</li>
          	<li>
+         		<span>订单管理</span>
+         		<ul>
+	         		<li data-options="attributes:{'url':'/page/order'}">查询订单</li>
+	         		<li data-options="attributes:{'url':'/page/order-shop'}">查询订单-商户</li>
+	         	</ul>
+         	</li>
+         	<li>
          		<span>商户管理</span>
          		<ul>
-	         		<li data-options="attributes:{'url':'/page/shop'}">查询商户</li>
+	         		<li data-options="attributes:{'url':'/page/shop'}">查询门店</li>
 	         		<li data-options="attributes:{'url':'/page/user'}">查询用户</li>
 	         	</ul>
          	</li>

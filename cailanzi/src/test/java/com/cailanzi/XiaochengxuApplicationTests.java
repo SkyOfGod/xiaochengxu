@@ -2,6 +2,7 @@ package com.cailanzi;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.cailanzi.mapper.OrderJdMapper;
 import com.cailanzi.mapper.ProductJdMapper;
 import com.cailanzi.mapper.ProductMapper;
 import com.cailanzi.pojo.OrderListInput;
@@ -9,6 +10,7 @@ import com.cailanzi.pojo.entities.ProductJd;
 import com.cailanzi.service.OrderService;
 import com.cailanzi.service.ProductService;
 import com.cailanzi.service.ShopService;
+import com.cailanzi.utils.ConstantsUtil;
 import com.cailanzi.utils.HttpClientUtil;
 import com.cailanzi.utils.JdHttpCilentUtil;
 import com.cailanzi.utils.MD5Util;
@@ -21,7 +23,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -35,6 +39,16 @@ public class XiaochengxuApplicationTests {
 	private ProductService productService;
 	@Autowired
 	private OrderService orderService;
+	@Autowired
+	private OrderJdMapper orderJdMapper;
+
+	@Test
+	public void testDeliveryOrderIdsOfOrderJd() throws Exception {
+		Set<String> orderIds = new HashSet<>();
+		orderIds.add("821342469000021");
+		orderIds.add("821325390000141");
+		System.out.println(orderJdMapper.getDeliveryOrderIdsOfOrderJd(orderIds, ConstantsUtil.Status.READY));
+	}
 
 	@Test
 	public void testGetOrderListResultData() throws Exception {

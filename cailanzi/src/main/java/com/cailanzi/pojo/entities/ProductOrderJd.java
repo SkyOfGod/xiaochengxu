@@ -25,5 +25,5 @@ public class ProductOrderJd {
     private Integer skuStorePrice;
     private Integer skuCostPrice;
     private Float skuWeight;
-
+    private Byte skuStatus;
 }

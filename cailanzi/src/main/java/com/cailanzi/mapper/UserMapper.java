@@ -4,6 +4,7 @@ import com.cailanzi.pojo.entities.ProductJd;
 import com.cailanzi.pojo.entities.User;
 import com.cailanzi.utils.MyMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -14,4 +15,6 @@ import java.util.List;
 public interface UserMapper extends MyMapper<User>{
 
     List<User> comgridList(String q);
+
+    List<User> selectByUsername(@Param("username") String username,@Param("type") Integer type);
 }

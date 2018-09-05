@@ -5,7 +5,7 @@
     商家商品状态:&nbsp;&nbsp;<input id="jd_list_fixedStatusCombo"/>
                     <input type="hidden" id="jd_list_fixedStatus"/>
 
-    <button style="margin-left: 10px" class="easyui-linkbutton" iconCls="icon-search" onclick="jdListSearch()">搜索</button>
+    <button style="margin-left: 10px" class="easyui-linkbutton" iconCls="icon-search" onclick="itemJdListSearch()">搜索</button>
 </div>
 <table id="item-jd-list" style="width:100%;height:800px"></table>
 
@@ -105,7 +105,7 @@
         }
     });
 
-    jdListSearch = function () {
+    itemJdListSearch = function () {
         $('#item-jd-list').datagrid('load');
     }
 

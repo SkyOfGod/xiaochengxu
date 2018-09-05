@@ -28,4 +28,5 @@ public class OrderUnion {
     private Integer skuJdPrice;
     private Integer skuCostPrice;
     private Float skuWeight;
+    private Byte skuStatus;
 }

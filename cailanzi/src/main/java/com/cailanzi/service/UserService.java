@@ -29,11 +29,8 @@ public class UserService {
     @Autowired
     private UserMapper userMapper;
 
-    public SysResult login(String username, String password, int type) throws ServiceException{
-        User user = new User();
-        user.setUsername(username);
-        user.setType((byte)type);
-        List<User> userList = userMapper.select(user);
+    public SysResult login(String username, String password, Integer type) throws ServiceException{
+        List<User> userList = userMapper.selectByUsername(username,type);
         if(userList.isEmpty()){
             return SysResult.build(400,"用户名不存在");
         }
@@ -80,9 +77,6 @@ public class UserService {
         user.setPassword(passwordMd5);
         String signMD5 = MD5Util.getMD5String(user.getUsername()+user.getPassword());
         user.setSign(signMD5);
-        if(StringUtils.isBlank(user.getBelongStationNo())){
-            user.setBelongStationNo("0");
-        }
         log.info("UserService addUser user={}", user);
         userMapper.insertSelective(user);
     }

@@ -8,9 +8,21 @@
         a.produce_station_name produceStationName,a.buyer_full_name buyerFullName,a.`status`,
         a.buyer_full_address buyerFullAddress,a.buyer_mobile buyerMobile,a.create_time createTime,
         b.sku_id skuId,b.sku_name skuName,b.sku_jd_price skuJdPrice,b.sku_count skuCount,
-        b.sku_store_price skuStorePrice,b.sku_cost_price skuCostPrice,b.sku_weight skuWeight
+        b.sku_store_price skuStorePrice,b.sku_cost_price skuCostPrice,b.sku_weight skuWeight,b.sku_status skuStatus
         FROM order_jd a
         JOIN product_order_jd b ON b.order_id = a.order_id
+        <where>
+            <if test="orderId!=null and orderId.trim()!=''">
+                AND a.order_id = #{orderId}
+            </if>
+        </where>
+    </select>
+
+    <select id="getOrderShopJdList" resultType="OrderUnion">
+        SELECT a.order_id orderId,a.order_num orderNum,b.sku_name skuName,b.sku_count skuCount,b.sku_store_price skuStorePrice
+        FROM order_jd a
+        JOIN product_order_jd b ON b.order_id=a.order_id
+        WHERE a.produce_station_no = #{stationNo} AND a.`status`= #{status}
     </select>
 
 </mapper>

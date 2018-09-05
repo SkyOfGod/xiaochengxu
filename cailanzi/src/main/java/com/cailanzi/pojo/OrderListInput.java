@@ -2,6 +2,8 @@ package com.cailanzi.pojo;
 
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * Created by v-hel27 on 2018/8/7.
  */
@@ -22,6 +24,10 @@ public class OrderListInput {
     private String orderStatus;
     //到家门店编码
     private String deliveryStationNo;
+    //角色类型
+    private String type;
+
+    private Date updateTime;
 
 
     //客户名
@@ -54,8 +60,6 @@ public class OrderListInput {
     private String orderCancelTime_begin;
     //订单取消时间(结束)
     private String orderCancelTime_end;
-    //订单状态
-    private String orderStatus_list;
     //城市编码，可以调用获取所有城市信息列表接口获取
     private String buyerCity_list;
     //承运单号，通常情况下和订单号一致

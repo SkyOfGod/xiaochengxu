@@ -4,7 +4,7 @@
     可售状态:&nbsp;&nbsp;<input id="vendibilityCombo"/>
     <input type="hidden" id="vendibility"/>
 
-    <button style="margin-left: 10px" class="easyui-linkbutton" iconCls="icon-search" onclick="statusListSearch()">搜索</button>
+    <button style="margin-left: 10px" class="easyui-linkbutton" iconCls="icon-search" onclick="itemStatusListSearch()">搜索</button>
 </div>
 <table id="item-status-list" style="width:100%;height:800px"></table>
 
@@ -165,7 +165,7 @@
         $("#editForm").form("load",data);
     }
 
-    statusListSearch = function () {
+    itemStatusListSearch = function () {
         $('#item-status-list').datagrid('load');
     }
 

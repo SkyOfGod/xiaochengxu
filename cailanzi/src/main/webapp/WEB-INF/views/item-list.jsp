@@ -1,7 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<div style="width: 500px;height: 40px">
+<div style="width: 100%;height: 40px">
     商户账号:&nbsp;&nbsp;<input  class="easyui-textbox" id="list_searchPhone">
-    <button class="easyui-linkbutton" iconCls="icon-search" onclick="listSearch()">搜索</button>
+    商品名称:&nbsp;&nbsp;<input  class="easyui-textbox" id="list_searchSkuName">
+    <button class="easyui-linkbutton" iconCls="icon-search" onclick="itemListSearch()">搜索</button>
 </div>
 <table id="item-list" style="width:100%;height:800px"></table>
 
@@ -98,6 +99,7 @@
             param.pageNo = param.page;
             param.pageSize = param.rows;
             param.phone = $('#list_searchPhone').val();
+            param.skuName = $('#list_searchSkuName').val();
             return true;
         }
     });
@@ -168,7 +170,7 @@
         });
     }
 
-    listSearch = function () {
+    itemListSearch = function () {
         $('#item-list').datagrid('load');
     }
 

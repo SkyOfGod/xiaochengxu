@@ -55,14 +55,7 @@ public class ProductItemService {
 
     public EasyUIResult queryProductPage(ProductListInput productListInput) {
         PageHelper.startPage(productListInput.getPageNo(),productListInput.getPageSize());
-        List<Product> list = null;
-        if(StringUtils.isNotBlank(productListInput.getPhone())){
-            Product product = new Product();
-            product.setPhone(productListInput.getPhone());
-            list = productMapper.select(product);
-        }else {
-            list = productMapper.selectAll();
-        }
+        List<Product> list = productMapper.selectDynamic(productListInput);
         log.info("ProductItemService queryProductPage list={}", list);
         PageInfo<Product> pageInfo = new PageInfo<>(list);
         return new EasyUIResult(pageInfo.getTotal(),pageInfo.getList());

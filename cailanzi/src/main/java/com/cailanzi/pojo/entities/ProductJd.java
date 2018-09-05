@@ -1,6 +1,5 @@
 package com.cailanzi.pojo.entities;
 
-import com.sun.corba.se.impl.ior.ByteBuffer;
 import lombok.Data;
 
 import javax.persistence.GeneratedValue;

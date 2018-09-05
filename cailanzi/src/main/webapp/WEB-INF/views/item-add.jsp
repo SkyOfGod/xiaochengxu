@@ -108,7 +108,8 @@
             return false;
         }
         //转化价格单位，将元转化为分
-        $("#itemAddForm [name=price]").val(eval($("#itemAddForm [name=initPrice]").val()) * 100);
+        var price = eval($("#itemAddForm [name=initPrice]").val()) * 100;
+        $("#itemAddForm [name=price]").val(parseInt(price));
         var params = $("#itemAddForm").serialize();
         $.post("/product/addProduct", params, function(data) {
             if (data.status == 200) {

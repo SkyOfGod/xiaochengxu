@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cailanzi.mapper.OrderShopMapper">
+
+    <select id="getOrderShopPageList" resultType="com.cailanzi.pojo.entities.OrderShop">
+        SELECT id,username,belong_station_no belongStationNo,order_id orderId,sku_id skuId,
+        sku_name skuName,sku_count skuCount,sku_price skuPrice,status,create_time createTime,update_time updateTime
+        FROM order_shop
+        <where>
+            <if test="username!=null and username.trim()!=''">
+                AND username =#{username}
+            </if>
+            <if test="orderId!=null and orderId.trim()!=''">
+                AND order_id =#{orderId}
+            </if>
+        </where>
+    </select>
+
+    <update id="updateOrderShopStatus">
+        UPDATE order_shop SET `status` = #{orderStatus},update_time = #{updateTime}
+        WHERE username = #{username} AND order_id = #{orderId}
+    </update>
+
+    <select id="getOrderShopList" resultType="OrderUnion">
+        SELECT a.order_id orderId,a.sku_name skuName,a.sku_count skuCount,a.sku_price skuStorePrice,b.order_num orderNum
+        FROM order_shop a
+        JOIN order_jd b ON b.order_id=a.order_id
+        WHERE a.belong_station_no=#{stationNo}  AND a.username=#{username} AND a.`status`=#{status}
+    </select>
+
+    <select id="getProductStatus" resultType="com.cailanzi.pojo.entities.OrderShop">
+        SELECT sku_id skuId,`status` FROM order_shop
+        WHERE sku_id IN
+        <foreach collection="skuIds" separator="," item="temp" open="(" close=")">
+            #{temp}
+        </foreach>
+        AND order_id = #{orderId}
+    </select>
+
+    <select id="getOutReadyStatusOrderIdsOfOrderShop" resultType="java.lang.String">
+        SELECT DISTINCT order_id FROM order_shop
+        WHERE order_id IN
+        <foreach collection="orderIds" separator="," item="temp" open="(" close=")">
+            #{temp}
+        </foreach>
+        AND username = #{username}
+        AND `status` <![CDATA[ <> ]]> #{status}
+    </select>
+
+</mapper>

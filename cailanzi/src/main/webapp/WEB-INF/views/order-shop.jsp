@@ -1,4 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<div style="width: 100%;height: 40px">
+    商户账号:&nbsp;&nbsp;<input  class="easyui-textbox" id="orderShopList_searchUsername">
+    订单ID:&nbsp;&nbsp;<input  class="easyui-textbox" id="orderShopList_searchOrderId">
+    <button class="easyui-linkbutton" iconCls="icon-search" onclick="orderShopListSearch()">搜索</button>
+</div>
 <table id="order-shop-list" style="width:100%;height:800px"></table>
 
 <script type="text/javascript">
@@ -26,7 +31,7 @@
                     if(value=="32000"){
                         return "待发货";
                     }else if(value=="33000"){
-                        return "待配送";
+                        return '<span style="color:red;">待配送</span>';
                     }else if(value=="34000"){
                         return "配送中";
                     }else if(value=="35000"){
@@ -41,7 +46,12 @@
         onBeforeLoad: function (param) {
             param.pageNo = param.page;
             param.pageSize = param.rows;
+            param.username = $('#orderShopList_searchUsername').val();
+            param.orderId = $('#orderShopList_searchOrderId').val();
             return true;
         }
     });
+    orderShopListSearch = function () {
+        $('#order-shop-list').datagrid('load');
+    }
 </script>

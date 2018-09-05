@@ -12,5 +12,6 @@ public class ProductOrderJdVo {
     private String skuName;
     private String skuCount;
     private String skuStorePrice;
+    private String status;
 
 }

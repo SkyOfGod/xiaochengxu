@@ -5,7 +5,17 @@
 
     <select id="comgridList" resultType="com.cailanzi.pojo.entities.User">
         SELECT username,belong_station_no belongStationNo,belong_station_name belongStationName FROM `user`
-        WHERE type=1 AND belong_station_no <![CDATA[ <> ]]> 0
+        WHERE type <![CDATA[ <> ]]> 0
     </select>
 
+    <select id="selectByUsername" resultType="com.cailanzi.pojo.entities.User">
+        SELECT username,password,sign,type,belong_station_no belongStationNo,belong_station_name belongStationName FROM `user`
+        WHERE username = #{username}
+        <if test="type==null">
+            AND type <![CDATA[ <> ]]> 0
+        </if>
+        <if test="type!=null">
+            AND type = #{type}
+        </if>
+    </select>
 </mapper>

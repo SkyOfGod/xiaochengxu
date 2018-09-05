@@ -22,7 +22,7 @@
 			<tr>
 				<td>所属门店:</td>
 				<td>
-					<input id="belongStationNo" name="belongStationNo" style="width: 240px;"/>
+					<input id="belongStationNo" name="belongStationNo" data-options="required:true"  style="width: 240px;"/>
 					<input id="belongStationName" type="hidden" name="belongStationName">
 				</td>
 			</tr>
@@ -30,7 +30,8 @@
 				<td>类型:</td>
 				<td>
 					<select class="easyui-combobox" name="type" style="width: 100px;" data-options="editable:false">
-						<option value="1">用户</option>
+						<option value="1">备货员</option>
+						<option value="2">收货员</option>
 						<option value="0">管理者</option>
 					</select>
 				</td>
@@ -86,12 +87,14 @@
             {field:'password',title:'密码',width:300,align:'center'},
             {field:'belongStationNo',title:'所属到家门店编码',width:200,align:'center'},
             {field:'belongStationName',title:'所属门店名称',width:200,align:'center'},
-            {field:'type',title:'用户类别',width:70,align:'center',
+            {field:'type',title:'用户类别',width:100,align:'center',
                 formatter:function (value,row,index) {
                 	if(value==0){
-                	    return "管理员";
+                	    return "后台管理员";
 					}else if(value==1){
-                	    return "用户";
+                	    return "备货员";
+					}else if(value==2){
+					    return "收货员";
 					}
                     return value;
                 }

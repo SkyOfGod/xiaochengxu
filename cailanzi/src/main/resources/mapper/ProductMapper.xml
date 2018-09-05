@@ -3,5 +3,19 @@
 
 <mapper namespace="com.cailanzi.mapper.ProductMapper">
 
+    <select id="selectDynamic" resultType="com.cailanzi.pojo.entities.Product">
+        SELECT id,phone,belong_station_no belongStationNo,belong_station_name belongStationName,
+        sku_id skuId,`name`,shop_categories shopCategories,price,store_num storeNum,is_sell isSell,
+        description,img_url imgUrl,create_time createTime,update_time updateTime
+        FROM product
+        <where>
+            <if test="phone!=null and phone.trim()!=''">
+                AND phone = #{phone}
+            </if>
+            <if test="skuName!=null and skuName.trim()!=''">
+                AND `name` LIKE CONCAT('%',#{skuName},'%')
+            </if>
+        </where>
+    </select>
 
 </mapper>

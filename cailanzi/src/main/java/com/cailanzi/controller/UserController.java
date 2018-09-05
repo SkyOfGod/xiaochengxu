@@ -41,7 +41,7 @@ public class UserController {
         if(StringUtils.isBlank(username)||StringUtils.isBlank(password)){
             return SysResult.build(400,"数据不能为空");
         }
-        return userService.login(username,password,1);
+        return userService.login(username,password,null);
     }
 
     /**

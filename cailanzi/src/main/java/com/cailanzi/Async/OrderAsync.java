@@ -16,9 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by v-hel27 on 2018/9/4.
@@ -72,6 +70,7 @@ public class OrderAsync {
     private ProductOrderJd getProductOrderJd(String orderId, JSONObject orderProductJsonObject) {
         ProductOrderJd productOrderJd = JSONObject.toJavaObject(orderProductJsonObject,ProductOrderJd.class);
         productOrderJd.setOrderId(orderId);
+        productOrderJd.setSkuStatus((byte)0);
         return productOrderJd;
     }
 
@@ -126,5 +125,39 @@ public class OrderAsync {
             return true;
         }
         return false;
+    }
+
+    @Async
+    public void checkProductsOfOrderIsAllReady(OrderListInput orderListInput) {
+        String orderId = orderListInput.getOrderId();
+        OrderShop orderShop = new OrderShop();
+        orderShop.setUsername(orderListInput.getUsername());
+        orderShop.setOrderId(orderId);
+        List<OrderShop> list = orderShopMapper.select(orderShop);
+        Set<Long> skuIds = new HashSet<>();
+        for (OrderShop shop : list) {
+            skuIds.add(shop.getSkuId());
+        }
+
+        ProductOrderJd productOrderJd = new ProductOrderJd();
+        productOrderJd.setOrderId(orderId);
+        List<ProductOrderJd> productOrderJdList = productOrderJdMapper.select(productOrderJd);
+        for (ProductOrderJd orderJd : productOrderJdList) {
+            if(skuIds.contains(orderJd.getSkuId())){
+                orderJd.setSkuStatus((byte)1);
+                productOrderJdMapper.updateByPrimaryKey(orderJd);
+            }
+        }
+
+        boolean flag = true;
+        for (ProductOrderJd orderJd : productOrderJdList) {
+            if(orderJd.getSkuStatus()==0){
+                flag = false;
+                break;
+            }
+        }
+        if(flag){
+            orderJdMapper.updateStatusByOrderId(orderId,"33000");
+        }
     }
 }

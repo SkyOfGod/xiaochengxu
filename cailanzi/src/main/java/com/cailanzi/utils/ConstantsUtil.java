@@ -12,6 +12,7 @@ public interface ConstantsUtil {
 
         public final static String READY = "32000";
         public final static String DELIVERY = "33000";
+        public final static String FINISH = "35000";
     }
 
     /**

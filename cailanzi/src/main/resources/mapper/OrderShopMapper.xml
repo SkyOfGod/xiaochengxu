@@ -19,7 +19,10 @@
 
     <update id="updateOrderShopStatus">
         UPDATE order_shop SET `status` = #{orderStatus},update_time = #{updateTime}
-        WHERE username = #{username} AND order_id = #{orderId}
+        WHERE order_id = #{orderId}
+        <if test="username!=null and username.trim()!=''">
+            AND username = #{username}
+        </if>
     </update>
 
     <select id="getOrderShopList" resultType="OrderUnion">

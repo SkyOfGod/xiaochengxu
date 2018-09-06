@@ -233,26 +233,36 @@ public class OrderService {
         return new EasyUIResult(pageInfo.getTotal(),pageInfo.getList());
     }
 
-    public SysResult updateOrderShopStatus(OrderListInput orderListInput) {
+    public SysResult updateOrderShopStatusToDelivery(OrderListInput orderListInput) {
         orderListInput.setUpdateTime(new Date());
         orderShopMapper.updateOrderShopStatus(orderListInput);
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            log.info(e.getMessage());
-        }
         orderAsync.checkProductsOfOrderIsAllReady(orderListInput);
         return SysResult.build(200);
     }
 
+    public SysResult updateOrderShopStatusToFinish(OrderListInput orderListInput) {
+        orderJdMapper.updateStatusByOrderId(orderListInput.getOrderId(),ConstantsUtil.Status.FINISH);
+        orderListInput.setUpdateTime(new Date());
+        orderShopMapper.updateOrderShopStatus(orderListInput);
+        return SysResult.build(200);
+    }
+
     public SysResult getWebOrder2List(OrderListInput orderListInput) {
+        return getWebOrderShopListBasic(orderListInput,ConstantsUtil.Status.DELIVERY);
+    }
+
+    public SysResult getWebOrder4List(OrderListInput orderListInput) {
+        return getWebOrderShopListBasic(orderListInput,ConstantsUtil.Status.FINISH);
+    }
+
+    private SysResult getWebOrderShopListBasic(OrderListInput orderListInput,String status) {
         String username = orderListInput.getUsername();
         String stationNo = orderListInput.getBelongStationNo();
         List<OrderUnion> list = null;
         if(ConstantsUtil.UserType.READYER.equals(orderListInput.getType())){
-            list = orderShopMapper.getOrderShopList(username,stationNo,ConstantsUtil.Status.DELIVERY);
+            list = orderShopMapper.getOrderShopList(username,stationNo,status);
         }else if(ConstantsUtil.UserType.SENDER.equals(orderListInput.getType())){
-            list = orderMapper.getOrderShopJdList(stationNo,ConstantsUtil.Status.DELIVERY);
+            list = orderMapper.getOrderShopJdList(stationNo,status);
         }
         Map<String,OrderJdVo> map = getOrderJdVoMap(list);
         return SysResult.ok(map.values());
@@ -287,4 +297,7 @@ public class OrderService {
         productOrderJdVo.setSkuStorePrice(union.getSkuStorePrice());
         return productOrderJdVo;
     }
+
+
+
 }

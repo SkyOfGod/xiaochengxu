@@ -38,6 +38,15 @@ public class OrderController {
         return data;
     }
 
+    //待配送数据
+    @RequestMapping("web/order4List")
+    private SysResult getWebOrder4List(OrderListInput orderListInput) throws Exception {
+        log.info("OrderController getWebOrder4List OrderListInput orderListInput={}", orderListInput);
+        SysResult data = orderService.getWebOrder4List(orderListInput);
+        log.info("OrderController getWebOrder4List return {}", data);
+        return data;
+    }
+
     @RequestMapping("orderList")
     private EasyUIResult getOrderList(OrderListInput orderListInput) throws Exception {
         log.info("OrderController getOrderList OrderListInput orderListInput={}", orderListInput);
@@ -54,10 +63,16 @@ public class OrderController {
         return data;
     }
 
-    @RequestMapping("web/updateOrderShopStatus")
-    private SysResult updateOrderShopStatus(OrderListInput orderListInput) throws Exception {
-        log.info("OrderController updateOrderShopStatus OrderListInput orderListInput={}", orderListInput);
-        return orderService.updateOrderShopStatus(orderListInput);
+    @RequestMapping("web/updateOrderShopStatusToDelivery")
+    private SysResult updateOrderShopStatusToDelivery(OrderListInput orderListInput) throws Exception {
+        log.info("OrderController updateOrderShopStatusToDelivery OrderListInput orderListInput={}", orderListInput);
+        return orderService.updateOrderShopStatusToDelivery(orderListInput);
+    }
+
+    @RequestMapping("web/updateOrderShopStatusToFinish")
+    private SysResult updateOrderShopStatusToFinish(OrderListInput orderListInput) throws Exception {
+        log.info("OrderController updateOrderShopStatusToFinish OrderListInput orderListInput={}", orderListInput);
+        return orderService.updateOrderShopStatusToFinish(orderListInput);
     }
 
 

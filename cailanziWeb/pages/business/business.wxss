@@ -1,0 +1,17 @@
+.view-user{
+  width: 112%;
+  height: 13%;
+  display: flex;
+}
+
+.view-user text{
+  font-size: 16px;
+  padding:20px 0px 10px 5px;
+}
+
+.view-user button{
+  width: 23%;
+  height: 78%;
+  padding:0px 0px 15px 5px;
+  text-align: center;
+}

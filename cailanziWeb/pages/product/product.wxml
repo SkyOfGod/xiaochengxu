@@ -1,0 +1,55 @@
+<view class="section">
+    <view>
+      <text decode="{{true}}" space="{{true}}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</text>
+    共有{{total}}个商品
+    </view>
+    <!-- 左侧类型 -->
+    <scroll-view scroll-y="true" class="left">
+        <view class="index-bd">
+          <view class="kind-list">
+            <block wx:for-items="{{categoriesList}}" wx:key="{{item.id}}">
+              <view class="kind-list-item">
+                <view data-categoryId="{{item.id}}" class="kind-list-item-hd {{item.open ? 'kind-list-item-hd-show' : ''}}" bindtap="kindToggle">
+                  <view class="kind-list-text">{{item.name}}</view>
+                </view>
+                <view class="kind-list-item-bd {{item.open ? 'kind-list-item-bd-show' : ''}}">
+                  <view class="navigator-box {{item.open ? 'navigator-box-show' : ''}}">
+                    <block wx:for-items="{{item.child}}" wx:for-item="page" wx:key="*item">
+                      <view data-categoryId="{{page.id}}" class="navigator-text" bindtap="clickGetProducts">{{page.name}}</view>
+                    </block>
+                  </view>
+                </view>
+              </view>
+            </block>
+          </view>
+        </view>
+    </scroll-view>  
+
+    <!-- 右侧数据 -->
+    <scroll-view class="right" scroll-y="true" bindscrolltolower='lower' lower-threshold='50px'>
+      <view class="search_no" wx:if="{{!products}}">
+          <view><image class="scimg" src="/images/search_no.png"/></view>
+          <text>没有任何商品/(ㄒoㄒ)/~~</text>
+      </view>
+      <view class='right-list' wx:for="{{products}}">
+        <view class="shop df">        
+          <image class="sh_slt" src="/images/search_no.png"/>
+          <view class="df_1">            
+              <view class="sp_text">
+                  <navigator url="../index/detail?productId={{item.skuId}}" hover-class="changestyle">
+                      <view class="sp_tit ovh1">{{item.name}}</view>
+                  </navigator>
+                  <view>
+                    <text style='color:red;'>¥{{item.price/100}} </text>
+                    <text style='font-size:11px;color:#999;'>库存{{item.num}}件</text>
+                  </view>
+              </view>
+          </view>
+        </view>
+        <view class='right-button'>
+          <button type="primary">设置库存/价格</button>
+          <button type="primary">设为{{item.status=="1"?"可售":"不可售"}}</button>
+        </view>
+      </view>
+    </scroll-view>
+</view>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cailanzi.mapper.OrderJdMapper">
+
+    <update id="updateStatusByOrderId">
+        UPDATE order_jd SET `status` = #{status}
+        WHERE  order_id = #{orderId}
+    </update>
+
+    <select id="getDeliveryOrderIdsOfOrderJd" resultType="java.lang.String">
+        SELECT order_id FROM order_jd
+        WHERE order_id IN
+        <foreach collection="orderIds" separator="," item="temp" open="(" close=")">
+            #{temp}
+        </foreach>
+        AND `status` <![CDATA[ <> ]]> #{status}
+    </select>
+
+</mapper>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cailanzi.mapper.ProductMapper">
+
+    <select id="selectDynamic" resultType="com.cailanzi.pojo.entities.Product">
+        SELECT id,phone,belong_station_no belongStationNo,belong_station_name belongStationName,
+        sku_id skuId,`name`,shop_categories shopCategories,price,store_num storeNum,is_sell isSell,
+        description,img_url imgUrl,create_time createTime,update_time updateTime
+        FROM product
+        <where>
+            <if test="phone!=null and phone.trim()!=''">
+                AND phone = #{phone}
+            </if>
+            <if test="skuName!=null and skuName.trim()!=''">
+                AND `name` LIKE CONCAT('%',#{skuName},'%')
+            </if>
+        </where>
+    </select>
+
+</mapper>

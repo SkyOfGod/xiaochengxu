@@ -21,17 +21,25 @@
             <view class="sp_text">
                 <view class="sp_tit ovh2">#{{item.orderNum}}</view>
                 <view class="sp_tit">订单号：{{item.orderId}}</view>
+                <view class="sp_tit">备注：{{item.orderBuyerRemark}}</view>
                 <block wx:for="{{item.product}}" wx:for-item="product">
                   <!-- <image class="sh_slt" src="/images/search_no.png"></image> -->
                   <text decode="{{true}}">&nbsp;</text>
                   <view class="sp_neb">产品名称：{{product.skuName}}</view>
                   <view class="sp_tit">产品数量：×<text class='sp_jg'>{{product.skuCount}}</text></view>
                   <view class="sp_tit">单价：¥{{product.skuStorePrice/100}}</view>
-                  <view wx:if="{{!ifToDelivery}}">
-                    状态：<text class="{{product.status==33000 ? 'sp_jg' : ''}}">{{product.status==33000 ? '已拣货' : '待拣货'}}</text>
+                  <view wx:if="{{isSender}}">
+                    状态：
+                    <text  wx:if="{{product.status==0 ? true : false}}">待拣货</text>
+                    <text wx:if="{{product.status==1 ? true : false}}" class="sp_jg0">已拣货</text>
+                    <text wx:if="{{product.status==2 ? true : false}}" class="sp_jg">缺货</text>
+                  </view>
+                  <view wx:if="{{isReadyer}}">
+                    状态：<text class="{{product.status==2 ? 'sp_jg' : ''}}">{{product.status==2 ? '缺货' : '有货'}}</text>
+                    <button  wx:if="{{product.status==2 ? false : true}}" data-orderId="{{item.orderId}}" data-skuId="{{product.skuId}}" type='primary' bindtap='stockout'>缺货</button>
                   </view>
                 </block>
-                <button wx:if="{{ifToDelivery}}" data-orderId="{{item.orderId}}" type='primary' bindtap='toDelivery'>已备货完毕，转待配送</button>
+                <button wx:if="{{isReadyer}}" data-orderId="{{item.orderId}}" type='primary' bindtap='toDelivery'>已备货完毕，转待配送</button>
             </view>
         </view>
         <view class="c_t61"></view>
@@ -51,13 +59,23 @@
               <view class="sp_text">
                   <view class="sp_tit ovh2">#{{item.orderNum}}</view>
                   <view class="sp_tit">订单号：{{item.orderId}}</view>
+                  <view class="sp_tit">备注：{{item.orderBuyerRemark}}</view>
                   <block wx:for="{{item.product}}" wx:for-item="product">
                     <text decode="{{true}}">&nbsp;</text>
                     <view class="sp_neb">产品名称：{{product.skuName}}</view>
                     <view class="sp_tit">产品数量：×<text class='sp_jg'>{{product.skuCount}}</text></view>
                     <view class="sp_tit">单价：¥{{product.skuStorePrice/100}}</view>
+                    <view wx:if="{{isSender}}">
+                    状态：
+                    <text  wx:if="{{product.status==0 ? true : false}}">待拣货</text>
+                    <text wx:if="{{product.status==1 ? true : false}}" class="sp_jg0">已拣货</text>
+                    <text wx:if="{{product.status==2 ? true : false}}" class="sp_jg">缺货</text>
+                  </view>
+                  <view wx:if="{{isReadyer}}">
+                    状态：<text class="{{product.status==2 ? 'sp_jg' : ''}}">{{product.status==2 ? '缺货' : '有货'}}</text>
+                  </view>
                   </block>
-                  <button wx:if="{{ifToFinish}}" data-orderId="{{item.orderId}}" type='primary' bindtap='toFinish'>已收货</button>
+                  <button wx:if="{{isSender}}" data-orderId="{{item.orderId}}" type='primary' bindtap='toDelivery2'>已发货,转配送中</button>
               </view>
           </view>
           <view class="c_t61"></view>
@@ -68,21 +86,26 @@
   <!-- 配送中-->
   <swiper-item>
     <view class="search_no" wx:if="{{!orders3}}">
-        <view class="font_14"><image class="scimg" src="/images/search_no.png"></image></view>
+        <view class="font_14"><image class="scimg" src="/images/search_no.png"/></view>
         <text>没有可用订单/(ㄒoㄒ)/~~</text>
     </view>
-    <view class="shop df" wx:for="{{orders3.resultList}}">   
-        <image class="sh_slt" src="{{item.photo_x}}"></image>
+    <view class='swi-item'>
+      <view class="shop df" wx:for="{{orders3.data}}">        
         <view class="df_1">            
-            <view class="sp_text">
-                <navigator url="../index/detail?productId={{item.pid}}" hover-class="changestyle">
-                    <view class="sp_tit ovh1">{{item.name}}</view>
-                </navigator>
-                <view class="sp_neb">单价：¥ {{item.price_yh}} 数量：×{{item.product_num}} 产品：×{{item.pro_count}}</view>
-                <view class="sp_jg">¥：{{item.price}}</view>
-                <navigator url="../order/detail?orderId={{item.id}}" class="font_12 red fl_r mr_5">订单详情</navigator>
-            </view>
-        </view>
+              <view class="sp_text">
+                  <view class="sp_tit ovh2">#{{item.orderNum}}</view>
+                  <view class="sp_tit">订单号：{{item.orderId}}</view>
+                  <view class="sp_tit">备注：{{item.orderBuyerRemark}}</view>
+                  <block wx:for="{{item.product}}" wx:for-item="product">
+                    <text decode="{{true}}">&nbsp;</text>
+                    <view class="sp_neb">产品名称：{{product.skuName}}</view>
+                    <view class="sp_tit">产品数量：×<text class='sp_jg'>{{product.skuCount}}</text></view>
+                    <view class="sp_tit">单价：¥{{product.skuStorePrice/100}}</view>
+                  </block>
+              </view>
+          </view>
+          <view class="c_t61"></view>
+      </view>
     </view>
   </swiper-item>
 
@@ -98,6 +121,7 @@
               <view class="sp_text">
                   <view class="sp_tit ovh2">#{{item.orderNum}}</view>
                   <view class="sp_tit">订单号：{{item.orderId}}</view>
+                  <view class="sp_tit">备注：{{item.orderBuyerRemark}}</view>
                   <block wx:for="{{item.product}}" wx:for-item="product">
                     <text decode="{{true}}">&nbsp;</text>
                     <view class="sp_neb">产品名称：{{product.skuName}}</view>
@@ -113,12 +137,12 @@
 
   <!-- 退款/售后 -->
   <swiper-item>
-    <view class="search_no" wx:if="{{!orders4}}">
+    <view class="search_no" wx:if="{{!orders5}}">
         <view class="font_14"><image class="scimg" src="/images/search_no.png"></image></view>
         <text>没有可用订单/(ㄒoㄒ)/~~</text>
     </view>
 
-    <view class="shop df" wx:for="{{orders3.resultList}}">
+    <view class="shop df" wx:for="{{orders5.resultList}}">
         <image class="sh_slt" src="{{item.photo_x}}"></image>
         <view class="df_1">            
             <view class="sp_text">

@@ -3,7 +3,7 @@
 
 <mapper namespace="com.cailanzi.mapper.OrderJdMapper">
 
-    <update id="updateStatusByOrderId">
+    <update id="updateOrderStatusByOrderId">
         UPDATE order_jd SET `status` = #{status}
         WHERE  order_id = #{orderId}
     </update>
@@ -16,5 +16,10 @@
         </foreach>
         AND `status` <![CDATA[ <> ]]> #{status}
     </select>
+
+    <update id="updateProductStatus">
+        UPDATE product_order_jd SET sku_status = #{skuStatus}
+        WHERE order_id = #{orderId} AND sku_id = #{skuId}
+    </update>
 
 </mapper>

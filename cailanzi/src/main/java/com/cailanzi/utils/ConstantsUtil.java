@@ -12,7 +12,18 @@ public interface ConstantsUtil {
 
         public final static String READY = "32000";
         public final static String DELIVERY = "33000";
+        public final static String DELIVERY2 = "34000";
         public final static String FINISH = "35000";
+    }
+
+    /**
+     * 商品状态：0-待拣货，1-已拣货，2-缺货
+     */
+    public static class productStatus {
+
+        public final static Byte READY = 0;
+        public final static Byte FINISH = 1;
+        public final static Byte STOCKOUT = 2;
     }
 
     /**

@@ -15,7 +15,24 @@
             <if test="skuName!=null and skuName.trim()!=''">
                 AND `name` LIKE CONCAT('%',#{skuName},'%')
             </if>
+            <if test="stationNo!=null and stationNo.trim()!=''">
+                AND belong_station_no = #{stationNo}
+            </if>
+            <if test="skuIds!=null and skuIds.size()!=0">
+                AND sku_id IN
+                <foreach collection="skuIds" separator="," item="temp" open="(" close=")">
+                    #{temp}
+                </foreach>
+            </if>
         </where>
     </select>
+
+    <update id="updateProductStatusEqualOrderShop">
+        UPDATE product_order_jd a
+        JOIN order_shop b ON b.order_id=a.order_id
+        AND b.sku_id=a.sku_id AND b.username = #{username}
+        SET a.sku_status = b.sku_status
+        WHERE a.order_id = #{orderId}
+    </update>
 
 </mapper>

@@ -101,6 +101,12 @@
     font-size: 12px;
     color: #999;
 }
+.sp_jg0{
+    width: 100%;
+    overflow: hidden;
+    font-size: 15px;
+    color:blue;
+}
 .sp_jg{
     width: 100%;
     overflow: hidden;

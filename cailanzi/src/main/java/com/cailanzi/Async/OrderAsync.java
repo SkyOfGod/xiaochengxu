@@ -3,15 +3,16 @@ package com.cailanzi.Async;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.cailanzi.mapper.OrderJdMapper;
-import com.cailanzi.mapper.OrderShopMapper;
-import com.cailanzi.mapper.ProductOrderJdMapper;
+import com.cailanzi.mapper.*;
 import com.cailanzi.pojo.OrderJdVo;
 import com.cailanzi.pojo.OrderListInput;
 import com.cailanzi.pojo.ProductOrderJdVo;
 import com.cailanzi.pojo.entities.OrderJd;
 import com.cailanzi.pojo.entities.OrderShop;
+import com.cailanzi.pojo.entities.Product;
 import com.cailanzi.pojo.entities.ProductOrderJd;
+import com.cailanzi.utils.ConstantsUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -22,6 +23,7 @@ import java.util.*;
  * Created by v-hel27 on 2018/9/4.
  */
 @Component
+@Slf4j
 public class OrderAsync {
 
     @Autowired
@@ -31,33 +33,31 @@ public class OrderAsync {
     @Autowired
     private OrderShopMapper orderShopMapper;
 
-    private final static String ORDER_READY_STATUS = "32000";
-
-    @Async
+//    @Async
     public void insertOrderJd(JSONArray jsonArray) {
         Date date = new Date();
-        List<OrderJd> orderList = new ArrayList<>();
+
+        JSONObject orderJsonObject = JSON.parseObject(jsonArray.get(0).toString());
+        String orderId = orderJsonObject.getString("orderId");
+
         List<ProductOrderJd> productList = new ArrayList<>();
-        for (Object orderObj : jsonArray) {
-            JSONObject orderJsonObject = JSON.parseObject(orderObj.toString());
-            String orderId = orderJsonObject.getString("orderId");
-            if(isExitOrder(orderId)){
-                continue;
-            }
-            orderList.add(getOrderJd(date,orderJsonObject));
-            JSONArray proJSonArray = orderJsonObject.getJSONArray("product");
-            for (Object orderProductObj : proJSonArray) {
-                JSONObject orderProductJsonObject = JSON.parseObject(orderProductObj.toString());
-                productList.add(getProductOrderJd(orderId,orderProductJsonObject));
-            }
+        JSONArray proJSonArray = orderJsonObject.getJSONArray("product");
+        for (Object orderProductObj : proJSonArray) {
+            JSONObject orderProductJsonObject = JSON.parseObject(orderProductObj.toString());
+            productList.add(getProductOrderJd(orderId,orderProductJsonObject));
         }
-        if(!orderList.isEmpty()){
-            orderJdMapper.insertList(orderList);
+        if(!productList.isEmpty()){
+            OrderJd orderJd = getOrderJd(date,orderJsonObject);
+            log.info("OrderAsync insertOrderJd OrderJd orderJd={}", orderJd);
+            orderJdMapper.insert(orderJd);
+            log.info("OrderAsync insertOrderJd insertList List<ProductOrderJd> productList={}", productList);
             productOrderJdMapper.insertList(productList);
+
+            insertOrderShop(orderId);
         }
     }
 
-    private boolean isExitOrder(String orderId) {
+    public boolean isExitOrder(String orderId) {
         OrderJd orderJd = new OrderJd();
         orderJd.setOrderId(orderId);
         List<OrderJd> list = orderJdMapper.select(orderJd);
@@ -76,42 +76,30 @@ public class OrderAsync {
 
     private OrderJd getOrderJd(Date date,JSONObject orderJsonObject) {
         OrderJd orderJd = JSONObject.toJavaObject(orderJsonObject,OrderJd.class);
-        orderJd.setStatus(ORDER_READY_STATUS);
+        orderJd.setStatus(ConstantsUtil.Status.READY);
         orderJd.setCreateTime(date);
         return orderJd;
     }
 
-    @Async
-    public void insertOrderShop(List<OrderJdVo> list, OrderListInput orderListInput) {
+    public void insertOrderShop(String orderId) {
         Date date = new Date();
-        String username = orderListInput.getUsername();
-        String stationNo = orderListInput.getBelongStationNo();
-
         List<OrderShop> inList = new ArrayList<>();
-        for (OrderJdVo orderJdVo : list) {
-            String orderId = orderJdVo.getOrderId();
+
+        List<OrderShop> list = orderShopMapper.getOrderShopListInitData(orderId);
+        for (OrderShop orderShop : list) {
+            String username = orderShop.getUsername();
             if(isExitOrderShop(orderId,username)){
                 continue;
             }
-
-            List<ProductOrderJdVo> productOrderJdList = orderJdVo.getProduct();
-            for (ProductOrderJdVo productOrderJdVo : productOrderJdList) {
-                OrderShop orderShop = new OrderShop();
-                orderShop.setOrderId(orderId);
-                orderShop.setCreateTime(date);
-                orderShop.setUpdateTime(date);
-                orderShop.setUsername(username);
-                orderShop.setBelongStationNo(stationNo);
-                orderShop.setStatus(ORDER_READY_STATUS);
-
-                orderShop.setSkuId(Long.parseLong(productOrderJdVo.getSkuId()));
-                orderShop.setSkuName(productOrderJdVo.getSkuName());
-                orderShop.setSkuCount(Integer.parseInt(productOrderJdVo.getSkuCount()));
-                orderShop.setSkuPrice(Integer.parseInt(productOrderJdVo.getSkuStorePrice()));
-                inList.add(orderShop);
-            }
+            orderShop.setOrderId(orderId);
+            orderShop.setCreateTime(date);
+            orderShop.setUpdateTime(date);
+            orderShop.setSkuStatus(ConstantsUtil.productStatus.READY);
+            orderShop.setOrderStatus(ConstantsUtil.Status.READY);
+            inList.add(orderShop);
         }
         if(!inList.isEmpty()){
+            log.info("OrderAsync insertOrderShop insertList List<OrderShop> inList={}", inList);
             orderShopMapper.insertList(inList);
         }
     }
@@ -127,37 +115,4 @@ public class OrderAsync {
         return false;
     }
 
-    @Async
-    public void checkProductsOfOrderIsAllReady(OrderListInput orderListInput) {
-        String orderId = orderListInput.getOrderId();
-        OrderShop orderShop = new OrderShop();
-        orderShop.setUsername(orderListInput.getUsername());
-        orderShop.setOrderId(orderId);
-        List<OrderShop> list = orderShopMapper.select(orderShop);
-        Set<Long> skuIds = new HashSet<>();
-        for (OrderShop shop : list) {
-            skuIds.add(shop.getSkuId());
-        }
-
-        ProductOrderJd productOrderJd = new ProductOrderJd();
-        productOrderJd.setOrderId(orderId);
-        List<ProductOrderJd> productOrderJdList = productOrderJdMapper.select(productOrderJd);
-        for (ProductOrderJd orderJd : productOrderJdList) {
-            if(skuIds.contains(orderJd.getSkuId())){
-                orderJd.setSkuStatus((byte)1);
-                productOrderJdMapper.updateByPrimaryKey(orderJd);
-            }
-        }
-
-        boolean flag = true;
-        for (ProductOrderJd orderJd : productOrderJdList) {
-            if(orderJd.getSkuStatus()==0){
-                flag = false;
-                break;
-            }
-        }
-        if(flag){
-            orderJdMapper.updateStatusByOrderId(orderId,"33000");
-        }
-    }
 }

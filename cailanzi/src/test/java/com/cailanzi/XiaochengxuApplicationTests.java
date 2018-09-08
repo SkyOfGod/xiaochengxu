@@ -1,7 +1,9 @@
 package com.cailanzi;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.cailanzi.RabbitMQ.RabbitListener.OrderServiceListener;
 import com.cailanzi.mapper.OrderJdMapper;
 import com.cailanzi.mapper.ProductJdMapper;
 import com.cailanzi.mapper.ProductMapper;
@@ -38,7 +40,7 @@ public class XiaochengxuApplicationTests {
 	@Autowired
 	private ProductService productService;
 	@Autowired
-	private OrderService orderService;
+	private OrderServiceListener orderServiceListener;
 	@Autowired
 	private OrderJdMapper orderJdMapper;
 
@@ -53,8 +55,14 @@ public class XiaochengxuApplicationTests {
 	@Test
 	public void testGetOrderListResultData() throws Exception {
 		OrderListInput orderListInput = new OrderListInput();
-		orderListInput.setBelongStationNo("11673747");//菜蓝子－扫把塘店
-		System.out.println(orderService.getOrderListResultData(orderListInput));
+		orderListInput.setDeliveryStationNo("11673747");//菜蓝子－扫把塘店
+		orderListInput.setPageSize(100);
+		orderListInput.setOrderStatus(ConstantsUtil.Status.READY);
+
+		String result = orderServiceListener.getOrderListResultData(orderListInput);
+		JSONObject resultJson = JSON.parseObject(result);
+		JSONArray jsonArray = resultJson.getJSONArray("resultList");
+		System.out.println(jsonArray);
 	}
 
 	@Test

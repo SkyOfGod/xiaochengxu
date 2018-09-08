@@ -2,6 +2,8 @@ package com.cailanzi.pojo;
 
 import lombok.Data;
 
+import java.util.Set;
+
 /**
  * Created by v-hel27 on 2018/8/7.
  */
@@ -28,4 +30,6 @@ public class ProductListInput {
     private int pageNo;
     //分页大小
     private int pageSize;
+
+    private Set<String> skuIds;
 }

@@ -33,10 +33,10 @@ public class RabbitMQtest {
         /*Map<String,Object> map = new HashMap<>();
         map.put("msg","这是第www个消息");
         map.put("data", Arrays.asList("helloworld",123,true));*/
-        String data = "{'billId':'821461655000541','statusId':'32000','timestamp':'2015-10-16 13:23:30'}";
+        String data = "{'billId':'821461295000141','statusId':'32000','timestamp':'2015-10-16 13:23:30'}";
         MqOrder mqOrder = JSONObject.toJavaObject(JSONObject.parseObject(data), MqOrder.class);
         //默认是SimpleMessageConverter（java的序列化格式，在rabbitMQ管理后台看数据是乱码）
-        rabbitTemplate.convertAndSend("exchange.direct","order.add", mqOrder);
+        rabbitTemplate.convertAndSend("exchange.direct","order.quit", mqOrder);
 
     }
 
@@ -53,7 +53,7 @@ public class RabbitMQtest {
     @Test
     public void testlistener() throws Exception {
         MqOrder mqOrder = new MqOrder();
-        mqOrder.setBillId("821461655000541");
+        mqOrder.setBillId("821461295000141");
         mqOrder.setStatusId("32000");
         orderServiceListener.addOrder(mqOrder);
     }

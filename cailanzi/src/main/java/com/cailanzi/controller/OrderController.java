@@ -90,11 +90,11 @@ public class OrderController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("web/updateOrderStatusToDelivery2")
+    /*@RequestMapping("web/updateOrderStatusToDelivery2")
     private SysResult updateOrderStatusToDelivery2(OrderListInput orderListInput) throws Exception {
         log.info("OrderController updateOrderShopStatusToFinish OrderListInput orderListInput={}", orderListInput);
         return orderService.updateOrderStatusToDelivery2(orderListInput);
-    }
+    }*/
 
     /**
      * 商品转缺货

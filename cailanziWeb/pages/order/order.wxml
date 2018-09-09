@@ -28,15 +28,16 @@
                   <view class="sp_neb">产品名称：{{product.skuName}}</view>
                   <view class="sp_tit">产品数量：×<text class='sp_jg'>{{product.skuCount}}</text></view>
                   <view class="sp_tit">单价：¥{{product.skuStorePrice/100}}</view>
-                  <view wx:if="{{isSender}}">
-                    状态：
-                    <text  wx:if="{{product.status==0 ? true : false}}">待拣货</text>
-                    <text wx:if="{{product.status==1 ? true : false}}" class="sp_jg0">已拣货</text>
-                    <text wx:if="{{product.status==2 ? true : false}}" class="sp_jg">缺货</text>
-                  </view>
-                  <view wx:if="{{isReadyer}}">
-                    状态：<text class="{{product.status==2 ? 'sp_jg' : ''}}">{{product.status==2 ? '缺货' : '有货'}}</text>
-                    <button  wx:if="{{product.status==2 ? false : true}}" data-orderId="{{item.orderId}}" data-skuId="{{product.skuId}}" type='primary' bindtap='stockout'>缺货</button>
+                  <view class='sp_text_status'>状态：
+                    <text wx:if="{{isSender}}">
+                      <text  wx:if="{{product.status==0 ? true : false}}">待拣货</text>
+                      <text wx:if="{{product.status==1 ? true : false}}" class="sp_jg0">已拣货</text>
+                      <text wx:if="{{product.status==2 ? true : false}}" class="sp_jg">缺货</text>
+                    </text>
+                    <text wx:if="{{isReadyer}}">
+                      <text class="{{product.status==2 ? 'sp_jg' : ''}}">{{product.status==2 ? '缺货' : '有货'}}</text>
+                      <text class='orderBtn' wx:if="{{product.status==2 ? false : true}}" data-orderId="{{item.orderId}}" data-skuId="{{product.skuId}}" type='primary' bindtap='stockout'>缺货</text>
+                    </text>
                   </view>
                 </block>
                 <button wx:if="{{isReadyer}}" data-orderId="{{item.orderId}}" type='primary' bindtap='toDelivery'>已备货完毕，转待配送</button>
@@ -75,7 +76,7 @@
                     状态：<text class="{{product.status==2 ? 'sp_jg' : ''}}">{{product.status==2 ? '缺货' : '有货'}}</text>
                   </view>
                   </block>
-                  <button wx:if="{{isSender}}" data-orderId="{{item.orderId}}" type='primary' bindtap='toDelivery2'>已发货,转配送中</button>
+                  <!-- <button wx:if="{{isSender}}" data-orderId="{{item.orderId}}" type='primary' bindtap='toDelivery2'>已发货,转配送中</button> -->
               </view>
           </view>
           <view class="c_t61"></view>
@@ -101,6 +102,15 @@
                     <view class="sp_neb">产品名称：{{product.skuName}}</view>
                     <view class="sp_tit">产品数量：×<text class='sp_jg'>{{product.skuCount}}</text></view>
                     <view class="sp_tit">单价：¥{{product.skuStorePrice/100}}</view>
+                     <view wx:if="{{isSender}}">
+                      状态：
+                      <text wx:if="{{product.status==0 ? true : false}}">待拣货</text>
+                      <text wx:if="{{product.status==1 ? true : false}}" class="sp_jg0">已拣货</text>
+                      <text wx:if="{{product.status==2 ? true : false}}" class="sp_jg">缺货</text>
+                    </view>
+                    <view wx:if="{{isReadyer}}">
+                      状态：<text class="{{product.status==2 ? 'sp_jg' : ''}}">{{product.status==2 ? '缺货' : '有货'}}</text>
+                    </view>
                   </block>
               </view>
           </view>

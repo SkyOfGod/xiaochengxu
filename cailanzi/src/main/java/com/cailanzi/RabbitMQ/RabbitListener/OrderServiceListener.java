@@ -60,7 +60,8 @@ public class OrderServiceListener {
 
     @RabbitListener(queues = "order.quit")
     public void quitOrder(MqOrder mqOrder){
-        System.out.println("quitOrder:"+mqOrder);
+        log.info("=================================OrderServiceListener quitOrder MqOrder mqOrder={}", mqOrder);
+        System.out.println("=================================quitOrder:"+mqOrder);
     }
 
 }

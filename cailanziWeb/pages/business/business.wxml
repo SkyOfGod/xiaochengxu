@@ -1,7 +1,7 @@
 <!--pages/business/business.wxml-->
 <view class='view-user'>
 <text>当前用户：{{userInfo.username}}</text>
-<button type='primary' bindtap='logout'>注销</button>
+<text class='view-user-btn' bindtap='logout'>注销</text>
 </view>
 <view>其他功能敬请期待。。。</view>
 

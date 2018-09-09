@@ -181,3 +181,16 @@
   font-size: 20px;
   color: blue;
 }
+.orderBtn {
+  cursor: pointer;
+  background-color: #00AA00;
+  text-align: center;
+  position: relative;
+  border-radius: 5px;
+  margin-left:10px;
+  color:white;
+  display:inline-block;
+  letter-spacing:2px;
+  padding:5px 15px;
+  line-height:20px;
+}

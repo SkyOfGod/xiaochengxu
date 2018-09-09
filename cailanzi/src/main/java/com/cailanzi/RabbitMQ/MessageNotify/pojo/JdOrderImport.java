@@ -14,5 +14,5 @@ public class JdOrderImport {
     private String format;
     private String v;
     private String sign;
-    private String jd_param_json;
+    private MqOrder jd_param_json;
 }

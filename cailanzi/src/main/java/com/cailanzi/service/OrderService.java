@@ -104,11 +104,13 @@ public class OrderService {
     }
 
     public SysResult updateOrderStatusToDelivery2(OrderListInput orderListInput) {
+        orderShopMapper.updateOrderStatus(orderListInput);
         orderJdMapper.updateOrderStatusByOrderId(orderListInput.getOrderId(),ConstantsUtil.Status.DELIVERY2);
         return SysResult.build(200);
     }
 
     public SysResult updateOrderShopStatusToFinish(OrderListInput orderListInput) {
+        orderShopMapper.updateOrderStatus(orderListInput);
         orderJdMapper.updateOrderStatusByOrderId(orderListInput.getOrderId(),ConstantsUtil.Status.FINISH);
         return SysResult.build(200);
     }

@@ -211,43 +211,45 @@ Page({
     })
   },
 
-  toDelivery2: function (e) {
-    var that = this;
-    wx.showModal({
-      title: '提示',
-      content: '确认转配送中吗？',
-      success: function (res) {
-        if (res.confirm) {
-          that.saveToDelivery2(e);
-        } else if (res.cancel) {}
-      }
-    })
-  },
+  // toDelivery2: function (e) {
+  //   var that = this;
+  //   wx.showModal({
+  //     title: '提示',
+  //     content: '确认转配送中吗？',
+  //     success: function (res) {
+  //       if (res.confirm) {
+  //         that.saveToDelivery2(e);
+  //       } else if (res.cancel) {}
+  //     }
+  //   })
+  // },
 
-  saveToDelivery2: function (e) {
-    var that = this;
-    var orderId = e.currentTarget.dataset.orderid;
-    wx.request({
-      url: app.globalData.urlPrefix + '/order/web/updateOrderStatusToDelivery2',
-      method: 'POST',
-      data: {
-        orderId: orderId,
-        orderStatus: '34000'
-      },
-      header: { "Content-Type": "application/x-www-form-urlencoded" },
-      success: function (res) {
-        if (res.data.status == 200) {
-          that.loadOrder2List();
-          that.loadOrder3List();
-          wx.showToast({
-            title: '转配送中成功',
-            icon: 'success',
-            duration: 500
-          });
-        }
-      }
-    })
-  },
+  // saveToDelivery2: function (e) {
+  //   var that = this;
+  //   var orderId = e.currentTarget.dataset.orderid;
+  //   var username = wx.getStorageSync('userInfo').username;
+  //   wx.request({
+  //     url: app.globalData.urlPrefix + '/order/web/updateOrderStatusToDelivery2',
+  //     method: 'POST',
+  //     data: {
+  //       orderId: orderId,
+  //       username: username,
+  //       orderStatus: '34000'
+  //     },
+  //     header: { "Content-Type": "application/x-www-form-urlencoded" },
+  //     success: function (res) {
+  //       if (res.data.status == 200) {
+  //         that.loadOrder2List();
+  //         that.loadOrder3List();
+  //         wx.showToast({
+  //           title: '转配送中成功',
+  //           icon: 'success',
+  //           duration: 500
+  //         });
+  //       }
+  //     }
+  //   })
+  // },
 
   stockout: function (e) {
     var that = this;

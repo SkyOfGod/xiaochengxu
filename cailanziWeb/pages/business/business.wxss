@@ -9,9 +9,17 @@
   padding:20px 0px 10px 5px;
 }
 
-.view-user button{
-  width: 23%;
-  height: 78%;
-  padding:0px 0px 15px 5px;
-  text-align: center;
+.view-user-btn{
+  background-color:#00AA00;
+  text-align:center;
+  position:relative;
+  border-radius:5px;
+  margin-left:45px;
+  color:white;
+  display:inline-block;
+  letter-spacing:3px;
+  margin:12px 45px;
+  line-height:16%;
+  height:9px;
+  width:62px;
 }

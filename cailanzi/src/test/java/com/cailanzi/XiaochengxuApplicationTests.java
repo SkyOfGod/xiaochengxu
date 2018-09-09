@@ -3,6 +3,7 @@ package com.cailanzi;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.cailanzi.RabbitMQ.MessageNotify.pojo.JdOrderImport;
 import com.cailanzi.RabbitMQ.RabbitListener.OrderServiceListener;
 import com.cailanzi.mapper.OrderJdMapper;
 import com.cailanzi.mapper.ProductJdMapper;
@@ -43,6 +44,14 @@ public class XiaochengxuApplicationTests {
 	private OrderServiceListener orderServiceListener;
 	@Autowired
 	private OrderJdMapper orderJdMapper;
+
+	@Test
+	public void testJSONtoBean(){
+		String str = "{\"token\":\"123\",\"jd_param_json\":{\"billId\":\"821461295000141\",\"statusId\":\"32000\"}}";
+		JSONObject jsonObject = JSON.parseObject(str);
+		JdOrderImport jdOrderImport = JSONObject.toJavaObject(jsonObject,JdOrderImport.class);
+		System.out.println(jdOrderImport);
+	}
 
 	@Test
 	public void testDeliveryOrderIdsOfOrderJd() throws Exception {

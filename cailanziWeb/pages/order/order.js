@@ -9,9 +9,10 @@ Page({
     page: 0,
     orders: null,//待发货
     orders2: null,//待配送
+    orders3: null,//配送中
     orders4: null,//已完成
-    ifToDelivery:false,
-    ifToFinish:false,
+    isReadyer:false,//是否是备货员
+    isSender:false,//是否是收货员
   },
   bindChange: function (e) {
     var that = this;
@@ -31,6 +32,9 @@ Page({
       }
       if (current == 1 && that.data.orders2==null) {
         that.loadOrder2List();
+      }
+      if (current == 2 && that.data.orders3 == null) {
+        that.loadOrder3List();
       }
       if (current == 3 && that.data.orders4 == null) {
         that.loadOrder4List();
@@ -98,6 +102,34 @@ Page({
     });
   },
 
+  //待配送
+  loadOrder3List: function () {
+    wx.showLoading({ title: '加载中', icon: 'loading' });
+    var that = this;
+    var userInfo = wx.getStorageSync('userInfo');
+    wx.request({
+      url: app.globalData.urlPrefix + '/order/web/order3List',
+      method: 'POST',
+      data: {
+        type: userInfo.type,
+        username: userInfo.username,
+        belongStationNo: userInfo.belongStationNo
+      },
+      header: { "Content-Type": "application/x-www-form-urlencoded" },
+      success: function (res) {
+        if (res.data.data && res.data.data.length > 0) {
+          that.setData({ orders3: res.data });
+        } else {
+          that.setData({ orders3: null });
+        }
+        wx.hideLoading();
+      },
+      fail: function () {
+        wx.showToast({ title: '网络异常！', duration: 2000 });
+      }
+    });
+  },
+
   //已完成
   loadOrder4List: function () {
     wx.showLoading({ title: '加载中', icon: 'loading' });
@@ -142,7 +174,7 @@ Page({
     var that = this;
     wx.showModal({
       title: '提示',
-      content: '确认要转待配送吗？',
+      content: '确认转待配送吗？',
       success: function (res) {
         if (res.confirm) {
           that.saveToDelivery(e);
@@ -157,7 +189,7 @@ Page({
     var orderId = e.currentTarget.dataset.orderid;
     var username = wx.getStorageSync('userInfo').username;
     wx.request({
-      url: app.globalData.urlPrefix + '/order/web/updateOrderShopStatusToDelivery',
+      url: app.globalData.urlPrefix + '/order/web/updateOrderStatusToDelivery',
       method: 'POST',
       data: {
         orderId: orderId,
@@ -179,36 +211,79 @@ Page({
     })
   },
 
-  toFinish: function (e) {
+  // toDelivery2: function (e) {
+  //   var that = this;
+  //   wx.showModal({
+  //     title: '提示',
+  //     content: '确认转配送中吗？',
+  //     success: function (res) {
+  //       if (res.confirm) {
+  //         that.saveToDelivery2(e);
+  //       } else if (res.cancel) {}
+  //     }
+  //   })
+  // },
+
+  // saveToDelivery2: function (e) {
+  //   var that = this;
+  //   var orderId = e.currentTarget.dataset.orderid;
+  //   var username = wx.getStorageSync('userInfo').username;
+  //   wx.request({
+  //     url: app.globalData.urlPrefix + '/order/web/updateOrderStatusToDelivery2',
+  //     method: 'POST',
+  //     data: {
+  //       orderId: orderId,
+  //       username: username,
+  //       orderStatus: '34000'
+  //     },
+  //     header: { "Content-Type": "application/x-www-form-urlencoded" },
+  //     success: function (res) {
+  //       if (res.data.status == 200) {
+  //         that.loadOrder2List();
+  //         that.loadOrder3List();
+  //         wx.showToast({
+  //           title: '转配送中成功',
+  //           icon: 'success',
+  //           duration: 500
+  //         });
+  //       }
+  //     }
+  //   })
+  // },
+
+  stockout: function (e) {
     var that = this;
     wx.showModal({
       title: '提示',
-      content: '确认收货吗？',
+      content: '确认缺货吗？',
       success: function (res) {
         if (res.confirm) {
-          that.saveToFinish(e);
+          that.saveToStockout(e);
         } else if (res.cancel) { }
       }
     })
   },
 
-  saveToFinish: function (e) {
+  saveToStockout: function (e){
     var that = this;
     var orderId = e.currentTarget.dataset.orderid;
+    var skuId = e.currentTarget.dataset.skuid;
+    var username = wx.getStorageSync('userInfo').username;
     wx.request({
-      url: app.globalData.urlPrefix + '/order/web/updateOrderShopStatusToFinish',
+      url: app.globalData.urlPrefix + '/order/web/updateProductToStockout',
       method: 'POST',
       data: {
         orderId: orderId,
-        orderStatus: '35000'
+        skuId: skuId,
+        username: username
       },
       header: { "Content-Type": "application/x-www-form-urlencoded" },
       success: function (res) {
         if (res.data.status == 200) {
+          that.loadOrderList();
           that.loadOrder2List();
-          that.loadOrder4List();
           wx.showToast({
-            title: '收货成功',
+            title: '设置成功',
             icon: 'success',
             duration: 500
           });
@@ -227,14 +302,14 @@ Page({
 
   onShow: function(){
     if (wx.getStorageSync('userInfo').type == 1) {
-      this.setData({ifToDelivery: true});
+      this.setData({ isReadyer: true});
     }else{
-      this.setData({ifToDelivery: false});
+      this.setData({ isReadyer: false});
     }
     if (wx.getStorageSync('userInfo').type == 2) {
-      this.setData({ ifToFinish: true });
+      this.setData({ isSender: true });
     } else {
-      this.setData({ ifToFinish: false });
+      this.setData({ isSender: false });
     }
   },
 
@@ -245,6 +320,9 @@ Page({
     }
     if (current == 1) {
       this.loadOrder2List();
+    }
+    if (current == 2) {
+      this.loadOrder3List();
     }
     if (current == 3) {
       this.loadOrder4List();

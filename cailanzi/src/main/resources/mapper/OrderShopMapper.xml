@@ -17,19 +17,30 @@
         </where>
     </select>
 
-    <update id="updateOrderShopStatus">
-        UPDATE order_shop SET `status` = #{orderStatus},update_time = #{updateTime}
-        WHERE order_id = #{orderId}
-        <if test="username!=null and username.trim()!=''">
-            AND username = #{username}
-        </if>
+    <update id="updateProductStatus">
+        UPDATE order_shop SET sku_status = #{skuStatus},update_time = #{updateTime}
+        WHERE order_id = #{orderId} AND username = #{username} AND sku_id = #{skuId}
     </update>
 
+    <update id="updateProductStatusToDelivery">
+        UPDATE order_shop SET sku_status = 1,update_time = #{updateTime}
+        WHERE order_id = #{orderId} AND username = #{username} AND sku_status = 0
+    </update>
+
+    <update id="updateOrderStatus">
+         UPDATE order_shop SET order_status = #{orderStatus},update_time = #{updateTime}
+        WHERE order_id = #{orderId} AND username = #{username}
+    </update>
+
+    <!--
+    备货员端 获取待发货/待配送/配送中/已完成/退货订单
+    -->
     <select id="getOrderShopList" resultType="OrderUnion">
-        SELECT a.order_id orderId,a.sku_name skuName,a.sku_count skuCount,a.sku_price skuStorePrice,b.order_num orderNum
-        FROM order_shop a
-        JOIN order_jd b ON b.order_id=a.order_id
-        WHERE a.belong_station_no=#{stationNo}  AND a.username=#{username} AND a.`status`=#{status}
+        SELECT a.order_id orderId,a.order_num orderNum,b.sku_id skuId,b.sku_name skuName,
+        b.sku_count skuCount,b.sku_price skuStorePrice,b.sku_status skuStatus,a.order_buyer_remark orderBuyerRemark
+        FROM order_jd a
+        JOIN order_shop b ON b.order_id=a.order_id AND b.username = #{username}
+        WHERE a.produce_station_no = #{stationNo} AND b.order_status = #{orderStatus}
     </select>
 
     <select id="getProductStatus" resultType="com.cailanzi.pojo.entities.OrderShop">
@@ -49,6 +60,14 @@
         </foreach>
         AND username = #{username}
         AND `status` <![CDATA[ <> ]]> #{status}
+    </select>
+
+    <select id="getOrderShopListInitData" resultType="com.cailanzi.pojo.entities.OrderShop">
+        SELECT c.phone username,a.produce_station_no belongStationNo,b.sku_id skuId,b.sku_name skuName,b.sku_count skuCount,c.price skuPrice
+        FROM order_jd a
+        JOIN product_order_jd b ON b.order_id = a.order_id
+        JOIN product c ON c.belong_station_no = a.produce_station_no AND c.sku_id=b.sku_id
+        WHERE a.order_id = #{orderId}
     </select>
 
 </mapper>

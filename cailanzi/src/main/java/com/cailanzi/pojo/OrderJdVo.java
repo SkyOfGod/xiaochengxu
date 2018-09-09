@@ -13,6 +13,7 @@ public class OrderJdVo {
 
     private String orderId;
     private Integer orderNum;
+    private String orderBuyerRemark;
     private List<ProductOrderJdVo> product;
 
 }

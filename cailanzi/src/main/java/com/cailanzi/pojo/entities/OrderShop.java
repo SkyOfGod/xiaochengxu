@@ -21,11 +21,12 @@ public class OrderShop {
     private String username;
     private String belongStationNo;
     private String orderId;
+    private String orderStatus;
     private Long skuId;
     private String skuName;
     private Integer skuCount;
     private Integer skuPrice;
-    private String status;
+    private Byte skuStatus;
     private Date createTime;
     private Date updateTime;
 

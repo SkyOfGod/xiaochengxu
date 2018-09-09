@@ -18,11 +18,35 @@ public interface OrderShopMapper extends MyMapper<OrderShop> {
 
     List<OrderShop> getOrderShopPageList(OrderListInput orderListInput);
 
-    void updateOrderShopStatus(OrderListInput orderListInput);
+    List<OrderUnion> getOrderShopList(@Param("username") String username,@Param("stationNo") String stationNo,@Param("orderStatus") String orderStatus);
 
-    List<OrderUnion> getOrderShopList(@Param("username") String username,@Param("stationNo") String stationNo,@Param("status") String status);
-
+    /**
+     *
+     * @param orderId
+     * @param skuIds
+     * @return
+     */
     List<OrderShop> getProductStatus(@Param("orderId") String orderId,@Param("skuIds") Set<String> skuIds);
 
+    /**
+     * order_shop中不在status中的订单id
+     * @param username
+     * @param orderIds
+     * @param status
+     * @return
+     */
     Set<String> getOutReadyStatusOrderIdsOfOrderShop(@Param("username") String username,@Param("orderIds") Set<String> orderIds,@Param("status") String status);
+
+    /**
+     * 通过订单id获取插入order_shop的原始数据
+     * @param orderId
+     * @return
+     */
+    List<OrderShop> getOrderShopListInitData(String orderId);
+
+    void updateOrderStatus(OrderListInput orderListInput);
+
+    void updateProductStatus(OrderListInput orderListInput);
+
+    void updateProductStatusToDelivery(OrderListInput orderListInput);
 }

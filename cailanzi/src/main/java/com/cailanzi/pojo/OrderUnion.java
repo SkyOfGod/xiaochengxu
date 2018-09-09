@@ -19,14 +19,17 @@ public class OrderUnion {
     private String buyerFullAddress;
     private String buyerMobile;
     private String status;
+    private String orderBuyerRemark;
     private Date createTime;
 
     private Long skuId;
     private String skuName;
     private String skuCount;
     private String skuStorePrice;
+    private Byte skuStatus;
+
     private Integer skuJdPrice;
     private Integer skuCostPrice;
     private Float skuWeight;
-    private Byte skuStatus;
+
 }

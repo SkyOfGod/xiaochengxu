@@ -63,9 +63,7 @@ Page({
         stationNo: userInfo.belongStationNo,
         pageNo: page
       },
-      header: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
+      header: {"Content-Type": "application/x-www-form-urlencoded"},
       success: function (res) {
         if (res.data) {
           if (res.data.length > 0) {

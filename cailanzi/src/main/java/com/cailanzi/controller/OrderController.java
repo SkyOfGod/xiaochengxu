@@ -38,6 +38,15 @@ public class OrderController {
         return data;
     }
 
+    //配送中数据
+    @RequestMapping("web/order3List")
+    private SysResult getWebOrder3List(OrderListInput orderListInput) throws Exception {
+        log.info("OrderController getWebOrder3List OrderListInput orderListInput={}", orderListInput);
+        SysResult data = orderService.getWebOrder3List(orderListInput);
+        log.info("OrderController getWebOrder3List return {}", data);
+        return data;
+    }
+
     //待配送数据
     @RequestMapping("web/order4List")
     private SysResult getWebOrder4List(OrderListInput orderListInput) throws Exception {
@@ -63,16 +72,40 @@ public class OrderController {
         return data;
     }
 
-    @RequestMapping("web/updateOrderShopStatusToDelivery")
-    private SysResult updateOrderShopStatusToDelivery(OrderListInput orderListInput) throws Exception {
-        log.info("OrderController updateOrderShopStatusToDelivery OrderListInput orderListInput={}", orderListInput);
-        return orderService.updateOrderShopStatusToDelivery(orderListInput);
+    /**
+     * 将订单状态改为待配送
+     * @param orderListInput
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("web/updateOrderStatusToDelivery")
+    private SysResult updateOrderStatusToDelivery(OrderListInput orderListInput) throws Exception {
+        log.info("OrderController updateOrderStatusToDelivery OrderListInput orderListInput={}", orderListInput);
+        return orderService.updateOrderStatusToDelivery(orderListInput);
     }
 
-    @RequestMapping("web/updateOrderShopStatusToFinish")
-    private SysResult updateOrderShopStatusToFinish(OrderListInput orderListInput) throws Exception {
+    /**
+     * 将订单状态改为配送中
+     * @param orderListInput
+     * @return
+     * @throws Exception
+     */
+    /*@RequestMapping("web/updateOrderStatusToDelivery2")
+    private SysResult updateOrderStatusToDelivery2(OrderListInput orderListInput) throws Exception {
         log.info("OrderController updateOrderShopStatusToFinish OrderListInput orderListInput={}", orderListInput);
-        return orderService.updateOrderShopStatusToFinish(orderListInput);
+        return orderService.updateOrderStatusToDelivery2(orderListInput);
+    }*/
+
+    /**
+     * 商品转缺货
+     * @param orderListInput
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("web/updateProductToStockout")
+    private SysResult updateProductToStockout(OrderListInput orderListInput) throws Exception {
+        log.info("OrderController updateOrderShopStatusToFinish OrderListInput orderListInput={}", orderListInput);
+        return orderService.updateProductToStockout(orderListInput);
     }
 
 

@@ -33,6 +33,10 @@ public class OrderNotifyService {
 
     private final static String QUIT_ROUTING_KEY = "order.quit";
 
+    private final static String DELIVERY_TO_ROUTING_KEY = "order.delivery.to";
+
+    private final static String FINISH_ROUTING_KEY = "order.finish";
+
     public JdResult notifyNewOrder(JdOrderImport jdOrderImport) throws Exception {
         return notifyOrder(jdOrderImport,ADD_ROUTING_KEY);
     }
@@ -41,52 +45,90 @@ public class OrderNotifyService {
         return notifyOrder(jdOrderImport,QUIT_ROUTING_KEY);
     }
 
-    public JdResult notifyOrder(JdOrderImport jdOrderImport,String routingKey) throws Exception {
-        Integer code = checkNotifyParam(jdOrderImport);
-        if(code != 0){
-            return JdResult.build(code);
-        }
-        log.info("OrderNotifyService notifyUserCancelOrder convertAndSend jd_param_json={}", jdOrderImport.getJd_param_json());
-        rabbitTemplate.convertAndSend(EXCHANGE_DIRECT,routingKey,jdOrderImport.getJd_param_json());
-        return JdResult.ok(0);
+    public JdResult deliveryOrder(JdOrderImport jdOrderImport) throws Exception {
+        return notifyOrder(jdOrderImport,DELIVERY_TO_ROUTING_KEY);
     }
 
-    private Integer checkNotifyParam(JdOrderImport jdOrderImport) throws Exception {
+    public JdResult finishOrder(JdOrderImport jdOrderImport) throws Exception {
+        return notifyOrder(jdOrderImport,FINISH_ROUTING_KEY);
+    }
+
+    public JdResult notifyOrder(JdOrderImport jdOrderImport,String routingKey) throws Exception {
+        JdResult jdResult = checkNotifyParam(jdOrderImport);
+        if("0".equals(jdResult.getCode())){
+            log.info("OrderNotifyService notifyUserCancelOrder convertAndSend jd_param_json={}", jdOrderImport.getJd_param_json());
+            rabbitTemplate.convertAndSend(EXCHANGE_DIRECT,routingKey,jdOrderImport.getJd_param_json());
+        }
+        return jdResult;
+    }
+
+    private JdResult checkNotifyParam(JdOrderImport jdOrderImport) throws Exception {
+        String code = "0";
+        String msg = "success";
+        Object data = jdOrderImport;
+
         String token = jdOrderImport.getToken();
         String app_key = jdOrderImport.getApp_key();
         String timestamp = jdOrderImport.getTimestamp();
         String format = jdOrderImport.getFormat();
         String v = jdOrderImport.getV();
-        MqOrder jd_param_json = jdOrderImport.getJd_param_json();
+        MqOrder mqOrder = jdOrderImport.getJd_param_json();
 
         String sign = jdOrderImport.getSign();
         if(StringUtils.isBlank(token)||StringUtils.isBlank(app_key)||StringUtils.isBlank(timestamp)||StringUtils.isBlank(format)
-                ||StringUtils.isBlank(v)||jd_param_json==null||StringUtils.isBlank(sign)){
-            return 10005;
-        }
-        if(!JdHttpCilentUtil.JD_TAKEN.equals(token)){
-            System.out.println("token==================="+JdHttpCilentUtil.JD_TAKEN);
-            System.out.println("token==================="+token);
-//            return 10013;
-        }
-        if(!JdHttpCilentUtil.APP_KEY.equals(app_key)){
-            return 10015;
-        }
+                ||StringUtils.isBlank(v)||mqOrder==null||StringUtils.isBlank(sign)){
+            code =  "10005";
+            msg = "必填项参数未填";
+        }else {
+            if(!JdHttpCilentUtil.JD_TAKEN.equals(token)){
+                code = "10013";
+                msg = "无效Token令牌";
+            } else {
+                if(!JdHttpCilentUtil.APP_KEY.equals(app_key)){
+                    code = "10015";
+                    msg = "API参数异常:app_key无效";
+                }else {
+                    Map<String,String> param = new HashMap<>();
+                    param.put("v",v);
+                    param.put("format",format);
+                    param.put("app_key",app_key);
+                    param.put("token",token);
 
-        Map<String,String> param = new HashMap<>();
-        param.put("v",v);
-        param.put("format",format);
-        param.put("app_key",app_key);
-        param.put("token",token);
-        param.put("jd_param_json",jd_param_json.toString());
-        param.put("timestamp",timestamp);
-        String getSign = JdHelper.getSign(param,JdHttpCilentUtil.APP_SECRET);
-        if(!getSign.equals(sign)){
-            System.out.println("getSign==================="+getSign);
-            System.out.println("sign==================="+sign);
-//            return 10014;
+                    String jd_param_json = "{\"billId\":\""+mqOrder.getBillId()+"\",\"statusId\":\""+mqOrder.getStatusId()+"\",\"timestamp\":\""+mqOrder.getTimestamp()+"\"}";
+                    param.put("jd_param_json",jd_param_json);
+                    param.put("timestamp",timestamp);
+                    String getSign = JdHelper.getSign(param,JdHttpCilentUtil.APP_SECRET);
+                    if(!getSign.equals(sign)){
+                        code = "10014";
+                        msg = "无效Sign签名";
+                    }else {
+                        data = "";
+                    }
+                }
+            }
         }
-        return 0;
+        return JdResult.build(code,msg,data);
     }
+
+    /*public static void main(String[] args) throws Exception {
+        MqOrder mqOrder = new MqOrder();
+        mqOrder.setBillId("10003129");
+        mqOrder.setTimestamp("2015-10-16 13:23:30");
+        mqOrder.setStatusId("32000");
+        System.out.println(mqOrder.toString());
+
+        String jd_param_json = "{\"billId\":\"10003129\",\"statusId\":\"32000\",\"timestamp\":\"2015-10-16 13:23:30\"}";
+        String str = "{\"billId\":\""+mqOrder.getBillId()+"\",\"statusId\":\""+mqOrder.getStatusId()+"\",\"timestamp\":\""+mqOrder.getTimestamp()+"\"}";
+        Map<String,String> param = new HashMap<>();
+        param.put("v","1.0");
+        param.put("format","json");
+        param.put("app_key","6bd9123fd3224c4299e06c9a9651a5cf");
+        param.put("token","e298bab2-9c58-4838-8105-b317498be342");
+        param.put("jd_param_json",str);
+        param.put("timestamp","2018-09-10 10:39:12");
+        String sign = "9BB21D1495A13C15F51414F312F7FEAB";
+        String getSign = JdHelper.getSign(param,JdHttpCilentUtil.APP_SECRET);
+        System.out.println(getSign);
+    }*/
 
 }

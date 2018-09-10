@@ -24,11 +24,11 @@
                 <view class="sp_tit">备注：{{item.orderBuyerRemark}}</view>
                 <block wx:for="{{item.product}}" wx:for-item="product">
                   <!-- <image class="sh_slt" src="/images/search_no.png"></image> -->
-                  <text decode="{{true}}">&nbsp;</text>
+                  <view class="c_t61"></view>
                   <view class="sp_neb">产品名称：{{product.skuName}}</view>
                   <view class="sp_tit">产品数量：×<text class='sp_jg'>{{product.skuCount}}</text></view>
                   <view class="sp_tit">单价：¥{{product.skuStorePrice/100}}</view>
-                  <view class='sp_text_status'>状态：
+                  <view>状态：
                     <text wx:if="{{isSender}}">
                       <text  wx:if="{{product.status==0 ? true : false}}">待拣货</text>
                       <text wx:if="{{product.status==1 ? true : false}}" class="sp_jg0">已拣货</text>
@@ -62,19 +62,11 @@
                   <view class="sp_tit">订单号：{{item.orderId}}</view>
                   <view class="sp_tit">备注：{{item.orderBuyerRemark}}</view>
                   <block wx:for="{{item.product}}" wx:for-item="product">
-                    <text decode="{{true}}">&nbsp;</text>
+                    <view class="c_t61"></view>
                     <view class="sp_neb">产品名称：{{product.skuName}}</view>
                     <view class="sp_tit">产品数量：×<text class='sp_jg'>{{product.skuCount}}</text></view>
                     <view class="sp_tit">单价：¥{{product.skuStorePrice/100}}</view>
-                    <view wx:if="{{isSender}}">
-                    状态：
-                    <text  wx:if="{{product.status==0 ? true : false}}">待拣货</text>
-                    <text wx:if="{{product.status==1 ? true : false}}" class="sp_jg0">已拣货</text>
-                    <text wx:if="{{product.status==2 ? true : false}}" class="sp_jg">缺货</text>
-                  </view>
-                  <view wx:if="{{isReadyer}}">
                     状态：<text class="{{product.status==2 ? 'sp_jg' : ''}}">{{product.status==2 ? '缺货' : '有货'}}</text>
-                  </view>
                   </block>
                   <!-- <button wx:if="{{isSender}}" data-orderId="{{item.orderId}}" type='primary' bindtap='toDelivery2'>已发货,转配送中</button> -->
               </view>
@@ -98,19 +90,11 @@
                   <view class="sp_tit">订单号：{{item.orderId}}</view>
                   <view class="sp_tit">备注：{{item.orderBuyerRemark}}</view>
                   <block wx:for="{{item.product}}" wx:for-item="product">
-                    <text decode="{{true}}">&nbsp;</text>
+                    <view class="c_t61"></view>
                     <view class="sp_neb">产品名称：{{product.skuName}}</view>
                     <view class="sp_tit">产品数量：×<text class='sp_jg'>{{product.skuCount}}</text></view>
                     <view class="sp_tit">单价：¥{{product.skuStorePrice/100}}</view>
-                     <view wx:if="{{isSender}}">
-                      状态：
-                      <text wx:if="{{product.status==0 ? true : false}}">待拣货</text>
-                      <text wx:if="{{product.status==1 ? true : false}}" class="sp_jg0">已拣货</text>
-                      <text wx:if="{{product.status==2 ? true : false}}" class="sp_jg">缺货</text>
-                    </view>
-                    <view wx:if="{{isReadyer}}">
-                      状态：<text class="{{product.status==2 ? 'sp_jg' : ''}}">{{product.status==2 ? '缺货' : '有货'}}</text>
-                    </view>
+                    状态：<text class="{{product.status==2 ? 'sp_jg' : ''}}">{{product.status==2 ? '缺货' : '有货'}}</text>
                   </block>
               </view>
           </view>
@@ -133,10 +117,11 @@
                   <view class="sp_tit">订单号：{{item.orderId}}</view>
                   <view class="sp_tit">备注：{{item.orderBuyerRemark}}</view>
                   <block wx:for="{{item.product}}" wx:for-item="product">
-                    <text decode="{{true}}">&nbsp;</text>
+                    <view class="c_t61"></view>
                     <view class="sp_neb">产品名称：{{product.skuName}}</view>
                     <view class="sp_tit">产品数量：×<text class='sp_jg'>{{product.skuCount}}</text></view>
                     <view class="sp_tit">单价：¥{{product.skuStorePrice/100}}</view>
+                    状态：<text class="{{product.status==2 ? 'sp_jg' : ''}}">{{product.status==2 ? '缺货' : '有货'}}</text>
                   </block>
               </view>
           </view>

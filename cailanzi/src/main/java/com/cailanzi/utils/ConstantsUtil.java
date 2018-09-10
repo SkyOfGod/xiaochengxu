@@ -6,14 +6,15 @@ package com.cailanzi.utils;
 public interface ConstantsUtil {
 
     /**
-     * 订单状态：32000-待发货，33000-待配送，34000-配送中，35000-已完成
+     * 订单状态：32000-待发货，33000-待配送，34000-配送中，35000-已完成，36000-已取消
      */
     public static class Status {
 
         public final static String READY = "32000";
         public final static String DELIVERY = "33000";
-        public final static String DELIVERY2 = "34000";
+        public final static String DELIVERY_TO = "34000";
         public final static String FINISH = "35000";
+        public final static String QUIT = "36000";
     }
 
     /**

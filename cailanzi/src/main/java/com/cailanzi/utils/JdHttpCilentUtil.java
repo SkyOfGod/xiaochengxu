@@ -4,9 +4,13 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cailanzi.Exception.ServiceException;
+import com.cailanzi.mapper.ConfigMapper;
+import com.cailanzi.service.ConfigService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.SpringApplication;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.UnsupportedEncodingException;
@@ -26,11 +30,16 @@ public class JdHttpCilentUtil {
 
     public final static String APP_SECRET = "810f1b6b35fa4d9d8898c551387f353e";
 
-    public final static String JD_TAKEN = "8bf2ba29-573a-434c-896c-4e2926926925";
+    public static String JD_TAKEN = "8bf2ba29-573a-434c-896c-4e2926926925";
 
     public final static String V = "1.0";
 
     public final static String FORMAT = "json";
+
+    static {
+        ConfigMapper configMapper = SpringContextUtil.getBean(ConfigMapper.class);
+        JD_TAKEN = configMapper.getNewToken();
+    }
 
     public static JSONObject doGetAndGetData(String url,String jdParamJson,String successCode,String successCodeKey,String msgKey) throws Exception {
         JSONObject data = doGetAndGetDataBasic(url,jdParamJson);

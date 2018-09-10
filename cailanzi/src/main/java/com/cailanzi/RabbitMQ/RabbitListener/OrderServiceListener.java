@@ -7,7 +7,9 @@ import com.cailanzi.Async.OrderAsync;
 import com.cailanzi.Exception.ServiceException;
 import com.cailanzi.RabbitMQ.MessageNotify.pojo.MqOrder;
 import com.cailanzi.mapper.OrderJdMapper;
+import com.cailanzi.mapper.OrderShopMapper;
 import com.cailanzi.pojo.OrderListInput;
+import com.cailanzi.pojo.SysResult;
 import com.cailanzi.pojo.entities.OrderJd;
 import com.cailanzi.utils.ConstantsUtil;
 import com.cailanzi.utils.JdHttpCilentUtil;
@@ -16,6 +18,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -27,9 +30,13 @@ public class OrderServiceListener {
 
     @Autowired
     private OrderAsync orderAsync;
+    @Autowired
+    private OrderShopMapper orderShopMapper;
+    @Autowired
+    private OrderJdMapper orderJdMapper;
 
     @RabbitListener(queues = "order.add")
-    public void addOrder(MqOrder mqOrder) throws Exception {
+    public void addOrder(MqOrder mqOrder){
         log.info("OrderServiceListener addOrder MqOrder mqOrder={}", mqOrder);
         if(orderAsync.isExitOrder(mqOrder.getBillId())){
             orderAsync.insertOrderShop(mqOrder.getBillId());
@@ -39,11 +46,15 @@ public class OrderServiceListener {
         orderListInput.setOrderId(mqOrder.getBillId());
         orderListInput.setOrderStatus(mqOrder.getStatusId());
 
-        String result = getOrderListResultData(orderListInput);
-        JSONObject resultJson = JSON.parseObject(result);
-        JSONArray jsonArray = resultJson.getJSONArray("resultList");
-        if(jsonArray!=null&&!jsonArray.isEmpty()){
-            orderAsync.insertOrderJd(jsonArray);
+        try {
+            String result = getOrderListResultData(orderListInput);
+            JSONObject resultJson = JSON.parseObject(result);
+            JSONArray jsonArray = resultJson.getJSONArray("resultList");
+            if(jsonArray!=null&&!jsonArray.isEmpty()){
+                orderAsync.insertOrderJd(jsonArray);
+            }
+        } catch (Exception e) {
+            log.info("OrderServiceListener addOrder:",e);
         }
     }
 
@@ -58,10 +69,30 @@ public class OrderServiceListener {
         return data.getString("result");
     }
 
-    @RabbitListener(queues = "order.quit")
-    public void quitOrder(MqOrder mqOrder){
-        log.info("=================================OrderServiceListener quitOrder MqOrder mqOrder={}", mqOrder);
-        System.out.println("=================================quitOrder:"+mqOrder);
+    @RabbitListener(queues = "order.delivery.to")
+    public void deliveryToOrder(MqOrder mqOrder){
+        log.info("OrderServiceListener deliveryToOrder MqOrder mqOrder={}", mqOrder);
+        updateOrderStatus(mqOrder.getBillId(),ConstantsUtil.Status.DELIVERY_TO);
     }
 
+    @RabbitListener(queues = "order.finish")
+    public void finishOrder(MqOrder mqOrder){
+        log.info("OrderServiceListener finishOrder MqOrder mqOrder={}", mqOrder);
+        updateOrderStatus(mqOrder.getBillId(),ConstantsUtil.Status.FINISH);
+    }
+
+    @RabbitListener(queues = "order.quit.to")
+    public void quitOrder(MqOrder mqOrder){
+        log.info("OrderServiceListener quitOrder MqOrder mqOrder={}", mqOrder);
+        updateOrderStatus(mqOrder.getBillId(),ConstantsUtil.Status.QUIT);
+    }
+
+    public void updateOrderStatus(String orderId,String status) {
+        OrderListInput orderListInput = new OrderListInput();
+        orderListInput.setOrderId(orderId);
+        orderListInput.setOrderStatus(status);
+        orderListInput.setUpdateTime(new Date());
+        orderShopMapper.updateOrderStatus(orderListInput);
+        orderJdMapper.updateOrderStatusByOrderId(orderId,status);
+    }
 }

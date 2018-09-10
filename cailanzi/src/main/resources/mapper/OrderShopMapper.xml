@@ -29,7 +29,10 @@
 
     <update id="updateOrderStatus">
          UPDATE order_shop SET order_status = #{orderStatus},update_time = #{updateTime}
-        WHERE order_id = #{orderId} AND username = #{username}
+        WHERE order_id = #{orderId}
+        <if test="username!=null and username.trim()!=''">
+            AND username = #{username}
+        </if>
     </update>
 
     <!--

@@ -36,13 +36,15 @@ public class RabbitMQtest {
         String data = "{'billId':'821461295000141','statusId':'32000','timestamp':'2015-10-16 13:23:30'}";
         MqOrder mqOrder = JSONObject.toJavaObject(JSONObject.parseObject(data), MqOrder.class);
         //默认是SimpleMessageConverter（java的序列化格式，在rabbitMQ管理后台看数据是乱码）
-        rabbitTemplate.convertAndSend("exchange.direct","order.quit", mqOrder);
+        rabbitTemplate.convertAndSend("exchange.direct","order.delivery.to", mqOrder);
+//        rabbitTemplate.convertAndSend("exchange.direct","order.finish", mqOrder);
+//        rabbitTemplate.convertAndSend("exchange.direct","order.quit.to", mqOrder);
 
     }
 
     @Test
     public void receive(){
-        Object o = rabbitTemplate.receiveAndConvert("order.add");
+        Object o = rabbitTemplate.receiveAndConvert("order.quit.to");
         System.out.println(o.getClass());
         System.out.println(o);
     }
@@ -53,7 +55,7 @@ public class RabbitMQtest {
     @Test
     public void testlistener() throws Exception {
         MqOrder mqOrder = new MqOrder();
-        mqOrder.setBillId("821461295000141");
+        mqOrder.setBillId("821421342000222");
         mqOrder.setStatusId("32000");
         orderServiceListener.addOrder(mqOrder);
     }

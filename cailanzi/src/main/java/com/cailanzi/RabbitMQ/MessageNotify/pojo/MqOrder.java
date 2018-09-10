@@ -11,4 +11,5 @@ public class MqOrder {
     private String billId;
     private String statusId;
     private String timestamp;
+
 }

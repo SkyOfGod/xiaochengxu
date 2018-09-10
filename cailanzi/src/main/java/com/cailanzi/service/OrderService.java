@@ -53,7 +53,7 @@ public class OrderService {
     }
 
     public SysResult getWebOrder3List(OrderListInput orderListInput) {
-        return getWebOrderShopListBasic(orderListInput,ConstantsUtil.Status.DELIVERY2);
+        return getWebOrderShopListBasic(orderListInput,ConstantsUtil.Status.DELIVERY_TO);
     }
 
     public SysResult getWebOrder4List(OrderListInput orderListInput) {
@@ -101,18 +101,6 @@ public class OrderService {
         if(flag){
             orderJdMapper.updateOrderStatusByOrderId(orderId,ConstantsUtil.Status.DELIVERY);
         }
-    }
-
-    public SysResult updateOrderStatusToDelivery2(OrderListInput orderListInput) {
-        orderShopMapper.updateOrderStatus(orderListInput);
-        orderJdMapper.updateOrderStatusByOrderId(orderListInput.getOrderId(),ConstantsUtil.Status.DELIVERY2);
-        return SysResult.build(200);
-    }
-
-    public SysResult updateOrderShopStatusToFinish(OrderListInput orderListInput) {
-        orderShopMapper.updateOrderStatus(orderListInput);
-        orderJdMapper.updateOrderStatusByOrderId(orderListInput.getOrderId(),ConstantsUtil.Status.FINISH);
-        return SysResult.build(200);
     }
 
     public SysResult updateProductToStockout(OrderListInput orderListInput) {

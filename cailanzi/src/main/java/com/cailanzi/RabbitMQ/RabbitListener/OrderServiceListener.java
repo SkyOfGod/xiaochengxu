@@ -9,8 +9,6 @@ import com.cailanzi.RabbitMQ.MessageNotify.pojo.MqOrder;
 import com.cailanzi.mapper.OrderJdMapper;
 import com.cailanzi.mapper.OrderShopMapper;
 import com.cailanzi.pojo.OrderListInput;
-import com.cailanzi.pojo.SysResult;
-import com.cailanzi.pojo.entities.OrderJd;
 import com.cailanzi.utils.ConstantsUtil;
 import com.cailanzi.utils.JdHttpCilentUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by v-hel27 on 2018/9/7.

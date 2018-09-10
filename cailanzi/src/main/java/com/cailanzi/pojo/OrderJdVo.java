@@ -16,4 +16,6 @@ public class OrderJdVo {
     private String orderBuyerRemark;
     private List<ProductOrderJdVo> product;
 
+    private boolean open = false;//默认不展开
+
 }

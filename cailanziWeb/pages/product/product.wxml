@@ -1,6 +1,6 @@
 <view class="section">
     <view>
-      <text decode="{{true}}" space="{{true}}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</text>
+      <text decode="{{true}}" space="{{true}}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</text>
     共有{{total}}个商品
     </view>
     <!-- 左侧类型 -->
@@ -9,7 +9,7 @@
           <view class="kind-list">
             <block wx:for-items="{{categoriesList}}" wx:key="{{item.id}}">
               <view class="kind-list-item">
-                <view data-categoryId="{{item.id}}" class="kind-list-item-hd {{item.open ? 'kind-list-item-hd-show' : ''}}" bindtap="kindToggle">
+                <view data-categoryId="{{item.id}}" class="kind-list-item-hd" bindtap="kindToggle">
                   <view class="kind-list-text">{{item.name}}</view>
                 </view>
                 <view class="kind-list-item-bd {{item.open ? 'kind-list-item-bd-show' : ''}}">

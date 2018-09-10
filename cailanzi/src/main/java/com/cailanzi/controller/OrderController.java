@@ -20,7 +20,7 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
-    //待发货数据
+    //待备货数据
     @RequestMapping("web/orderList")
     private SysResult getWebOrderList(OrderListInput orderListInput) throws Exception {
         log.info("OrderController getWebOrderList OrderListInput orderListInput={}", orderListInput);
@@ -29,7 +29,7 @@ public class OrderController {
         return data;
     }
 
-    //待配送数据
+    //待收货数据
     @RequestMapping("web/order2List")
     private SysResult getWebOrder2List(OrderListInput orderListInput) throws Exception {
         log.info("OrderController getWebOrder2List OrderListInput orderListInput={}", orderListInput);
@@ -38,7 +38,7 @@ public class OrderController {
         return data;
     }
 
-    //配送中数据
+    //待配送数据
     @RequestMapping("web/order3List")
     private SysResult getWebOrder3List(OrderListInput orderListInput) throws Exception {
         log.info("OrderController getWebOrder3List OrderListInput orderListInput={}", orderListInput);
@@ -47,7 +47,7 @@ public class OrderController {
         return data;
     }
 
-    //待配送数据
+    //已完成数据
     @RequestMapping("web/order4List")
     private SysResult getWebOrder4List(OrderListInput orderListInput) throws Exception {
         log.info("OrderController getWebOrder4List OrderListInput orderListInput={}", orderListInput);
@@ -73,7 +73,7 @@ public class OrderController {
     }
 
     /**
-     * 将订单状态改为待配送
+     * 将订单状态改为待收货
      * @param orderListInput
      * @return
      * @throws Exception
@@ -83,18 +83,6 @@ public class OrderController {
         log.info("OrderController updateOrderStatusToDelivery OrderListInput orderListInput={}", orderListInput);
         return orderService.updateOrderStatusToDelivery(orderListInput);
     }
-
-    /**
-     * 将订单状态改为配送中
-     * @param orderListInput
-     * @return
-     * @throws Exception
-     */
-    /*@RequestMapping("web/updateOrderStatusToDelivery2")
-    private SysResult updateOrderStatusToDelivery2(OrderListInput orderListInput) throws Exception {
-        log.info("OrderController updateOrderShopStatusToFinish OrderListInput orderListInput={}", orderListInput);
-        return orderService.updateOrderStatusToDelivery2(orderListInput);
-    }*/
 
     /**
      * 商品转缺货

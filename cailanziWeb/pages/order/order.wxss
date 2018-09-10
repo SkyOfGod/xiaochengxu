@@ -75,14 +75,35 @@
 }
 .shop checkbox{ 
     margin-top: 27px;
-    }
-.sh_slt{
-    width: 80px;
-    height: 80px;
-    overflow: hidden;
+}
+.order-detail-btn{
+  text-align: center;
+}
+.order-detail-btn image{
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+}
+.order_product{
+  height: 0px;
+  overflow: hidden;
+}
+.order_product-show{
+  height: auto;
+}
+.order_product_img{
+    width: 30%;
+    height: 70px;
     border-radius: 5px;
-    margin-right: 4%;
-    float: left;
+    margin-right: 5%;
+}
+.order_product_data{
+    display: inline-block;
+    width: 60%;
+}
+.order_product_data_name{
+    font-size: 12px;
+    color: #999;
 }
 .sp_text{
     float: left;
@@ -95,12 +116,6 @@
     overflow: hidden;
     font-size: 14px;
 }
-.sp_neb{
-    width: 100%;
-    overflow: hidden;
-    font-size: 12px;
-    color: #999;
-}
 .sp_jg0{
     width: 100%;
     overflow: hidden;
@@ -108,10 +123,9 @@
     color:blue;
 }
 .sp_jg{
-    width: 100%;
-    overflow: hidden;
     font-size: 15px;
     color: #fc0628;
+    margin-right: 15px;
 }
 .dle{
     color: #999;
@@ -193,4 +207,7 @@
   letter-spacing:2px;
   padding:5px 15px;
   line-height:20px;
+}
+.order_product_status{
+  display:inline-block;
 }

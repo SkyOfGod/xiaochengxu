@@ -55,7 +55,7 @@ public class RabbitMQtest {
     @Test
     public void testlistener() throws Exception {
         MqOrder mqOrder = new MqOrder();
-        mqOrder.setBillId("821421342000222");
+        mqOrder.setBillId("821461295000141");
         mqOrder.setStatusId("32000");
         orderServiceListener.addOrder(mqOrder);
     }

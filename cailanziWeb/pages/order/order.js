@@ -7,9 +7,9 @@ Page({
     // tab切换  
     currentTab: 0,
     page: 0,
-    orders: null,//待发货
-    orders2: null,//待配送
-    orders3: null,//配送中
+    orders: null,//待备货
+    orders2: null,//待收货
+    orders3: null,//待配送
     orders4: null,//已完成
     isReadyer:false,//是否是备货员
     isSender:false,//是否是收货员
@@ -27,21 +27,24 @@ Page({
       that.setData({
         currentTab: parseInt(current)
       });
-      if (current == 0 && that.data.orders==null) {
+      if (current == 0) {
         that.loadOrderList();
       }
-      if (current == 1 && that.data.orders2==null) {
+      if (current == 1) {
+        that.loadOrderList();
         that.loadOrder2List();
       }
-      if (current == 2 && that.data.orders3 == null) {
+      if (current == 2) {
+        that.loadOrder2List();
         that.loadOrder3List();
       }
-      if (current == 3 && that.data.orders4 == null) {
+      if (current == 3) {
+        that.loadOrder3List();
         that.loadOrder4List();
       }
     };
   },
-  //待发货
+  //待备货
   loadOrderList: function () {
     wx.showLoading({title: '加载中',icon: 'loading'});
     var that = this; 
@@ -59,7 +62,7 @@ Page({
       },
       success: function (res) {
         if (res.data.data&&res.data.data.length>0){
-          that.setData({orders: res.data});
+          that.setData({ orders: res.data.data});
         }else{
           that.setData({orders: null});
         }
@@ -74,7 +77,7 @@ Page({
     });
 
   },
-  //待配送
+  //待收货
   loadOrder2List: function () {
     wx.showLoading({title: '加载中',icon: 'loading'});
     var that = this;
@@ -90,7 +93,7 @@ Page({
       header: {"Content-Type": "application/x-www-form-urlencoded"},
       success: function (res) {
         if (res.data.data && res.data.data.length > 0) {
-          that.setData({orders2: res.data});
+          that.setData({ orders2: res.data.data});
         } else {
           that.setData({orders2: null});
         }
@@ -118,7 +121,7 @@ Page({
       header: { "Content-Type": "application/x-www-form-urlencoded" },
       success: function (res) {
         if (res.data.data && res.data.data.length > 0) {
-          that.setData({ orders3: res.data });
+          that.setData({ orders3: res.data.data });
         } else {
           that.setData({ orders3: null });
         }
@@ -146,7 +149,7 @@ Page({
       header: { "Content-Type": "application/x-www-form-urlencoded" },
       success: function (res) {
         if (res.data.data && res.data.data.length > 0) {
-          that.setData({ orders4: res.data });
+          that.setData({ orders4: res.data.data });
         } else {
           that.setData({ orders4: null });
         }
@@ -211,46 +214,6 @@ Page({
     })
   },
 
-  // toDelivery2: function (e) {
-  //   var that = this;
-  //   wx.showModal({
-  //     title: '提示',
-  //     content: '确认转配送中吗？',
-  //     success: function (res) {
-  //       if (res.confirm) {
-  //         that.saveToDelivery2(e);
-  //       } else if (res.cancel) {}
-  //     }
-  //   })
-  // },
-
-  // saveToDelivery2: function (e) {
-  //   var that = this;
-  //   var orderId = e.currentTarget.dataset.orderid;
-  //   var username = wx.getStorageSync('userInfo').username;
-  //   wx.request({
-  //     url: app.globalData.urlPrefix + '/order/web/updateOrderStatusToDelivery2',
-  //     method: 'POST',
-  //     data: {
-  //       orderId: orderId,
-  //       username: username,
-  //       orderStatus: '34000'
-  //     },
-  //     header: { "Content-Type": "application/x-www-form-urlencoded" },
-  //     success: function (res) {
-  //       if (res.data.status == 200) {
-  //         that.loadOrder2List();
-  //         that.loadOrder3List();
-  //         wx.showToast({
-  //           title: '转配送中成功',
-  //           icon: 'success',
-  //           duration: 500
-  //         });
-  //       }
-  //     }
-  //   })
-  // },
-
   stockout: function (e) {
     var that = this;
     wx.showModal({
@@ -313,7 +276,7 @@ Page({
     }
   },
 
-  onPullDownRefresh: function () {
+  onReachBottom: function () {
     var current = this.data.currentTab
     if (current == 0) {
       this.loadOrderList();
@@ -327,8 +290,44 @@ Page({
     if (current == 3) {
       this.loadOrder4List();
     }
-    wx.stopPullDownRefresh();//没有就不合并画面
   },
 
+  kindToggle: function (e) {
+    var id = e.currentTarget.dataset.orderid, list = this.data.orders;
+    for (var i = 0, len = list.length; i < len; ++i) {
+      if (list[i].orderId == id) {
+        list[i].open = !list[i].open
+      }
+    }
+    this.setData({orders: list});
+  },
+  kindToggle2: function (e) {
+    var id = e.currentTarget.dataset.orderid, list = this.data.orders2;
+    for (var i = 0, len = list.length; i < len; ++i) {
+      if (list[i].orderId == id) {
+        list[i].open = !list[i].open
+      }
+    }
+    this.setData({ orders2: list });
+  },
+  kindToggle3: function (e) {
+    var id = e.currentTarget.dataset.orderid, list = this.data.orders3;
+    for (var i = 0, len = list.length; i < len; ++i) {
+      if (list[i].orderId == id) {
+        list[i].open = !list[i].open
+      }
+    }
+    this.setData({ orders3: list });
+  },
+  kindToggle4: function (e) {
+    var id = e.currentTarget.dataset.orderid, list = this.data.orders4;
+    for (var i = 0, len = list.length; i < len; ++i) {
+      if (list[i].orderId == id) {
+        list[i].open = !list[i].open
+      }
+    }
+    this.setData({ orders4: list });
+  },
 
 })
+

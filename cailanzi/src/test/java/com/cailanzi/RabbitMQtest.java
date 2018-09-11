@@ -24,7 +24,7 @@ public class RabbitMQtest {
      * 1、点播
      */
     @Test
-    public void contextLoads() {
+    public void send() {
         //message需要自己构造一个；定义消息体内容和消息头
         //rabbitTemplate.send(exchage,routeKey,message);
 

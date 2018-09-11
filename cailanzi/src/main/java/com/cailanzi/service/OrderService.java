@@ -138,6 +138,7 @@ public class OrderService {
                 productOrderJdVoList.add(getProductOrderJdVo(union));
 
                 OrderJdVo temp = new OrderJdVo();
+                temp.setCreateTime(union.getCreateTime());
                 temp.setOrderId(orderId);
                 temp.setOrderNum(union.getOrderNum());
                 temp.setOrderBuyerRemark(union.getOrderBuyerRemark());

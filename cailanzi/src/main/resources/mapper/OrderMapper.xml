@@ -3,7 +3,7 @@
 
 <mapper namespace="com.cailanzi.mapper.OrderMapper">
 
-    <select id="getOrderList"  resultType="OrderUnion">
+    <select id="getOrderList" resultType="OrderUnion">
         SELECT a.order_id orderId,a.order_num orderNum,a.produce_station_no produceStationNo,
         a.produce_station_name produceStationName,a.buyer_full_name buyerFullName,a.`status`,
         a.buyer_full_address buyerFullAddress,a.buyer_mobile buyerMobile,a.create_time createTime,
@@ -19,11 +19,12 @@
     </select>
 
     <!--
-    收货员端 获取待发货/待配送/配送中/已完成/退货订单
+    收货员端 获取待备货/待收货/待配送/已完成/退货订单
     -->
     <select id="getOrderShopJdList" resultType="OrderUnion">
         SELECT a.order_id orderId,a.order_num orderNum,b.sku_id skuId,b.sku_name skuName,
-        b.sku_count skuCount,b.sku_store_price skuStorePrice,b.sku_status skuStatus,a.order_buyer_remark orderBuyerRemark
+        b.sku_count skuCount,b.sku_store_price skuStorePrice,b.sku_status skuStatus,
+        a.order_buyer_remark orderBuyerRemark,a.create_time createTime
         FROM order_jd a
         JOIN product_order_jd b ON b.order_id=a.order_id
         WHERE a.produce_station_no = #{stationNo} AND a.`status` = #{status}

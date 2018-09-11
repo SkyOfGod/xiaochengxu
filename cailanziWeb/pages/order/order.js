@@ -69,10 +69,7 @@ Page({
         wx.hideLoading();
       }, 
       fail: function () {
-        wx.showToast({
-          title: '网络异常！',
-          duration: 2000
-        });
+        wx.showToast({ title: '网络异常！', duration: 2000, icon: 'none' });
       }
     });
 
@@ -100,7 +97,7 @@ Page({
         wx.hideLoading();
       },
       fail: function () {
-        wx.showToast({title: '网络异常！',duration: 2000});
+        wx.showToast({ title: '网络异常！', duration: 2000, icon: 'none'});
       }
     });
   },
@@ -128,7 +125,7 @@ Page({
         wx.hideLoading();
       },
       fail: function () {
-        wx.showToast({ title: '网络异常！', duration: 2000 });
+        wx.showToast({ title: '网络异常！', duration: 2000, icon: 'none' });
       }
     });
   },
@@ -156,7 +153,7 @@ Page({
         wx.hideLoading();
       },
       fail: function () {
-        wx.showToast({ title: '网络异常！', duration: 2000 });
+        wx.showToast({ title: '网络异常！', duration: 2000, icon: 'none' });
       }
     });
   },

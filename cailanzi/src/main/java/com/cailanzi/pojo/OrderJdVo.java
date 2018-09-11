@@ -14,6 +14,7 @@ public class OrderJdVo {
     private String orderId;
     private Integer orderNum;
     private String orderBuyerRemark;
+    private Date createTime;
     private List<ProductOrderJdVo> product;
 
     private boolean open = false;//默认不展开

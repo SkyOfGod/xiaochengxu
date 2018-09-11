@@ -36,11 +36,12 @@
     </update>
 
     <!--
-    备货员端 获取待发货/待配送/配送中/已完成/退货订单
+    备货员端 获取待备货/待收货/待配送/已完成/退货订单
     -->
     <select id="getOrderShopList" resultType="OrderUnion">
         SELECT a.order_id orderId,a.order_num orderNum,b.sku_id skuId,b.sku_name skuName,
-        b.sku_count skuCount,b.sku_price skuStorePrice,b.sku_status skuStatus,a.order_buyer_remark orderBuyerRemark
+        b.sku_count skuCount,b.sku_price skuStorePrice,b.sku_status skuStatus,
+        a.order_buyer_remark orderBuyerRemark,a.create_time createTime
         FROM order_jd a
         JOIN order_shop b ON b.order_id=a.order_id AND b.username = #{username}
         WHERE a.produce_station_no = #{stationNo} AND b.order_status = #{orderStatus}

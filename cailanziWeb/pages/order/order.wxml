@@ -8,15 +8,26 @@
 </view>
 <view class="c_t60"></view>
 
-<swiper current="{{currentTab}}" class="swiper-box" duration="300" style="height:{{winHeight - 31}}px" bindchange="bindChange">
+<!-- style="height:{{winHeight - 31}}px" -->
+<swiper current="{{currentTab}}" class="swiper-box" duration="300" bindchange="bindChange">
   <!-- 待备货 -->
   <swiper-item>
-    <view class="search_no" wx:if="{{!orders}}">
-        <view class="font_14"><image class="scimg" src="/images/search_no.png"></image></view>
-        <text>没有可用订单/(ㄒoㄒ)/~~</text>
+    <view class='order-time'>
+      <text>开始：</text>
+      <view class='order-time-picker'>
+        <picker mode="date" value="{{date}}" start="2018-9-1" end="{{nowDate}}" bindchange="bindReadyDateChange">{{readyDate}}</picker>
+      </view>
+      <text class='allTotal'>结束：</text>
+      <view class='order-time-picker'>
+        <picker mode="date" value="{{date}}" start="{{readyDate}}" end="{{nowDate}}" bindchange="bindReadyEndDateChange">{{readyEndDate}}</picker>
+      </view>
     </view>
-    <view class='swi-item'>
-      <view class="shop df" wx:for="{{orders}}">
+    <view class='swi-item-finish'>
+      <view class="search_no" wx:if="{{!orders}}">
+          <view class="font_14"><image class="scimg" src="/images/search_no.png"></image></view>
+          <text>没有可用订单/(ㄒoㄒ)/~~</text>
+      </view>
+      <view class="shop df" wx:for="{{orders}}" wx:key="orderId">
         <view class="df_1 sp_text">
             <view class="sp_tit">
               <text class="ovh2">#{{item.orderNum}}</text>
@@ -29,7 +40,7 @@
               <image wx:if="{{!item.open}}" src="/images/dropDown.png"></image>
               <image wx:if="{{item.open}}" src="/images/upArrow.png"></image>
             </view>
-            <view class="order_product {{item.open ? 'order_product-show' : ''}}" wx:for="{{item.product}}" wx:for-item="product">
+            <view class="order_product {{item.open ? 'order_product-show' : ''}}" wx:for="{{item.product}}" wx:for-item="product" wx:key="this">
               <image class="order_product_img" src="/images/search_no.png"></image>
               <view class="order_product_data">
                 <view class="order_product_data_name">名称：{{product.skuName}}</view>
@@ -45,7 +56,7 @@
                   </text>
                   <view wx:if="{{isReadyer}}" class="order_product_status">
                     <text class="{{product.status==2 ? 'sp_jg' : ''}}">{{product.status==2 ? '缺货' : '有货'}}</text>
-                    <view class='orderBtn' wx:if="{{product.status==2 ? false : true}}" data-orderId="{{item.orderId}}" data-skuId="{{product.skuId}}" type='primary' bindtap='stockout'>缺货</view>
+                    <view class='orderBtn' wx:if="{{product.status==2 ? false : true}}" data-orderId="{{item.orderId}}" data-skuId="{{product.skuId}}"  bindtap='stockout'>缺货</view>
                   </view>
                 </view>
               </view>
@@ -64,7 +75,7 @@
         <text>没有可用订单/(ㄒoㄒ)/~~</text>
     </view>
     <view class='swi-item'>
-      <view class="shop df" wx:for="{{orders2}}">        
+      <view class="shop df" wx:for="{{orders2}}" wx:key="orderId">        
         <view class="df_1 sp_text">
           <view class="sp_tit">
               <text class="ovh2">#{{item.orderNum}}</text>
@@ -77,7 +88,7 @@
             <image wx:if="{{!item.open}}" src="/images/dropDown.png"></image>
             <image wx:if="{{item.open}}" src="/images/upArrow.png"></image>
           </view>
-          <view class="order_product {{item.open ? 'order_product-show' : ''}}"wx:for="{{item.product}}" wx:for-item="product">
+          <view class="order_product {{item.open ? 'order_product-show' : ''}}"wx:for="{{item.product}}" wx:for-item="product" wx:key="this">
             <image class="order_product_img" src="/images/search_no.png"></image>
             <view class="order_product_data">
               <view class="order_product_data_name">名称：{{product.skuName}}</view>
@@ -102,7 +113,7 @@
         <text>没有可用订单/(ㄒoㄒ)/~~</text>
     </view>
     <view class='swi-item'>
-      <view class="shop df" wx:for="{{orders3}}">        
+      <view class="shop df" wx:for="{{orders3}}" wx:key="orderId">        
           <view class="df_1 sp_text">
             <view class="sp_tit">
               <text class="ovh2">#{{item.orderNum}}</text>
@@ -115,12 +126,12 @@
               <image wx:if="{{!item.open}}" src="/images/dropDown.png"></image>
               <image wx:if="{{item.open}}" src="/images/upArrow.png"></image>
             </view>
-            <view class="order_product {{item.open ? 'order_product-show' : ''}}" wx:for="{{item.product}}" wx:for-item="product">
+            <view class="order_product {{item.open ? 'order_product-show' : ''}}" wx:for="{{item.product}}" wx:for-item="product" wx:key="this">
               <image class="order_product_img" src="/images/search_no.png"></image>
               <view class="order_product_data">
                 <view class="order_product_data_name">产品名称：{{product.skuName}}</view>
                 <view class="sp_tit">
-                  数量：×<text class='sp_jg'>{{product.skuCount}}</text>
+                  数量：×<text>{{product.skuCount}}</text>
                   <text>单价：¥{{product.skuStorePrice/100}}</text>
                 </view>
                 状态：<text class="{{product.status==2 ? 'sp_jg' : ''}}">{{product.status==2 ? '缺货' : '有货'}}</text>
@@ -134,12 +145,23 @@
 
   <!-- 已完成-->
   <swiper-item>
-    <view class="search_no" wx:if="{{!orders4}}">
+    <view class='order-time'>
+      <text>时间：</text>
+      <view class='order-time-picker'>
+        <picker mode="date" value="{{date}}" start="2018-9-1" end="{{nowDate}}" bindchange="bindDateChange">{{finishDate}}</picker>
+        <!-- <image src="/images/dropDown.png"></image> -->
+      </view>
+      <view class='allTotal'>
+        <text>总金额：</text>
+        ￥<text class='sp_jg'>{{finishTotal/100}}</text>
+      </view>
+    </view>  
+    <view class='swi-item-finish'>
+      <view class="search_no" wx:if="{{!orders4}}">
         <view class="font_14"><image class="scimg" src="/images/search_no.png"></image></view>
         <text>没有可用订单/(ㄒoㄒ)/~~</text>
-    </view>
-    <view class='swi-item'>
-      <view class="shop df" wx:for="{{orders4}}">        
+      </view>
+      <view class="shop df" wx:for="{{orders4}}" wx:key="orderId">        
         <view class="df_1 sp_text">
             <view class="sp_tit">
               <text class="ovh2">#{{item.orderNum}}</text>
@@ -147,17 +169,18 @@
             </view>
             <view class="sp_tit">订单号：{{item.orderId}}</view>
             <view class="sp_tit">备注：{{item.orderBuyerRemark}}</view>
+            <view class="sp_tit">订单总额：￥<text class='sp_jg'>{{item.costTotal/100}}</text></view>
             <view class='order-detail-btn' data-orderid="{{item.orderId}}" bindtap="kindToggle4">
               订单详情
               <image wx:if="{{!item.open}}" src="/images/dropDown.png"></image>
               <image wx:if="{{item.open}}" src="/images/upArrow.png"></image>
             </view>
-            <view class="order_product {{item.open ? 'order_product-show' : ''}}" wx:for="{{item.product}}" wx:for-item="product">
+            <view class="order_product {{item.open ? 'order_product-show' : ''}}" wx:for="{{item.product}}" wx:for-item="product" wx:key="this">
               <image class="order_product_img" src="/images/search_no.png"></image>
               <view class="order_product_data">
                 <view class="order_product_data_name">产品名称：{{product.skuName}}</view>
                 <view class="sp_tit">
-                  数量：×<text class='sp_jg'>{{product.skuCount}}</text>
+                  数量：×<text>{{product.skuCount}}</text>
                   <text>单价：¥{{product.skuStorePrice/100}}</text>
                 </view>
                 状态：<text class="{{product.status==2 ? 'sp_jg' : ''}}">{{product.status==2 ? '缺货' : '有货'}}</text>
@@ -176,7 +199,7 @@
         <text>没有可用订单/(ㄒoㄒ)/~~</text>
     </view>
 
-    <view class="shop df" wx:for="{{orders5}}">
+    <view class="shop df" wx:for="{{orders5}}"  wx:key="orderId">
         <image class="sh_slt" src="{{item.photo_x}}"></image>
         <view class="df_1">            
             <view class="sp_text">

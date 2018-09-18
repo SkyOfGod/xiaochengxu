@@ -94,7 +94,7 @@ public class OrderAsync {
             orderShop.setOrderId(orderId);
             orderShop.setCreateTime(date);
             orderShop.setUpdateTime(date);
-            orderShop.setSkuStatus(ConstantsUtil.productStatus.READY);
+            orderShop.setSkuStatus(ConstantsUtil.ProductStatus.READY);
             orderShop.setOrderStatus(ConstantsUtil.Status.READY);
             inList.add(orderShop);
         }

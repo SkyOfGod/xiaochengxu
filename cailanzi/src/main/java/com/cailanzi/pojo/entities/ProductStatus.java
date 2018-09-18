@@ -16,6 +16,10 @@ public class ProductStatus {
 
     private Long skuId;
 
+    private String name;
+
+    private Integer currentQty;//currentQty = usableQty + lockQty + orderQty
+
     private Integer usableQty;
 
     private Integer lockQty;
@@ -24,6 +28,8 @@ public class ProductStatus {
 
     private Byte vendibility;
 
-    private Date createTime = new Date();
+    private Integer price;
+
+    private Date createTime;
 
 }

@@ -33,7 +33,7 @@ public class OrderNotifyService {
 
     private final static String QUIT_ROUTING_KEY = "order.quit";
 
-    private final static String DELIVERY_TO_ROUTING_KEY = "order.delivery.to";
+    private final static String DELIVERY_TO_ROUTING_KEY = "order.delivery";
 
     private final static String FINISH_ROUTING_KEY = "order.finish";
 

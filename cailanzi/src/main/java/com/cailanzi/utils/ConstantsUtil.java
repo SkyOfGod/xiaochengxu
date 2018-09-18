@@ -20,7 +20,7 @@ public interface ConstantsUtil {
     /**
      * 商品状态：0-待拣货，1-已拣货，2-缺货
      */
-    public static class productStatus {
+    public static class ProductStatus {
 
         public final static Byte READY = 0;
         public final static Byte FINISH = 1;
@@ -35,6 +35,13 @@ public interface ConstantsUtil {
         public final static String MANAGER = "0";
         public final static String READYER = "1";
         public final static String SENDER = "2";
+
+    }
+
+    public static class ProductCategory {
+
+        public final static String ALL_ID = "0000000";
+
 
     }
 

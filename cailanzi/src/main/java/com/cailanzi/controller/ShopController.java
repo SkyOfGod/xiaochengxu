@@ -29,7 +29,11 @@ public class ShopController {
 
     @RequestMapping("syncShop")
     public SysResult syncShop() throws Exception {
-        shopService.syncShop();
+        try {
+            shopService.syncShop();
+        }catch (Exception e){
+            return SysResult.build(201,e.getMessage());
+        }
         return SysResult.build(200);
     }
 

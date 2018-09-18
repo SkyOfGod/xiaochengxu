@@ -23,8 +23,12 @@
                 <td><input class="easyui-textbox" name="skuId" style="width: 200px;" data-options="editable:false"/></td>
             </tr>
             <tr>
-                <td>可用库存数量:</td>
-                <td><input class="easyui-numberbox" name="usableQty" data-options="min:0,max:99999999,precision:0,required:true" /></td>
+                <td>现货库存:</td>
+                <td><input class="easyui-numberbox" name="currentQty" data-options="min:0,max:999,precision:0,required:true" /></td>
+            </tr>
+            <tr>
+                <td>价格(分):</td>
+                <td><input class="easyui-numberbox" name="price" data-options="min:0,max:99999,precision:0,required:true" /></td>
             </tr>
             <tr>
                 <td>可售状态:</td>
@@ -98,9 +102,12 @@
             {field:'id',checkbox:true},
             {field:'stationNo',title:'到家门店编码',width:100,align:'center'},
             {field:'skuId',title:'到家商品编码',width:100,align:'center'},
-            {field:'usableQty',title:'可用库存数量',width:100,align:'center'},
-            {field:'lockQty',title:'锁定库存数量',width:100,align:'center'},
-            {field:'orderQty',title:'预占库存数量',width:100,align:'center'},
+            {field:'name',title:'商品名称',width:150,align:'center'},
+            {field:'currentQty',title:'现货库存',width:100,align:'center'},
+            {field:'usableQty',title:'可用库存',width:100,align:'center'},
+            {field:'lockQty',title:'锁定库存',width:100,align:'center'},
+            {field:'orderQty',title:'预占库存',width:100,align:'center'},
+            {field:'price',title:'门店价格(分)',width:100,align:'center'},
             {field:'vendibility',title:'可售状态',width:70,align:'center',
                 formatter:function (value,row,index) {
                     if(value==0){
@@ -123,7 +130,7 @@
     });
 
     editProduct = function () {
-        var ids = getSelectionsIds();
+        var ids = getItemStatusListSelectionsIds();
         if (ids.length == 0) {
             $.messager.alert('提示', '必须选择一条数据才能编辑!');
             return;
@@ -143,7 +150,7 @@
                 text:'保存',
                 handler:function(){
                     var params = $("#editForm").serialize();
-                    $.post("/product/updateProductStatus", params, function(data) {
+                    $.post("/product/updateProductStatusOfStorePriceVendibility", params, function(data) {
                         if (data.status == 200) {
                             $.messager.alert('提示', '修改商品库存成功!', 'info',
                                 function() {
@@ -169,7 +176,7 @@
         $('#item-status-list').datagrid('load');
     }
 
-    getSelectionsIds = function() {
+    getItemStatusListSelectionsIds = function() {
         var itemList = $("#item-status-list");
         var sels = itemList.datagrid("getSelections");
         var ids = [];

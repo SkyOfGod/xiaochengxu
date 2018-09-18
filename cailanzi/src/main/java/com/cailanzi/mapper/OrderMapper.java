@@ -16,5 +16,5 @@ public interface OrderMapper {
 
     List<OrderJdVo> getOrderList(OrderListInput orderListInput);
 
-    List<OrderUnion> getOrderShopJdList(@Param("stationNo") String stationNo,@Param("status") String status);
+    List<OrderUnion> getOrderShopJdList(OrderListInput orderListInput);
 }

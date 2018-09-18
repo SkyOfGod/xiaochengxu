@@ -18,5 +18,5 @@ public class OrderJdVo {
     private List<ProductOrderJdVo> product;
 
     private boolean open = false;//默认不展开
-
+    private int costTotal;//订单总价
 }

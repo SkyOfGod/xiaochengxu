@@ -23,15 +23,20 @@ public class SysResult {
 
     private Object data;
 
+    private Integer count;//总价或者总数
+
     public static SysResult build(Integer status, String msg) {
-        return new SysResult(status, msg, null);
+        return new SysResult(status, msg, null,null);
     }
 
     public static SysResult build(Integer status) {
-        return new SysResult(status, "", null);
+        return new SysResult(status, "", null,null);
     }
 
     public static SysResult ok(Object data) {
-        return new SysResult(200,"ok",data);
+        return new SysResult(200,"ok",data,null);
+    }
+    public static SysResult ok(Object data,Integer count) {
+        return new SysResult(200,"ok",data,count);
     }
 }

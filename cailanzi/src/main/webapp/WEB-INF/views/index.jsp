@@ -21,6 +21,7 @@
 	         		<li data-options="attributes:{'url':'/page/item-list'}">查询商品</li>
 	         		<li data-options="attributes:{'url':'/page/item-jd-list'}">查询商品-京东</li>
 					<li data-options="attributes:{'url':'/page/item-status-list'}">查询商品库存</li>
+					<li data-options="attributes:{'url':'/page/item-category-list'}">查询商品类目</li>
 	         	</ul>
          	</li>
          	<li>
@@ -35,6 +36,13 @@
          		<ul>
 	         		<li data-options="attributes:{'url':'/page/shop'}">查询门店</li>
 	         		<li data-options="attributes:{'url':'/page/user'}">查询用户</li>
+	         	</ul>
+         	</li>
+         	<li>
+         		<span>规则管理</span>
+         		<ul>
+	         		<li data-options="attributes:{'url':'/page/rule'}">查询规则</li>
+	         		<li data-options="attributes:{'url':'/page/rule-item'}">查询规则-商品</li>
 	         	</ul>
          	</li>
          </ul>

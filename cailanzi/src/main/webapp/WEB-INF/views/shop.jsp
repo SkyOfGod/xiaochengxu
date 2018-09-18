@@ -22,9 +22,11 @@
                         $.post("/shop/syncShop", null, function(data) {
                             if (data.status == 200) {
                                 $.messager.alert('提示', '商户同步成功!', 'info');
-                                $.messager.progress('close');
                                 $('#shop-jd-list').datagrid('reload');
+                            }else {
+                                $.messager.alert('提示', '商户同步失败：'+data.msg , 'info');
                             }
+                            $.messager.progress('close');
                         });
                     }
                 });
@@ -39,7 +41,7 @@
             {field:'cityName',title:'城市名称',width:60,align:'center'},
             {field:'countyName',title:'镇名称',width:60,align:'center'},
             {field:'phone',title:'门店电话',width:100,align:'center'},
-            {field:'mobile',title:'门店手机',width:60,align:'center'},
+            /*{field:'mobile',title:'门店手机',width:60,align:'center'},*/
             {field:'stationAddress',title:'地址',width:400,align:'center'},
             {field:'standByPhone',title:'备联电话',width:100,align:'center'},
             {field:'orderAging',title:'订单时效',width:60,align:'center'},

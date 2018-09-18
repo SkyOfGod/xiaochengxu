@@ -45,6 +45,9 @@ public class OrderService {
                 ||StringUtils.isBlank(orderListInput.getType())){
             return SysResult.build(400);
         }
+        if(StringUtils.isNotBlank(orderListInput.getEndTime())){
+            orderListInput.setEndTime(orderListInput.getEndTime()+" 23:59:59");
+        }
         return getWebOrderShopListBasic(orderListInput,ConstantsUtil.Status.READY);
     }
 
@@ -57,6 +60,9 @@ public class OrderService {
     }
 
     public SysResult getWebOrder4List(OrderListInput orderListInput) {
+        if(StringUtils.isNotBlank(orderListInput.getStartTime())){
+            orderListInput.setEndTime(orderListInput.getStartTime()+" 23:59:59");
+        }
         return getWebOrderShopListBasic(orderListInput,ConstantsUtil.Status.FINISH);
     }
 
@@ -112,30 +118,38 @@ public class OrderService {
     }
 
     private SysResult getWebOrderShopListBasic(OrderListInput orderListInput,String orderStatus) {
-        String username = orderListInput.getUsername();
-        String stationNo = orderListInput.getBelongStationNo();
+        orderListInput.setOrderStatus(orderStatus);
         List<OrderUnion> list = null;
         if(ConstantsUtil.UserType.READYER.equals(orderListInput.getType())){
-            list = orderShopMapper.getOrderShopList(username,stationNo,orderStatus);
+            list = orderShopMapper.getOrderShopList(orderListInput);
         }else if(ConstantsUtil.UserType.SENDER.equals(orderListInput.getType())){
-            list = orderMapper.getOrderShopJdList(stationNo,orderStatus);
+            list = orderMapper.getOrderShopJdList(orderListInput);
         } else {
             list = new ArrayList<>();
         }
         Map<String,OrderJdVo> map = getOrderJdVoMap(list);
-        return SysResult.ok(map.values());
+        Collection<OrderJdVo> collection = map.values();
+        int total = 0;
+        if(ConstantsUtil.Status.FINISH.equals(orderStatus)){
+            for(OrderJdVo orderJdVo: collection){
+                total += orderJdVo.getCostTotal();
+            }
+        }
+        return SysResult.ok(collection,total);
     }
 
     private Map<String,OrderJdVo> getOrderJdVoMap(List<OrderUnion> list) {
         Map<String,OrderJdVo> map = new HashMap<>();
         for (OrderUnion union : list) {
             String orderId = union.getOrderId();
+            ProductOrderJdVo productOrderJdVo = getProductOrderJdVo(union);
             if(map.containsKey(orderId)){
                 OrderJdVo temp = map.get(orderId);
-                temp.getProduct().add(getProductOrderJdVo(union));
+                temp.setCostTotal(temp.getCostTotal()+productOrderJdVo.getCost());
+                temp.getProduct().add(productOrderJdVo);
             }else {
                 List<ProductOrderJdVo> productOrderJdVoList = new ArrayList<>();
-                productOrderJdVoList.add(getProductOrderJdVo(union));
+                productOrderJdVoList.add(productOrderJdVo);
 
                 OrderJdVo temp = new OrderJdVo();
                 temp.setCreateTime(union.getCreateTime());
@@ -143,6 +157,7 @@ public class OrderService {
                 temp.setOrderNum(union.getOrderNum());
                 temp.setOrderBuyerRemark(union.getOrderBuyerRemark());
                 temp.setProduct(productOrderJdVoList);
+                temp.setCostTotal(productOrderJdVo.getCost());
 
                 map.put(orderId,temp);
             }
@@ -157,6 +172,11 @@ public class OrderService {
         productOrderJdVo.setSkuCount(union.getSkuCount());
         productOrderJdVo.setSkuStorePrice(union.getSkuStorePrice());
         productOrderJdVo.setStatus(union.getSkuStatus()+"");
+        try {
+            productOrderJdVo.setCost(Integer.parseInt(union.getSkuCount())*Integer.parseInt(union.getSkuStorePrice()));
+        }catch (Exception e){
+            log.info("计算商品总价转换异常：",e);
+        }
         return productOrderJdVo;
     }
 

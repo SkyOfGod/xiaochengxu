@@ -22,11 +22,7 @@
             {field:'username',title:'商户账号',width:120,align:'center'},
             {field:'belongStationNo',title:'所属门店编码',width:100,align:'center'},
             {field:'orderId',title:'订单ID',width:150,align:'center'},
-            {field:'skuId',title:'到家商品编码',width:120,align:'center'},
-            {field:'skuName',title:'商品名称',width:200,align:'center'},
-            {field:'skuCount',title:'下单数量',width:70,align:'center'},
-            {field:'skuPrice',title:'商品价格（分）',width:100,align:'center'},
-            {field:'status',title:'订单状态',width:60,align:'center',
+            {field:'orderStatus',title:'订单状态',width:70,align:'center',
                 formatter: function(value,row,index){
                     if(value=="32000"){
                         return "待发货";
@@ -36,6 +32,24 @@
                         return "配送中";
                     }else if(value=="35000"){
                         return "已完成";
+                    }else if(value=="36000"){
+                        return "已取消";
+                    }
+                    return value;
+                }
+            },
+            {field:'skuId',title:'到家商品编码',width:120,align:'center'},
+            {field:'skuName',title:'商品名称',width:200,align:'center'},
+            {field:'skuCount',title:'下单数量',width:70,align:'center'},
+            {field:'skuPrice',title:'商品价格（分）',width:100,align:'center'},
+            {field:'skuStatus',title:'商品状态',width:70,align:'center',
+                formatter: function(value,row,index){
+                    if(value==0){
+                        return "待拣货";
+                    }else if(value==1){
+                        return '<span style="color:blue;">已拣货</span>';
+                    }else if(value==2){
+                        return '<span style="color:red;">缺货</span>';
                     }
                     return value;
                 }

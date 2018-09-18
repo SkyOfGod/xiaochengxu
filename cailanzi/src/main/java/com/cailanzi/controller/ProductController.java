@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -19,9 +18,9 @@ import java.util.List;
 /**
  * Created by v-hel27 on 2018/8/8.
  */
+@Slf4j
 @RestController
 @RequestMapping("product")
-@Slf4j
 public class ProductController {
 
     @Autowired
@@ -45,18 +44,40 @@ public class ProductController {
         return sysResult;
     }
 
-    @RequestMapping("productStatusPage")
-    public EasyUIResult queryProductStatusPage(ProductListInput productListInput) throws Exception {
-        log.info("ProductController queryProductStatusPage ProductListInput productListInput={}", productListInput);
-        EasyUIResult sysResult = productItemService.queryProductStatusPage(productListInput);
-        log.info("ProductController queryProductStatusPage return {}", sysResult);
-        return sysResult;
-    }
-
     @RequestMapping("jd/asynProduct")
     public SysResult asynProduct() throws Exception {
         productService.asynProduct();
         return SysResult.ok(200);
+    }
+
+    @RequestMapping(value = "jd/comgridList",method = RequestMethod.POST)
+    public List<ProductJd> comgridJdList(String q,String belongStationNo) throws Exception {
+        return productItemService.comgridJdList(q,belongStationNo);
+    }
+
+    @RequestMapping(value = "addProduct",method = RequestMethod.POST)
+    public SysResult addProduct(Product product) throws Exception {
+        log.info("ProductController addProduct product = {}",product);
+        try {
+            productItemService.addProduct(product);
+        }catch (ServiceException e){
+            return SysResult.build(400,e.getMessage());
+        }
+        return SysResult.build(200);
+    }
+
+    @RequestMapping(value = "updateProduct",method = RequestMethod.POST)
+    public SysResult updateProduct(Product product) throws Exception {
+        productItemService.updateProduct(product);
+        log.info("ProductController updateProduct product={}",product);
+        return SysResult.build(200);
+    }
+
+    @RequestMapping(value = "deleteProduct",method = RequestMethod.POST)
+    public SysResult deleteProduct(String ids) throws Exception {
+        log.info("ProductController deleteProduct ids={}",ids);
+        productItemService.deleteProduct(ids);
+        return SysResult.build(200);
     }
 
     @RequestMapping("jd/asynProductStatus")
@@ -69,56 +90,41 @@ public class ProductController {
         return SysResult.ok(200);
     }
 
-    @RequestMapping(value = "jd/comgridList",method = RequestMethod.POST)
-    public List<ProductJd> comgridJdList(String q,String belongStationNo) throws Exception {
-        return productItemService.comgridJdList(q,belongStationNo);
+    @RequestMapping("productStatusPage")
+    public EasyUIResult queryProductStatusPage(ProductListInput productListInput) throws Exception {
+        log.info("ProductController queryProductStatusPage ProductListInput productListInput={}", productListInput);
+        EasyUIResult sysResult = productItemService.queryProductStatusPage(productListInput);
+        log.info("ProductController queryProductStatusPage return {}", sysResult);
+        return sysResult;
     }
 
-    @RequestMapping(value = "addProduct",method = RequestMethod.POST)
-    public SysResult addProduct(Product product) throws Exception {
-        log.info("ProductController addProduct start");
-        try {
-            productItemService.addProduct(product);
-        }catch (ServiceException e){
-            return SysResult.build(400,e.getMessage());
-        }
+    @RequestMapping("jd/asynCategories")
+    public SysResult asynCategories() throws Exception {
+        log.info("ProductController asynCategories start");
+        productService.asynCategories();
+        return SysResult.ok(200);
+    }
+
+    @RequestMapping("categoriesPage")
+    public EasyUIResult categoriesPage(ProductListInput productListInput) throws Exception {
+        log.info("ProductController categoriesPage start");
+        EasyUIResult easyUIResult = productItemService.categoriesPage(productListInput);
+        log.info("ProductController categoriesPage return {}", easyUIResult);
+        return easyUIResult;
+    }
+
+    /**
+     * 后台管理界面：修改商品（product_status）库存、价格、可售状态
+     * @param productStatus
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "updateProductStatusOfStorePriceVendibility",method = RequestMethod.POST)
+    public SysResult updateProductStatusOfStorePriceVendibility(ProductStatus productStatus) throws Exception {
+        log.info("ProductController updateProductStatusOfStorePriceVendibility productStatus={}",productStatus);
+        productItemService.updateProductStatusOfStorePriceVendibility(productStatus);
         return SysResult.build(200);
     }
 
-    @RequestMapping(value = "updateProduct",method = RequestMethod.POST)
-    public SysResult updateProduct(Product product) throws Exception {
-        log.info("ProductController updateProduct product={}",product);
-        productItemService.updateProduct(product);
-        return SysResult.build(200);
-    }
 
-    @RequestMapping(value = "deleteProduct",method = RequestMethod.POST)
-    public SysResult deleteProduct(String ids) throws Exception {
-        log.info("ProductController deleteProduct start");
-        productItemService.deleteProduct(ids);
-        return SysResult.build(200);
-    }
-
-    @RequestMapping(value = "updateProductStatus",method = RequestMethod.POST)
-    public SysResult updateProductStatus(ProductStatus productStatus) throws Exception {
-        log.info("ProductController updateProductStatus productStatus={}",productStatus);
-        productItemService.updateProductStatus(productStatus);
-        return SysResult.build(200);
-    }
-
-    @RequestMapping("web/getCategories")
-    public List<CategoriesVo> getCategories() throws Exception {
-        log.info("ProductController getCategories start");
-        List<CategoriesVo> list = productService.getCategories();
-        log.info("ProductController getCategories return {}", list);
-        return list;
-    }
-
-    @RequestMapping(value = "web/getProductsByCategoryId",method = RequestMethod.POST)
-    public List<ProductVo> getProductsByCategoryId(ProductListInput productListInput) throws Exception {
-        log.info("ProductController getProductsByCategoryId productListInput={}",productListInput);
-        List<ProductVo> list = productService.getProductsByCategoryId(productListInput);
-        log.info("ProductController getProductsByCategoryId return {}", list);
-        return list;
-    }
 }

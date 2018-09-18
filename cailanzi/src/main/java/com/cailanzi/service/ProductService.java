@@ -3,21 +3,12 @@ package com.cailanzi.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.cailanzi.mapper.ProductJdMapper;
-import com.cailanzi.mapper.ProductMapper;
-import com.cailanzi.mapper.ProductStatusMapper;
-import com.cailanzi.mapper.ShopMapper;
-import com.cailanzi.pojo.CategoriesVo;
+import com.cailanzi.mapper.*;
 import com.cailanzi.pojo.ProductListInput;
 import com.cailanzi.pojo.ProductStatusInput;
-import com.cailanzi.pojo.ProductVo;
-import com.cailanzi.pojo.entities.Product;
-import com.cailanzi.pojo.entities.ProductJd;
-import com.cailanzi.pojo.entities.ProductStatus;
-import com.cailanzi.pojo.entities.ShopJd;
+import com.cailanzi.pojo.entities.*;
+import com.cailanzi.utils.ConstantsUtil;
 import com.cailanzi.utils.JdHttpCilentUtil;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,13 +24,13 @@ import java.util.*;
 public class ProductService {
 
     @Autowired
-    private ProductMapper productMapper;
-    @Autowired
     private ProductJdMapper productJdMapper;
     @Autowired
     private ShopMapper shopMapper;
     @Autowired
     private ProductStatusMapper productStatusMapper;
+    @Autowired
+    private ProductCategoryMapper productCategoryMapper;
 
     public void asynProduct() throws Exception {
         ProductListInput productListInput = new ProductListInput();
@@ -85,15 +76,6 @@ public class ProductService {
         productJdMapper.insertList(list);
     }
 
-    /*public static void main(String[] args) throws Exception {
-        ProductService productService = new ProductService();
-
-        ProductListInput productListInput = new ProductListInput();
-        JSONObject data = JSONObject.parseObject(productService.getJdProductList(productListInput));
-        JSONArray temp = data.getJSONArray("result");
-        System.out.println(temp);
-    }*/
-
     private String getJdProductList(ProductListInput productListInput) throws Exception {
         log.info("ProductService getJdProductList ProductListInput productListInput={}", productListInput);
         String url = "https://openo2o.jd.com/djapi/pms/querySkuInfos";
@@ -104,15 +86,21 @@ public class ProductService {
     }
 
     public void asynProductStatus() throws Exception {
-        ProductJd selectProduct = new ProductJd();
-        selectProduct.setFixedStatus((byte)1);//只处理了上架商品
-        List<ProductJd> productJdList = productJdMapper.select(selectProduct);
-
-        productStatusMapper.truncateProductStatus();
+        Date date = new Date();
 
         List<ShopJd> shopList = shopMapper.selectAll();
         for (ShopJd shopJd : shopList) {
             String stationNo = shopJd.getStationNo();
+            //只处理当前门店下面没有拉回的商品状态数据
+            List<ProductJd> productJdList = productJdMapper.selectByStationNoLeftJoinProductStatus(stationNo);
+            if(productJdList.isEmpty()){
+                continue;
+            }
+            Map<Long,ProductJd> productJdListMap = new HashMap<>();
+            for (ProductJd productJd : productJdList) {
+                productJdListMap.put(productJd.getSkuId(),productJd);
+            }
+
             List<ProductStatus> productStatusList = new ArrayList<>();
             List<ProductStatusInput> productStatusInputList = new ArrayList<>();
             for (int i = 0; i < productJdList.size(); i++) {
@@ -124,34 +112,19 @@ public class ProductService {
                     productStatusInputList.clear();
                 }
             }
-            productStatusMapper.insertList(productStatusList);
+            for (ProductStatus productStatus : productStatusList) {
+                productStatus.setCreateTime(date);
+                productStatus.setCurrentQty(productStatus.getLockQty()+productStatus.getUsableQty()+productStatus.getOrderQty());
+
+                ProductJd productJd = productJdListMap.get(productStatus.getSkuId());
+                productStatus.setName(productJd.getSkuName());
+                productStatus.setPrice(productJd.getSkuPrice());
+            }
+            if(!productStatusList.isEmpty()){
+                productStatusMapper.insertList(productStatusList);
+            }
         }
     }
-
-    //利用多线程 处理了所有商品
-   /* public void asynProductStatusAsync() throws Exception {
-        List<ProductJd> productJdList = productJdMapper.selectAll();
-
-        productStatusMapper.truncateProductStatus();
-
-        List<ShopJd> shopList = shopMapper.selectAll();
-        for (ShopJd shopJd : shopList) {
-            String stationNo = shopJd.getStationNo();
-
-            List<ProductStatus> productStatusList = new ArrayList<>();
-            List<ProductStatusInput> productStatusInputList = new ArrayList<>();
-            for (int i = 0; i < productJdList.size(); i++) {
-                Long skuId = productJdList.get(i).getSkuId();
-                ProductStatusInput productStatusInput = new ProductStatusInput(stationNo,skuId);
-                productStatusInputList.add(productStatusInput);
-                if(productStatusInputList.size()==50||i==productJdList.size()-1){
-                    getJdProductStatusList(productStatusInputList,productStatusList);
-                    productStatusInputList.clear();
-                }
-            }
-            productStatusMapper.insertList(productStatusList);
-        }
-    }*/
 
     private void getJdProductStatusList(List<ProductStatusInput> list,List<ProductStatus> productStatusList) throws Exception {
         log.info("ProductService getJdProductStatusList List<ProductStatusInput> list={},productStatusList={}", list,productStatusList);
@@ -169,38 +142,70 @@ public class ProductService {
         }
     }
 
-    public List<CategoriesVo> getCategories() throws Exception {
+    /* 	根据商家商品编码和门店编码批量查询商品库存及可售状态信息接口
+    public void asynProductStatus() throws Exception {
+        ProductJd selectProduct = new ProductJd();
+        selectProduct.setFixedStatus((byte)1);//只处理了上架商品
+        List<ProductJd> productJdList = productJdMapper.select(selectProduct);
+
+        productStatusMapper.truncateProductStatus();
+
+        List<ShopJd> shopList = shopMapper.selectAll();
+        for (ShopJd shopJd : shopList) {
+            List<ProductStatus> productStatusList = new ArrayList<>();
+
+            List<SkuIdEntity> skuIds = new ArrayList<>();
+            ProductStatusJdImport productStatusJdImport = new ProductStatusJdImport();
+            productStatusJdImport.setOutStationNo(shopJd.getStationNo());
+            for (int i = 0; i < productJdList.size(); i++) {
+                String  skuId = productJdList.get(i).getSkuId()+"";
+                skuIds.add(new SkuIdEntity(skuId));
+                if(skuIds.size()==50||i==productJdList.size()-1){
+                    productStatusJdImport.setSkuIds(skuIds);
+                    getJdProductStatusList(productStatusJdImport,productStatusList);
+                    skuIds.clear();
+                }
+            }
+            productStatusMapper.insertList(productStatusList);
+        }
+    }
+
+    public void getJdProductStatusList(ProductStatusJdImport productStatusJdImport, List<ProductStatus> productStatusList) throws Exception {
+        log.info("ProductService getJdProductStatusList ProductStatusJdImport productStatusJdImport={},productStatusList={}", productStatusJdImport,productStatusList);
+        String jdParamJson = JSON.toJSONString(productStatusJdImport);
+
+        String url = "https://openo2o.jd.com/djapi/stock/queryStockCenter";
+        JSONObject data = JdHttpCilentUtil.doGetAndGetData(url,jdParamJson,"0","retCode","retMsg");
+
+        String text = data.getString("data");
+        log.info("ProductService getJdProductStatusList text={}", text);
+        if(text != null){
+            productStatusList.addAll(JSONArray.parseArray(text,ProductStatus.class));
+        }
+    }*/
+
+    public void asynCategories() throws Exception {
         JSONArray result = getCategoriesBasic();
 
-        List<CategoriesVo> list = new ArrayList<>();
-        list.add(new CategoriesVo("0","0","所有分类","0",new ArrayList<>()));
+        Date date = new Date();
+        List<ProductCategory> list = new ArrayList<>();
+//        list.add(new ProductCategory(ConstantsUtil.ProductCategory.ALL_ID,"0","所有分类","0","0",date));
         for (Object o : result) {
-            JSONObject parent = JSONObject.parseObject(o.toString());
-            String parentPid = parent.getString("pid");
-            if("0".equals(parentPid)){
-                String parentId = parent.getString("id");
-                String parentName = parent.getString("shopCategoryName");
-                String parentSort = parent.getString("sort");
-                List<CategoriesVo> childVoList = new ArrayList<>();
-                for (Object b : result) {
-                    JSONObject child = JSONObject.parseObject(b.toString());
-                    String childPid = child.getString("pid");
-                    String childId = child.getString("id");
-                    String childName = child.getString("shopCategoryName");
-                    String childSort = parent.getString("sort");
-                    if(childPid.equals(parentId)){
-                        CategoriesVo childVo = new CategoriesVo(childPid,childId,childName,childSort,null);
-                        childVoList.add(childVo);
-                    }
-                }
-                /*if(childVoList.isEmpty()){
-                    childVoList.add(new CategoriesVo(parentPid,parentId,parentName,parentSort,null));
-                }*/
-                CategoriesVo vo = new CategoriesVo(parentPid,parentId,parentName,parentSort,childVoList);
-                list.add(vo);
-            }
+            JSONObject jsonObject = JSONObject.parseObject(o.toString());
+            ProductCategory productCategory = new ProductCategory();
+            productCategory.setId(jsonObject.getString("id"));
+            productCategory.setPid(jsonObject.getString("pid"));
+            productCategory.setShopCategoryName(jsonObject.getString("shopCategoryName"));
+            productCategory.setShopCategoryLevel(jsonObject.getString("shopCategoryLevel"));
+            productCategory.setSort(jsonObject.getString("sort"));
+            productCategory.setCreateTime(date);
+            list.add(productCategory);
         }
-        return list;
+        if(!list.isEmpty()){
+            log.info("ProductService asynCategories List<ProductCategory> list={}", list);
+            productCategoryMapper.delete(new ProductCategory());
+            productCategoryMapper.batchInsertList(list);
+        }
     }
 
     public JSONArray getCategoriesBasic() throws Exception {
@@ -210,52 +215,5 @@ public class ProductService {
         JSONObject data = JdHttpCilentUtil.doGetAndGetData(url,jdParamJson);
         return data.getJSONArray("result");
     }
-
-    /**
-     * 查询上架的所有商品
-     * @param productListInput
-     * @return
-     */
-    public List<ProductVo> getProductsByCategoryId(ProductListInput productListInput) {
-        int pageSize = 10;
-        int startIndex = productListInput.getPageNo()*pageSize;
-        String categoryId = productListInput.getCategoryId();
-        String phone = productListInput.getPhone();
-        String stationNo = productListInput.getStationNo();
-
-        List<ProductVo> list = null;
-        if("0".equals(stationNo)){
-            ShopJd shopJd = new ShopJd();
-            shopJd.setPhone(phone);
-            String shopStationNo = shopMapper.selectOne(shopJd).getStationNo();
-
-            list = productJdMapper.getProductsByCategoryId(shopStationNo,categoryId,startIndex,pageSize);
-        }else{
-            list = productJdMapper.getProductsByPhone(phone,stationNo,categoryId,startIndex,pageSize);
-        }
-        return list;
-    }
-
-    /**
-     * 获取商品图片信息
-     * @return
-     * @throws Exception
-     */
-    /*public List<JSONArray> getImg() throws Exception {
-        List<ProductJd> list = productJdMapper.selectAll();
-        return getImagesBySkuIds(list);
-    }
-
-    public List<JSONArray> getImagesBySkuIds(List<ProductJd> list) throws Exception {
-        String url = "https://openo2o.jd.com/djapi/order/queryListBySkuIds";
-        List<JSONArray> temp = new ArrayList<>();
-        for (ProductJd productJd : list) {
-            String jdParamJson = "{\"skuIds\":"+productJd.getSkuId()+"}";
-            JSONObject data = JdHttpCilentUtil.doGetAndGetData(url,jdParamJson);
-            temp.add(data.getJSONArray("result"));
-        }
-        return temp;
-    }*/
-
 
 }

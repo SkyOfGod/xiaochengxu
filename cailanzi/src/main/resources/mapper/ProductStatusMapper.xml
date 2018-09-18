@@ -10,14 +10,15 @@
     <update id="updateStoreAndStatus" parameterType="com.cailanzi.pojo.entities.ProductStatus">
         UPDATE product_status
         <set>
-            <if test="createTime!=null">
-                create_time=#{createTime},
-            </if>
-            <if test="usableQty!=null">
-                usable_qty=#{usableQty},
+            create_time=NOW(),
+            <if test="currentQty!=null">
+                current_qty=#{currentQty},
             </if>
             <if test="vendibility!=null">
                 vendibility=#{vendibility},
+            </if>
+            <if test="price!=null">
+                price=#{price},
             </if>
         </set>
         WHERE station_no=#{stationNo} AND sku_id=#{skuId}

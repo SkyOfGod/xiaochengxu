@@ -22,14 +22,24 @@ public class ProductListInput {
 
     private String categoryId;
 
+    private String categoryPid;
+    //角色类型
+    private String type;
+
     //商品名称(支持模糊查询)
     private String skuName;
     //商品UPC编码
     private String upcCode;
     //当前页
-    private int pageNo;
+    private Integer pageNo;
     //分页大小
-    private int pageSize;
+    private Integer pageSize;
+
+    private Integer pageStart;
 
     private Set<String> skuIds;
+
+    private String skuPrice;
+
+    private String skuStore;
 }

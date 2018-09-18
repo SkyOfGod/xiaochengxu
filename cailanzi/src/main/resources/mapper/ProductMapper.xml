@@ -35,4 +35,21 @@
         WHERE a.order_id = #{orderId}
     </update>
 
+    <update id="updateProductOfStorePriceVendibility">
+        UPDATE product
+        <set>
+            update_time = #{updateTime},
+            <if test="price!=null">
+                price=#{price},
+            </if>
+            <if test="storeNum!=null">
+                store_num=#{storeNum},
+            </if>
+            <if test="isSell!=null">
+                is_sell=#{isSell},
+            </if>
+        </set>
+        WHERE belong_station_no=#{belongStationNo} AND sku_id=#{skuId} AND phone=#{phone}
+    </update>
+
 </mapper>

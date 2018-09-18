@@ -1,8 +1,8 @@
 //app.js
 App({
   globalData: {
-    // urlPrefix: 'http://localhost:8090',
-    urlPrefix: 'https://api.1000heng.xyz',
+    urlPrefix: 'http://localhost:8090',
+    // urlPrefix: 'https://api.1000heng.xyz',
     // userInfo: null,
   },
   validateUser: function () {

@@ -26,11 +26,10 @@ public class OrderListInput {
     private String deliveryStationNo;
     //角色类型
     private String type;
-
     private Date updateTime;
-
     private String skuId;
-
     private String skuStatus;
+    private String startTime;
+    private String endTime;
 
 }

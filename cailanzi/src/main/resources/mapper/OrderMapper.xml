@@ -27,7 +27,10 @@
         a.order_buyer_remark orderBuyerRemark,a.create_time createTime
         FROM order_jd a
         JOIN product_order_jd b ON b.order_id=a.order_id
-        WHERE a.produce_station_no = #{stationNo} AND a.`status` = #{status}
+        WHERE a.produce_station_no = #{belongStationNo} AND a.`status` = #{orderStatus}
+        <if test="startTime != null and endTime != null">
+            AND a.create_time BETWEEN #{startTime} AND #{endTime}
+        </if>
     </select>
 
 </mapper>

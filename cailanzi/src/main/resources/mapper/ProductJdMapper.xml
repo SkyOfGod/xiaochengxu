@@ -8,7 +8,7 @@
     </delete>
 
     <select id="comgridJdList" resultType="com.cailanzi.pojo.entities.ProductJd">
-        SELECT a.sku_id skuId,a.sku_name skuName,a.sku_price skuPrice,b.usable_qty stockNum,b.vendibility fixedStatus,a.shop_categories shopCategories
+        SELECT a.sku_id skuId,a.sku_name skuName,b.price skuPrice,b.current_qty stockNum,b.vendibility fixedStatus,a.shop_categories shopCategories
         FROM product_jd a
         INNER JOIN product_status b ON b.sku_id=a.sku_id AND b.station_no = #{belongStationNo} AND b.vendibility=0
         WHERE a.fixed_status = 1
@@ -18,25 +18,70 @@
     </select>
 
     <select id="getProductsByCategoryId" resultType="com.cailanzi.pojo.ProductVo">
-        SELECT a.sku_id skuId,a.sku_name `name`,a.sku_price price,b.usable_qty num,b.vendibility `status`
-        FROM product_jd a
-        INNER JOIN product_status b ON b.sku_id=a.sku_id AND b.station_no = #{stationNo}
-        WHERE a.fixed_status = 1
-        <if test="categoryId != 0">
-          AND a.shop_categories LIKE CONCAT('%',#{categoryId},'%')
-        </if>
-        LIMIT #{startIndex,jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
+        SELECT a.sku_id skuId,a.name `name`,a.price price,a.current_qty num,a.vendibility `status`
+        <include refid="getProductsByCategoryIdSql"></include>
+        LIMIT #{pageStart,jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
     </select>
 
-    <select id="getProductsByPhone" resultType="com.cailanzi.pojo.ProductVo">
-        SELECT a.sku_id skuId,a.name `name`,a.price price,b.usable_qty num,b.vendibility `status`
-        FROM product a
-        INNER JOIN product_status b ON b.sku_id=a.sku_id AND b.station_no = #{stationNo}
-        WHERE a.is_sell = 0 AND a.phone = #{phone} AND a.belong_station_no = #{stationNo}
-        <if test="categoryId != 0">
-            AND a.shop_categories LIKE CONCAT('%',#{categoryId},'%')
+    <select id="getProductsCountByCategoryId" resultType="Integer">
+        SELECT COUNT(*)
+        <include refid="getProductsByCategoryIdSql"></include>
+    </select>
+
+    <sql id="getProductsByCategoryIdSql">
+        FROM product_status a
+        INNER JOIN product_jd b ON b.sku_id=a.sku_id AND b.fixed_status = 1
+        <if test="categoryId != '0000000' and categoryId != 'null'">
+            AND b.shop_categories IN
+            <foreach collection="skuIds" separator="," item="temp" open="(" close=")">
+                #{temp}
+            </foreach>
         </if>
-        LIMIT #{startIndex,jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
+        WHERE a.station_no = #{stationNo}
+        <if test="skuName != 'null' and skuName.trim() != ''">
+            AND a.name LIKE CONCAT('%',#{skuName},'%')
+        </if>
+    </sql>
+
+    <select id="getProductsByPhone" resultType="com.cailanzi.pojo.ProductVo">
+        SELECT a.sku_id skuId,a.name `name`,a.price price,a.store_num num,a.is_sell `status`
+        <include refid="getProductsByPhoneSql"></include>
+        LIMIT #{pageStart,jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
+    </select>
+
+    <select id="getProductsCountByPhone" resultType="Integer">
+        SELECT COUNT(*)
+        <include refid="getProductsByPhoneSql"></include>
+    </select>
+
+    <sql id="getProductsByPhoneSql">
+        FROM product a
+        INNER JOIN product_jd b ON b.sku_id=a.sku_id AND b.fixed_status = 1
+        WHERE a.phone = #{phone} AND a.belong_station_no = #{stationNo}
+        <if test="categoryId != '0000000' and categoryId != 'null'">
+            AND a.shop_categories IN
+            <foreach collection="skuIds" separator="," item="temp" open="(" close=")">
+                #{temp}
+            </foreach>
+        </if>
+        <if test="skuName != 'null' and skuName.trim() != ''">
+            AND a.name LIKE CONCAT('%',#{skuName},'%')
+        </if>
+    </sql>
+
+    <select id="selectByStationNoLeftJoinProductStatus" resultType="com.cailanzi.pojo.entities.ProductJd">
+        SELECT a.sku_id skuId,a.sku_name skuName,a.sku_price skuPrice FROM product_jd a
+        LEFT JOIN product_status b ON b.sku_id=a.sku_id
+        AND b.station_no = #{stationNo}
+        WHERE b.sku_id IS NULL AND a.fixed_status=1
+    </select>
+
+    <select id="productJdComgrid" resultType="com.cailanzi.pojo.entities.ProductJd">
+        SELECT sku_id skuId,sku_name skuName,sku_price skuPrice FROM product_jd
+        WHERE fixed_status=1
+        <if test="q !=  null and q.trim() != ''">
+            AND sku_name LIKE CONCAT('%',#{q},'%')
+        </if>
     </select>
 
 </mapper>

@@ -16,6 +16,6 @@ public class ProductVo {
 
     private String num;
 
-    private String status;
+    private String status;//可售/不可售
 
 }

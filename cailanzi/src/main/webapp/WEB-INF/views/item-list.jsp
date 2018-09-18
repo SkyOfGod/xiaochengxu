@@ -105,7 +105,7 @@
     });
 
     editProduct = function () {
-        var ids = getSelectionsIds();
+        var ids = getItemListSelectionsIds();
         if (ids.length == 0) {
             $.messager.alert('提示', '必须选择一个商品才能编辑!');
             return;
@@ -150,7 +150,7 @@
     }
 
     deleteProduct = function () {
-        var ids = getSelectionsIds();
+        var ids = getItemListSelectionsIds();
         if (ids.length == 0) {
             $.messager.alert('提示', '未选中商品!');
             return;
@@ -174,7 +174,7 @@
         $('#item-list').datagrid('load');
     }
 
-    getSelectionsIds = function() {
+    getItemListSelectionsIds = function() {
         var itemList = $("#item-list");
         var sels = itemList.datagrid("getSelections");
         var ids = [];

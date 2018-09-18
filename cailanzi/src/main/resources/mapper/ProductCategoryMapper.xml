@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cailanzi.mapper.ProductCategoryMapper">
+
+    <insert id="batchInsertList" parameterType="com.cailanzi.pojo.entities.ProductCategory">
+        INSERT INTO product_category(id,pid,shop_category_name,shop_category_level,sort,create_time)
+        VALUES
+        <foreach collection="list" item="temp" separator=",">
+            (#{temp.id},#{temp.pid},#{temp.shopCategoryName},#{temp.shopCategoryLevel},#{temp.sort},#{temp.createTime})
+        </foreach>
+    </insert>
+
+</mapper>

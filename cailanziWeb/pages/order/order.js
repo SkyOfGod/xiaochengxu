@@ -13,6 +13,11 @@ Page({
     orders4: null,//已完成
     isReadyer:false,//是否是备货员
     isSender:false,//是否是收货员
+    nowDate:null,//当前日期
+    readyDate: null,
+    readyEndDate: null,
+    finishDate: null,
+    finishTotal:0,
   },
   bindChange: function (e) {
     var that = this;
@@ -40,6 +45,7 @@ Page({
       }
       if (current == 3) {
         that.loadOrder3List();
+        this.setData({ finishDate: this.data.nowDate });
         that.loadOrder4List();
       }
     };
@@ -55,7 +61,9 @@ Page({
       data: {
         type: userInfo.type,
         username: userInfo.username,
-        belongStationNo: userInfo.belongStationNo
+        belongStationNo: userInfo.belongStationNo,
+        startTime: that.data.readyDate,
+        endTime: that.data.readyEndDate
       },
       header: {
         "Content-Type": "application/x-www-form-urlencoded"
@@ -141,14 +149,18 @@ Page({
       data: {
         type: userInfo.type,
         username: userInfo.username,
-        belongStationNo: userInfo.belongStationNo
+        belongStationNo: userInfo.belongStationNo,
+        startTime: that.data.finishDate, 
       },
       header: { "Content-Type": "application/x-www-form-urlencoded" },
       success: function (res) {
-        if (res.data.data && res.data.data.length > 0) {
-          that.setData({ orders4: res.data.data });
-        } else {
-          that.setData({ orders4: null });
+        if (res.data.data) {
+          if (res.data.data.length > 0){
+            that.setData({ orders4: res.data.data});
+          }else{
+            that.setData({ orders4: null });
+          }
+          that.setData({ finishTotal: res.data.count });
         }
         wx.hideLoading();
       },
@@ -162,10 +174,7 @@ Page({
     var that = this;
     wx.getSystemInfo({
       success: function (res) {
-        that.setData({
-          winWidth: res.windowWidth,
-          winHeight: res.windowHeight
-        });
+        that.setData({winWidth: res.windowWidth,winHeight: res.windowHeight});
       } 
     });
   },
@@ -219,7 +228,7 @@ Page({
       success: function (res) {
         if (res.confirm) {
           that.saveToStockout(e);
-        } else if (res.cancel) { }
+        } else if (res.cancel) {}
       }
     })
   },
@@ -254,10 +263,17 @@ Page({
 
   onLoad: function (options) {
     if (app.validateUser()) {
-      this.initSystemInfo();
+      // this.initSystemInfo();
+      this.initDate();
       this.loadOrderList();
       this.loadOrder2List();
     };
+  },
+
+  initDate: function(){
+    var date = new Date();
+    var time = date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate();
+    this.setData({ nowDate: time, readyDate: time, readyEndDate: time});
   },
 
   onShow: function(){
@@ -324,6 +340,20 @@ Page({
       }
     }
     this.setData({ orders4: list });
+  },
+
+  bindReadyDateChange: function (e) {
+    this.setData({ readyDate: e.detail.value });
+    this.loadOrderList();
+  },
+  bindReadyEndDateChange: function (e) {
+    this.setData({ readyEndDate: e.detail.value });
+    this.loadOrderList();
+  },
+
+  bindDateChange: function (e) {
+    this.setData({ finishDate: e.detail.value});
+    this.loadOrder4List();
   },
 
 })

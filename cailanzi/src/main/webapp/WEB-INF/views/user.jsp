@@ -144,7 +144,7 @@
     }
 
     deleteUser = function () {
-        var ids = getSelectionsIds();
+        var ids = getUserListSelectionsIds();
         if (ids.length == 0) {
             $.messager.alert('提示', '未选中数据!');
             return;
@@ -168,7 +168,7 @@
         $('#user-list').datagrid('load');
     }
 
-    getSelectionsIds = function() {
+    getUserListSelectionsIds = function() {
         var itemList = $("#user-list");
         var sels = itemList.datagrid("getSelections");
         var ids = [];

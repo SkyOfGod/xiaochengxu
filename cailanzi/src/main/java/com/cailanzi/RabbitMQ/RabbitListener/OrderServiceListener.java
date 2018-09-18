@@ -66,7 +66,7 @@ public class OrderServiceListener {
         return data.getString("result");
     }
 
-    @RabbitListener(queues = "order.delivery.to")
+    @RabbitListener(queues = "order.delivery")
     public void deliveryToOrder(MqOrder mqOrder){
         log.info("OrderServiceListener deliveryToOrder MqOrder mqOrder={}", mqOrder);
         updateOrderStatus(mqOrder.getBillId(),ConstantsUtil.Status.DELIVERY_TO);
@@ -78,7 +78,7 @@ public class OrderServiceListener {
         updateOrderStatus(mqOrder.getBillId(),ConstantsUtil.Status.FINISH);
     }
 
-    @RabbitListener(queues = "order.quit.to")
+    @RabbitListener(queues = "order.quit")
     public void quitOrder(MqOrder mqOrder){
         log.info("OrderServiceListener quitOrder MqOrder mqOrder={}", mqOrder);
         updateOrderStatus(mqOrder.getBillId(),ConstantsUtil.Status.QUIT);

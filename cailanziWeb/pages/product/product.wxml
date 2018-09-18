@@ -1,3 +1,9 @@
+<view class='productSearch'>
+  <input class="product-input" placeholder="请输入商品" confirm-type="search" bindinput="skuNameInput"/>
+  <view class='productSearchBtn' bindtap='productSearch'>
+    <text class='productSearchBtn-text'>搜索</text>
+  </view>
+</view>
 <view class="section">
     <view>
       <text decode="{{true}}" space="{{true}}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</text>
@@ -36,20 +42,52 @@
           <image class="sh_slt" src="/images/search_no.png"/>
           <view class="df_1">            
               <view class="sp_text">
-                  <navigator url="../index/detail?productId={{item.skuId}}" hover-class="changestyle">
+                  <!-- <navigator url="../index/detail?productId={{item.skuId}}" hover-class="changestyle"> -->
                       <view class="sp_tit ovh1">{{item.name}}</view>
-                  </navigator>
+                  <!-- </navigator> -->
                   <view>
                     <text style='color:red;'>¥{{item.price/100}} </text>
                     <text style='font-size:11px;color:#999;'>库存{{item.num}}件</text>
                   </view>
+                  <view style='font-size:11px;color:#999;'>状态：{{item.status=="0"?"可售":"不可售"}}</view>
               </view>
           </view>
         </view>
         <view class='right-button'>
-          <button type="primary">设置库存/价格</button>
-          <button type="primary">设为{{item.status=="1"?"可售":"不可售"}}</button>
+          <button type="primary" data-skuid="{{item.skuId}}" data-skuname="{{item.name}}" data-price="{{item.price}}" data-num="{{item.num}}" bindtap="setStoreAndPrice">设置库存/价格</button>
+          <button type="primary" data-skuid="{{item.skuId}}" data-status="{{item.status}}" bindtap="setVendibility">设为{{item.status=="1"?"可售":"不可售"}}</button>
         </view>
       </view>
     </scroll-view>
+
+    <view class="set-store-price {{ bHide ? 'hide' : '' }}">
+      <view class="set-store-price-form">
+        <view class="set-store-price-form-box">
+          <view class="set-store-price-tit">改库存/价格</view>
+          <view class="shop df">        
+            <image class="sh_slt" src="/images/search_no.png"/>
+            <view class="df_1 sp_text sp_tit ovh1">{{setProduct.skuname}}</view>
+          </view>
+          <view class="set-store-price-store">
+            <view>库存</view>
+            <view class="set-store-price-store-block">
+              <view class="set-store-price-store-btn" bindtap='minusStore'>-</view>
+              <input type="text" maxlength="3" value="{{ storeInput }}" bindinput="storeInput"></input>
+              <view class="set-store-price-store-btn" bindtap='plusStore'>+</view>
+            </view>
+          </view>
+          <view class="set-store-price-store">
+            <view>价格</view>
+            <view class="set-store-price-price-block">
+              <view>￥</view>
+              <input type="digit" maxlength="10" value="{{ priceInput }}" bindinput="priceInput"></input>
+            </view>
+          </view>
+          <view class='set-store-price-btn'>
+            <button type='warn'bindtap='hideBox'>取消</button>
+            <button type='warn'bindtap='saveBox'>保存</button>
+          </view>
+        </view>
+      </view>
+    </view>
 </view>

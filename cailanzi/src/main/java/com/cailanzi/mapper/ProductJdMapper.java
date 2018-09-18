@@ -1,5 +1,6 @@
 package com.cailanzi.mapper;
 
+import com.cailanzi.pojo.ProductListInput;
 import com.cailanzi.pojo.ProductVo;
 import com.cailanzi.pojo.entities.ProductJd;
 import com.cailanzi.utils.MyMapper;
@@ -18,9 +19,15 @@ public interface ProductJdMapper extends MyMapper<ProductJd> {
 
     List<ProductJd> comgridJdList(@Param("q") String q,@Param("belongStationNo") String belongStationNo);
 
-    List<ProductVo> getProductsByCategoryId(@Param("stationNo") String stationNo, @Param("categoryId") String categoryId,
-                                            @Param("startIndex") int startIndex,@Param("pageSize") int pageSize);
+    List<ProductVo> getProductsByCategoryId(ProductListInput productListInput);
 
-    List<ProductVo> getProductsByPhone(@Param("phone") String phone,@Param("stationNo") String stationNo, @Param("categoryId") String categoryId,
-                                       @Param("startIndex") int startIndex,@Param("pageSize") int pageSize);
+    int getProductsCountByCategoryId(ProductListInput productListInput);
+
+    List<ProductVo> getProductsByPhone(ProductListInput productListInput);
+
+    int getProductsCountByPhone(ProductListInput productListInput);
+
+    List<ProductJd> selectByStationNoLeftJoinProductStatus(String stationNo);
+
+    List<ProductJd> productJdComgrid(@Param("q") String q);
 }

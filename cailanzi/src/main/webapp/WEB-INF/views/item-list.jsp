@@ -6,10 +6,12 @@
 </div>
 <table id="item-list" style="width:100%;height:800px"></table>
 
-<div id="edit" class="easyui-dialog" data-options="closed:true">
-    <form id="editForm" method="post">
+<div id="editItem" class="easyui-dialog" data-options="closed:true">
+    <form id="editItemForm" method="post">
         <table cellpadding="5">
             <input type="hidden" name="id">
+            <input type="hidden" name="belongStationNo">
+            <input type="hidden" name="skuId">
             <tr>
                 <td>商户:</td>
                 <td>
@@ -17,24 +19,32 @@
                 </td>
             </tr>
             <tr>
-                <td>商品类型:</td>
+                <td>商品名称:</td>
                 <td><input class="easyui-textbox" name="name" style="width: 300px;" data-options="editable:false"/></td>
             </tr>
             <tr>
                 <td>商品价格:</td>
                 <td>
-                    <input class="easyui-numberbox" type="text" name="initPrice" data-options="min:1,max:99999999,precision:2,required:true" />
-                    <input type="hidden" name="price">
+                    <input class="easyui-numberbox" type="text" name="price" data-options="min:1,max:99999999,precision:0,required:true" />分
                 </td>
             </tr>
             <tr>
                 <td>库存数量:</td>
-                <td><input class="easyui-numberbox" type="text" name="storeNum" data-options="min:1,max:99999999,precision:0,required:true" /></td>
+                <td><input class="easyui-numberbox" type="text" name="storeNum" data-options="min:1,max:99999999,precision:0,required:true" />个</td>
             </tr>
             <tr>
+                <td>可售状态:</td>
+                <td>
+                    <select class="easyui-combobox" name="isSell" style="width: 100px;" data-options="editable:false">
+                        <option value="0">可售</option>
+                        <option value="1">不可售</option>
+                    </select>
+                </td>
+            </tr>
+            <%--<tr>
                 <td>商品描述:</td>
                 <td><input class="easyui-textbox" name="description" data-options="multiline:true,validType:'length[0,150]'" style="height:60px;width: 280px;"></input></td>
-            </tr>
+            </tr>--%>
         </table>
     </form>
 </div>
@@ -71,16 +81,11 @@
             {field:'belongStationNo',title:'门店编码',width:100,align:'center'},
             {field:'belongStationName',title:'门店名称',width:180,align:'center'},
             {field:'skuId',title:'到家商品编码',width:100,align:'center'},
-            {field:'name',title:'商品名称',width:400,align:'center'},
+            {field:'name',title:'商品名称',width:450,align:'center'},
             {field:'shopCategories',title:'分类编码',width:100,align:'center'},
-            {field:'price',title:'商品价格',width:70,align:'center',
-                formatter:function (value,row,index) {
-                    return value/100;
-                }
-             },
+            {field:'price',title:'商品价格(分)',width:70,align:'center'},
             {field:'storeNum',title:'库存数量',width:100,align:'center'},
-            {field:'description',title:'商品描述',width:200,align:'center'},
-            {field:'imgUrl',title:'图片地址',width:60,align:'center'},
+            /*{field:'description',title:'商品描述',width:200,align:'center'},*/
             {field:'isSell',title:'是否可售',width:60,align:'center',
                 formatter: function(value,row,index){
                     if (value==0){
@@ -114,39 +119,39 @@
             $.messager.alert('提示', '只能选择一个商品!');
             return;
         }
-        $('#edit').dialog({
+        $("#editItem").dialog({
             title: '编辑商品',
-            width: 400,
-            height: 300,
+            width: 450,
+            height: 400,
             closed: false,
             cache: false,
             modal: true,
             buttons:[{
                 text:'保存',
                 handler:function(){
-                    $("#editForm [name=price]").val(eval($("#editForm [name=initPrice]").val()) * 100);
-                    var params = $("#editForm").serialize();
-                    $.post("/product/updateProduct", params, function(data) {
+                    var params = $("#editItemForm").serialize();
+                    $.post("/product/updateProductOfStorePriceVendibility", params, function(data) {
                         if (data.status == 200) {
                             $.messager.alert('提示', '修改商品成功!', 'info',
                                 function() {
-                                    $("#edit").dialog('close');
+                                    $("#editItem").dialog('close');
                                     $("#item-list").datagrid("reload");
                                 });
+                        }else if(data.status == 201){
+                            $.messager.alert('提示', data.msg, 'warning');
                         }
                     });
                 }
             },{
                 text:'关闭',
-                handler:function(){$('#edit').dialog("close");}
+                handler:function(){$("#editItem").dialog("close");}
             }],
             onBeforeClose: function () {
-                $("#editForm").form("clear");
+                $("#editItemForm").form("clear");
             }
         });
         var data = $("#item-list").datagrid("getSelected");
-        data.initPrice = data.price/100;
-        $("#editForm").form("load",data);
+        $("#editItemForm").form("load",data);
     }
 
     deleteProduct = function () {
@@ -160,7 +165,7 @@
                 var params = {"ids" : ids};
                 $.post("/product/deleteProduct", params, function(data) {
                     if (data.status == 200) {
-                        $.messager.alert('提示', '删除商品成功!', 'warning',
+                        $.messager.alert('提示', '删除商品成功!', 'info',
                             function() {
                                 $("#item-list").datagrid("reload");
                             });

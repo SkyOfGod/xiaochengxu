@@ -17,11 +17,13 @@
          	<li>
          		<span>商品管理</span>
          		<ul>
-	         		<li data-options="attributes:{'url':'/page/item-add'}">新增商品</li>
-	         		<li data-options="attributes:{'url':'/page/item-list'}">查询商品</li>
-	         		<li data-options="attributes:{'url':'/page/item-jd-list'}">查询商品-京东</li>
-					<li data-options="attributes:{'url':'/page/item-status-list'}">查询商品库存</li>
+					<li data-options="attributes:{'url':'/page/item-add'}">新增商品-商户</li>
+					<li data-options="attributes:{'url':'/page/item-list'}">查询商品-商户</li>
+					<li data-options="attributes:{'url':'/page/item-jd-list'}">查询商品-京东</li>
+					<li data-options="attributes:{'url':'/page/item-status-list'}">查询商品-京东库存</li>
 					<li data-options="attributes:{'url':'/page/item-category-list'}">查询商品类目</li>
+					<li data-options="attributes:{'url':'/page/item-img-list'}">查询商品图片</li>
+					<li data-options="attributes:{'url':'/page/item-img-category-list'}">查询商品图片类目</li>
 	         	</ul>
          	</li>
          	<li>

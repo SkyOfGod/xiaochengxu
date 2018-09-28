@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.concurrent.TransferQueue;
@@ -66,10 +67,17 @@ public class OrderService {
         return getWebOrderShopListBasic(orderListInput,ConstantsUtil.Status.FINISH);
     }
 
+    public SysResult getWebOrder5List(OrderListInput orderListInput) {
+        if(StringUtils.isNotBlank(orderListInput.getStartTime())){
+            orderListInput.setEndTime(orderListInput.getStartTime()+" 23:59:59");
+        }
+        return getWebOrderShopListBasic(orderListInput,ConstantsUtil.Status.QUIT);
+    }
+
     public EasyUIResult getOrderList(OrderListInput orderListInput) {
         PageHelper.startPage(orderListInput.getPageNo(),orderListInput.getPageSize());
-        List<OrderJdVo> list = orderMapper.getOrderList(orderListInput);
-        PageInfo<OrderJdVo> pageInfo = new PageInfo<>(list);
+        List<OrderUnion> list = orderMapper.getOrderList(orderListInput);
+        PageInfo<OrderUnion> pageInfo = new PageInfo<>(list);
         return new EasyUIResult(pageInfo.getTotal(),pageInfo.getList());
     }
 
@@ -172,6 +180,7 @@ public class OrderService {
         productOrderJdVo.setSkuCount(union.getSkuCount());
         productOrderJdVo.setSkuStorePrice(union.getSkuStorePrice());
         productOrderJdVo.setStatus(union.getSkuStatus()+"");
+        productOrderJdVo.setImgUrl(union.getImgUrl());
         try {
             productOrderJdVo.setCost(Integer.parseInt(union.getSkuCount())*Integer.parseInt(union.getSkuStorePrice()));
         }catch (Exception e){
@@ -180,4 +189,15 @@ public class OrderService {
         return productOrderJdVo;
     }
 
+    @Transactional
+    public SysResult deleteOrder(String orderId) {
+        OrderJd orderJd = new OrderJd();
+        orderJd.setOrderId(orderId);
+        orderJdMapper.delete(orderJd);
+
+        ProductOrderJd productOrderJd = new ProductOrderJd();
+        productOrderJd.setOrderId(orderId);
+        productOrderJdMapper.delete(productOrderJd);
+        return SysResult.build(200);
+    }
 }

@@ -29,13 +29,6 @@
 	            <td>库存数量:</td>
 	            <td><input type="text" name="storeNum" data-options="editable:false" /></td>
 	        </tr>
-	        <tr>
-	            <td>商品图片:</td>
-	            <td>
-	            	 <%--<a href="javascript:void(0)" class="easyui-linkbutton picFileUpload">上传图片</a>--%>
-	                 <input type="file" name="file"/>
-	            </td>
-	        </tr>
 			<tr>
 				<td>商品描述:</td>
 				<td><input class="easyui-textbox" name="description" data-options="multiline:true,validType:'length[0,150]'" style="height:60px;width: 280px;"></input></td>
@@ -71,7 +64,7 @@
 
     getProductCombogrid = function (belongStationNo) {
         $('#add_product').combogrid({
-            panelWidth:760,
+            panelWidth:960,
             idField:'skuName',
             textField:'skuName',
             url:'/product/jd/comgridList',
@@ -87,6 +80,7 @@
                     }
 				},
                 {field:'stockNum',title:'库存数量',width:60,align:'center'},
+                {field:'imgUrl',title:'图片地址',width:200,align:'center'},
                 {field:'shopCategories',title:'分类编码',width:120,align:'center'}
             ]],
             onSelect: function (index,row) {

@@ -91,19 +91,30 @@ public class UserController {
 
     @RequestMapping("addUser")
     public SysResult addUser(User user){
-        log.info("UserController addUser start");
+        log.info("UserController addUser user = {}",user);
         try {
             userService.addUser(user);
         }catch (ServiceException e){
-            return SysResult.build(400,e.getMessage());
+            return SysResult.build(201,e.getMessage());
+        }
+        return SysResult.build(200);
+    }
+
+    @RequestMapping("editUser")
+    public SysResult editUser(User user){
+        log.info("UserController editUser user = {}",user);
+        try {
+            userService.editUser(user);
+        }catch (ServiceException e){
+            return SysResult.build(201,e.getMessage());
         }
         return SysResult.build(200);
     }
 
     @RequestMapping("deleteUser")
-    public SysResult deleteUser(String ids){
-        log.info("UserController addUser start");
-        userService.deleteUser(ids);
+    public SysResult deleteUser(String names){
+        log.info("UserController deleteUser String names={}",names);
+        userService.deleteUser(names);
         return SysResult.build(200);
     }
 

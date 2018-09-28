@@ -86,7 +86,7 @@ public class JdHttpCilentUtil {
      * successCode="0",successCodeKey="code",msgKey="msg"
      * @param url
      * @param jdParamJson
-     * @return
+     * @return result的data数据（效验过两层的“code”是否等于0）
      * @throws Exception
      */
     public static JSONObject doGetAndGetData(String url,String jdParamJson) throws Exception {
@@ -149,7 +149,7 @@ public class JdHttpCilentUtil {
     }
 
     /**
-     * 将对象转为json对象格式
+     * 将java实体对象转为json对象格式
      * @param t
      * @param <T>
      * @return

@@ -3,12 +3,32 @@
 
 <mapper namespace="com.cailanzi.mapper.ProductJdMapper">
 
+    <select id="selectDynamic" resultType="com.cailanzi.pojo.entities.ProductJd">
+        SELECT id,sku_id skuId,out_sku_id outSkuId,sku_name skuName,sku_price skuPrice,upc_code upcCode,
+        category_id categoryId,shop_categories shopCategories,sell_cities sellCities,stock_num stockNum,
+        fixed_status fixedStatus,org_code orgCode,fixed_up_time fixedUpTime,fixed_down_time fixedDownTime,
+        sync_time syncTime,img_url imgUrl
+        FROM product_jd
+        <where>
+            <if test="skuId!=null and skuId.trim()!=''">
+                AND sku_id = #{skuId}
+            </if>
+            <if test="skuName!=null and skuName.trim()!=''">
+                AND sku_name LIKE CONCAT('%',#{skuName},'%')
+            </if>
+            <if test="fixedStatus!=null and fixedStatus.trim()!=''">
+                AND fixed_status = #{fixedStatus}
+            </if>
+        </where>
+    </select>
+
     <delete id="truncateProductJd">
         TRUNCATE TABLE product_jd
     </delete>
 
     <select id="comgridJdList" resultType="com.cailanzi.pojo.entities.ProductJd">
-        SELECT a.sku_id skuId,a.sku_name skuName,b.price skuPrice,b.current_qty stockNum,b.vendibility fixedStatus,a.shop_categories shopCategories
+        SELECT a.sku_id skuId,a.sku_name skuName,b.price skuPrice,b.current_qty stockNum,b.vendibility fixedStatus,
+                a.shop_categories shopCategories,a.img_url imgUrl
         FROM product_jd a
         INNER JOIN product_status b ON b.sku_id=a.sku_id AND b.station_no = #{belongStationNo} AND b.vendibility=0
         WHERE a.fixed_status = 1
@@ -18,7 +38,7 @@
     </select>
 
     <select id="getProductsByCategoryId" resultType="com.cailanzi.pojo.ProductVo">
-        SELECT a.sku_id skuId,a.name `name`,a.price price,a.current_qty num,a.vendibility `status`
+        SELECT a.sku_id skuId,a.name `name`,a.price price,a.current_qty num,a.vendibility `status`,b.img_url imgUrl
         <include refid="getProductsByCategoryIdSql"></include>
         LIMIT #{pageStart,jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
     </select>
@@ -44,7 +64,7 @@
     </sql>
 
     <select id="getProductsByPhone" resultType="com.cailanzi.pojo.ProductVo">
-        SELECT a.sku_id skuId,a.name `name`,a.price price,a.store_num num,a.is_sell `status`
+        SELECT a.sku_id skuId,a.name `name`,a.price price,a.store_num num,a.is_sell `status`,b.img_url imgUrl
         <include refid="getProductsByPhoneSql"></include>
         LIMIT #{pageStart,jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
     </select>
@@ -83,5 +103,20 @@
             AND sku_name LIKE CONCAT('%',#{q},'%')
         </if>
     </select>
+
+    <update id="backupImgUrl">
+        INSERT INTO product_jd_bak(sku_id,img_url)
+        SELECT sku_id,img_url FROM product_jd
+    </update>
+
+    <update id="callImgUrl">
+        UPDATE product_jd a
+        JOIN product_jd_bak b ON b.sku_id=a.sku_id
+        SET a.img_url = b.img_url
+    </update>
+
+    <update id="truncateProductJdBak">
+        TRUNCATE TABLE product_jd_bak
+    </update>
 
 </mapper>

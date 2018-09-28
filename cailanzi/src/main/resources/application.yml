@@ -9,7 +9,6 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
 
-
 mybatis:
    mapperLocations: classpath:mapper/*.xml
    typeAliasesPackage: com.cailanzi.pojo

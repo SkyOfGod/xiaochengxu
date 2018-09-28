@@ -50,10 +50,9 @@
   height: 30px;
 }
 
-
 .sh_slt{
-  width: 60px;
-  height: 50px;
+  width: 80px;
+  height: 70px;
   margin-right: 8%;
   float: left;
 }

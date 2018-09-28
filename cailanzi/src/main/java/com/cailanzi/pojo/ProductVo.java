@@ -18,4 +18,6 @@ public class ProductVo {
 
     private String status;//可售/不可售
 
+    private String imgUrl;
+
 }

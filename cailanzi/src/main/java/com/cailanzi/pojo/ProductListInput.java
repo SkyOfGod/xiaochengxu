@@ -42,4 +42,6 @@ public class ProductListInput {
     private String skuPrice;
 
     private String skuStore;
+
+    private String isFilterDel;
 }

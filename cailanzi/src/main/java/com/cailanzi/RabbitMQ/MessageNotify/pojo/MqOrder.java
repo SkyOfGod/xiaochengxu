@@ -1,4 +1,4 @@
-package com.cailanzi.RabbitMQ.MessageNotify.pojo;
+package com.cailanzi.rabbitMQ.messageNotify.pojo;
 
 import lombok.Data;
 

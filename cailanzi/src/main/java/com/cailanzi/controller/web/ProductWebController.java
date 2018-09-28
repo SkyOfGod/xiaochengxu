@@ -1,5 +1,6 @@
 package com.cailanzi.controller.web;
 
+import com.cailanzi.Exception.ServiceException;
 import com.cailanzi.pojo.CategoriesVo;
 import com.cailanzi.pojo.ProductListInput;
 import com.cailanzi.pojo.SysResult;
@@ -42,9 +43,13 @@ public class ProductWebController {
     @RequestMapping("updateStorePriceVendibility")
     public  SysResult updateStorePriceVendibility(ProductListInput productListInput) throws Exception {
         log.info("ProductWebController updateStorePriceVendibility productListInput={}",productListInput);
-        SysResult sysResult = productItemService.updateStorePriceVendibility(productListInput);
-        log.info("ProductWebController updateStorePriceVendibility return {}", sysResult);
-        return sysResult;
+        try {
+            SysResult sysResult = productItemService.updateStorePriceVendibility(productListInput);
+            log.info("ProductWebController updateStorePriceVendibility return {}", sysResult);
+            return sysResult;
+        }catch (ServiceException e){
+            return SysResult.build(201,e.getMessage());
+        }
     }
 
 

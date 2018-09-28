@@ -13,6 +13,7 @@ public class ProductOrderJdVo {
     private String skuCount;
     private String skuStorePrice;
     private String status;
+    private String imgUrl;
     private int cost;//skuCount*skuStorePrice
 
 }

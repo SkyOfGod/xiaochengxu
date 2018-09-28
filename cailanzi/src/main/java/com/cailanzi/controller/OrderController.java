@@ -56,6 +56,15 @@ public class OrderController {
         return data;
     }
 
+    //已退订单数据
+    @RequestMapping("web/order5List")
+    private SysResult getWebOrder5List(OrderListInput orderListInput) throws Exception {
+        log.info("OrderController getWebOrder5List OrderListInput orderListInput={}", orderListInput);
+        SysResult data = orderService.getWebOrder5List(orderListInput);
+        log.info("OrderController getWebOrder5List return {}", data);
+        return data;
+    }
+
     @RequestMapping("orderList")
     private EasyUIResult getOrderList(OrderListInput orderListInput) throws Exception {
         log.info("OrderController getOrderList OrderListInput orderListInput={}", orderListInput);
@@ -69,6 +78,14 @@ public class OrderController {
         log.info("OrderController getOrderShopList OrderListInput orderListInput={}", orderListInput);
         EasyUIResult data = orderService.getOrderShopList(orderListInput);
         log.info("OrderController getShopOrderList return {}", data);
+        return data;
+    }
+
+    @RequestMapping("deleteOrder")
+    private SysResult deleteOrder(String orderId) throws Exception {
+        log.info("OrderController deleteOrder String orderId={}", orderId);
+        SysResult data = orderService.deleteOrder(orderId);
+        log.info("OrderController deleteOrder return {}", data);
         return data;
     }
 

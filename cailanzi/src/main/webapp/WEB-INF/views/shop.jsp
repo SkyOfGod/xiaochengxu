@@ -38,6 +38,7 @@
             {field:'venderName',title:'商家名称',width:120,align:'center'},
             {field:'stationName',title:'门店名称',width:180,align:'center'},
             {field:'stationNo',title:'到家门店编码',width:90,align:'center'},
+            {field:'outSystemId',title:'商家门店编码',width:90,align:'center'},
             {field:'cityName',title:'城市名称',width:60,align:'center'},
             {field:'countyName',title:'镇名称',width:60,align:'center'},
             {field:'phone',title:'门店电话',width:100,align:'center'},

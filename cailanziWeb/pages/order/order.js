@@ -2,6 +2,7 @@
 var app = getApp();
 Page({
   data: {
+    urlPrefix: app.globalData.urlPrefix,
     winWidth: 0,
     winHeight: 0,
     // tab切换  
@@ -11,6 +12,7 @@ Page({
     orders2: null,//待收货
     orders3: null,//待配送
     orders4: null,//已完成
+    orders5: null,//已退款
     isReadyer:false,//是否是备货员
     isSender:false,//是否是收货员
     nowDate:null,//当前日期
@@ -18,6 +20,7 @@ Page({
     readyEndDate: null,
     finishDate: null,
     finishTotal:0,
+    returnDate:null,
   },
   bindChange: function (e) {
     var that = this;
@@ -45,8 +48,12 @@ Page({
       }
       if (current == 3) {
         that.loadOrder3List();
-        this.setData({ finishDate: this.data.nowDate });
+        // this.setData({ finishDate: this.data.nowDate });
         that.loadOrder4List();
+      }
+      if (current == 4) {
+        // this.setData({ returnDate: this.data.nowDate });
+        that.loadOrder5List();
       }
     };
   },
@@ -170,6 +177,37 @@ Page({
     });
   },
 
+  //退单
+  loadOrder5List: function () {
+    wx.showLoading({ title: '加载中', icon: 'loading' });
+    var that = this;
+    var userInfo = wx.getStorageSync('userInfo');
+    wx.request({
+      url: app.globalData.urlPrefix + '/order/web/order5List',
+      method: 'POST',
+      data: {
+        type: userInfo.type,
+        username: userInfo.username,
+        belongStationNo: userInfo.belongStationNo,
+        startTime: that.data.returnDate,
+      },
+      header: { "Content-Type": "application/x-www-form-urlencoded" },
+      success: function (res) {
+        if (res.data.data) {
+          if (res.data.data.length > 0) {
+            that.setData({ orders5: res.data.data });
+          } else {
+            that.setData({ orders5: null });
+          }
+        }
+        wx.hideLoading();
+      },
+      fail: function () {
+        wx.showToast({ title: '网络异常！', duration: 2000, icon: 'none' });
+      }
+    });
+  },
+
   initSystemInfo: function () {
     var that = this;
     wx.getSystemInfo({
@@ -267,13 +305,14 @@ Page({
       this.initDate();
       this.loadOrderList();
       this.loadOrder2List();
+      app.connectSocket();
     };
   },
 
   initDate: function(){
     var date = new Date();
     var time = date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate();
-    this.setData({ nowDate: time, readyDate: time, readyEndDate: time});
+    this.setData({ nowDate:time,readyDate:time,readyEndDate:time,finishDate:time,returnDate:time });
   },
 
   onShow: function(){
@@ -341,6 +380,15 @@ Page({
     }
     this.setData({ orders4: list });
   },
+  kindToggle5: function (e) {
+    var id = e.currentTarget.dataset.orderid, list = this.data.orders5;
+    for (var i = 0, len = list.length; i < len; ++i) {
+      if (list[i].orderId == id) {
+        list[i].open = !list[i].open
+      }
+    }
+    this.setData({ orders5: list });
+  },
 
   bindReadyDateChange: function (e) {
     this.setData({ readyDate: e.detail.value });
@@ -350,10 +398,13 @@ Page({
     this.setData({ readyEndDate: e.detail.value });
     this.loadOrderList();
   },
-
   bindDateChange: function (e) {
     this.setData({ finishDate: e.detail.value});
     this.loadOrder4List();
+  },
+  bindReturnDateChange: function (e) {
+    this.setData({ returnDate: e.detail.value });
+    this.loadOrder5List();
   },
 
 })

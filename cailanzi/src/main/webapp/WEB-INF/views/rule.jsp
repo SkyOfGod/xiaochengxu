@@ -17,7 +17,7 @@
             </tr>
             <tr>
                 <td>比率:</td>
-                <td><input class="easyui-numberbox" name="rate" style="width: 200px;" data-options="required:true"/></td>
+                <td><input class="easyui-numberbox" name="rate" style="width: 100px;" data-options="required:true"/>%</td>
             </tr>
             <tr>
                 <td>是否有效:</td>

@@ -1,10 +1,14 @@
 package com.cailanzi.service;
 
 import com.cailanzi.Exception.ServiceException;
+import com.cailanzi.mapper.OrderShopMapper;
+import com.cailanzi.mapper.ProductMapper;
 import com.cailanzi.mapper.UserMapper;
 import com.cailanzi.pojo.EasyUIResult;
 import com.cailanzi.pojo.SysResult;
 import com.cailanzi.pojo.UserImport;
+import com.cailanzi.pojo.entities.OrderShop;
+import com.cailanzi.pojo.entities.Product;
 import com.cailanzi.pojo.entities.ProductJd;
 import com.cailanzi.pojo.entities.User;
 import com.cailanzi.utils.MD5Util;
@@ -28,6 +32,8 @@ public class UserService {
 
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private ProductMapper productMapper;
 
     public SysResult login(String username, String password, Integer type) throws ServiceException{
         List<User> userList = userMapper.selectByUsername(username,type);
@@ -75,17 +81,27 @@ public class UserService {
         user.setCreateTime(new Date());
         String passwordMd5 = MD5Util.getMD5String(user.getPassword());
         user.setPassword(passwordMd5);
-        String signMD5 = MD5Util.getMD5String(user.getUsername()+user.getPassword());
+        String signMD5 = MD5Util.getMD5String(user.getUsername()+user.getPassword()+user.getType()+user.getBelongStationNo());
         user.setSign(signMD5);
         log.info("UserService addUser user={}", user);
         userMapper.insertSelective(user);
     }
 
-    public void deleteUser(String ids) {
-        log.info("UserService deleteUser ids={}", ids);
-        String[] arr = ids.split(",");
-        for (String id : arr) {
-            userMapper.deleteByPrimaryKey(id);
+    public void editUser(User user) {
+        userMapper.updateByPrimaryKeySelective(user);
+    }
+
+    public void deleteUser(String names) {
+        log.info("UserService deleteUser ids={}", names);
+        String[] arr = names.split(",");
+        for (String name : arr) {
+            User user = new User();
+            user.setUsername(name);
+            userMapper.delete(user);
+
+            Product product = new Product();
+            product.setPhone(name);
+            productMapper.delete(product);
         }
     }
 
@@ -95,4 +111,6 @@ public class UserService {
         log.info("UserService comgridList return list={}", list);
         return list;
     }
+
+
 }

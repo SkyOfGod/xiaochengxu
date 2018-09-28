@@ -32,5 +32,6 @@ public class ProductJd {
     private Date fixedUpTime;
     private Date fixedDownTime;
     private Date syncTime;
+    private String imgUrl;
 
 }

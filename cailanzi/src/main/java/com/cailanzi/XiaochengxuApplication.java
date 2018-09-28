@@ -10,6 +10,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * rabbitMQ自动配置
@@ -22,6 +23,8 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @SpringBootApplication
 @EnableAsync
 @EnableRabbit//开启基于注解的监听
+@EnableTransactionManagement
+//@EnableWebSocket
 public class XiaochengxuApplication  extends SpringBootServletInitializer {
 
 	public static void main(String[] args) {
@@ -41,5 +44,6 @@ public class XiaochengxuApplication  extends SpringBootServletInitializer {
 	public MessageConverter messageConverter(){
 		return new Jackson2JsonMessageConverter();
 	}
+
 
 }

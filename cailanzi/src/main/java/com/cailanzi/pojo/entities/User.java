@@ -31,6 +31,8 @@ public class User {
 
     private String belongStationName;
 
+    private String remark;
+
     private Date createTime;
 
 }

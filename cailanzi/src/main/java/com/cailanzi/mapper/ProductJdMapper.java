@@ -15,6 +15,8 @@ import java.util.List;
 @Mapper
 public interface ProductJdMapper extends MyMapper<ProductJd> {
 
+    List<ProductJd> selectDynamic(ProductListInput productListInput);
+
     void truncateProductJd();
 
     List<ProductJd> comgridJdList(@Param("q") String q,@Param("belongStationNo") String belongStationNo);
@@ -30,4 +32,10 @@ public interface ProductJdMapper extends MyMapper<ProductJd> {
     List<ProductJd> selectByStationNoLeftJoinProductStatus(String stationNo);
 
     List<ProductJd> productJdComgrid(@Param("q") String q);
+
+    void backupImgUrl();
+
+    void callImgUrl();
+
+    void truncateProductJdBak();
 }

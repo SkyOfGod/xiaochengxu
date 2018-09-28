@@ -13,6 +13,7 @@ import com.cailanzi.pojo.entities.Product;
 import com.cailanzi.pojo.entities.ProductOrderJd;
 import com.cailanzi.utils.ConstantsUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.message.ReusableMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -35,10 +36,9 @@ public class OrderAsync {
 
 //    @Async
     public void insertOrderJd(JSONArray jsonArray) {
-        Date date = new Date();
-
         JSONObject orderJsonObject = JSON.parseObject(jsonArray.get(0).toString());
         String orderId = orderJsonObject.getString("orderId");
+        String orderStatus = getOrderStatus(orderJsonObject);
 
         List<ProductOrderJd> productList = new ArrayList<>();
         JSONArray proJSonArray = orderJsonObject.getJSONArray("product");
@@ -47,14 +47,27 @@ public class OrderAsync {
             productList.add(getProductOrderJd(orderId,orderProductJsonObject));
         }
         if(!productList.isEmpty()){
-            OrderJd orderJd = getOrderJd(date,orderJsonObject);
+            OrderJd orderJd = getOrderJd(orderJsonObject,orderStatus);
             log.info("OrderAsync insertOrderJd OrderJd orderJd={}", orderJd);
             orderJdMapper.insert(orderJd);
             log.info("OrderAsync insertOrderJd insertList List<ProductOrderJd> productList={}", productList);
             productOrderJdMapper.insertList(productList);
 
-            insertOrderShop(orderId);
+            insertOrderShop(orderId,orderStatus);
         }
+    }
+
+    private String getOrderStatus(JSONObject orderJsonObject) {
+        String status = ConstantsUtil.Status.READY;
+        String orderStatus = orderJsonObject.getString("orderStatus");
+        if("33040".equals(orderStatus)){
+            status = ConstantsUtil.Status.DELIVERY_TO;
+        }else if("33060".equals(orderStatus)){
+            status = ConstantsUtil.Status.FINISH;
+        }else if("20020".equals(orderStatus)){
+            status = ConstantsUtil.Status.QUIT;
+        }
+        return status;
     }
 
     public boolean isExitOrder(String orderId) {
@@ -74,14 +87,14 @@ public class OrderAsync {
         return productOrderJd;
     }
 
-    private OrderJd getOrderJd(Date date,JSONObject orderJsonObject) {
+    private OrderJd getOrderJd(JSONObject orderJsonObject,String status) {
         OrderJd orderJd = JSONObject.toJavaObject(orderJsonObject,OrderJd.class);
-        orderJd.setStatus(ConstantsUtil.Status.READY);
-        orderJd.setCreateTime(date);
+        orderJd.setStatus(status);
+        orderJd.setCreateTime(new Date());
         return orderJd;
     }
 
-    public void insertOrderShop(String orderId) {
+    public void insertOrderShop(String orderId,String orderStatus) {
         Date date = new Date();
         List<OrderShop> inList = new ArrayList<>();
 
@@ -91,11 +104,10 @@ public class OrderAsync {
             if(isExitOrderShop(orderId,username)){
                 continue;
             }
-            orderShop.setOrderId(orderId);
             orderShop.setCreateTime(date);
             orderShop.setUpdateTime(date);
             orderShop.setSkuStatus(ConstantsUtil.ProductStatus.READY);
-            orderShop.setOrderStatus(ConstantsUtil.Status.READY);
+            orderShop.setOrderStatus(orderStatus);
             inList.add(orderShop);
         }
         if(!inList.isEmpty()){

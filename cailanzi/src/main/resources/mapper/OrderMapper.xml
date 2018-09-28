@@ -8,14 +8,19 @@
         a.produce_station_name produceStationName,a.buyer_full_name buyerFullName,a.`status`,
         a.buyer_full_address buyerFullAddress,a.buyer_mobile buyerMobile,a.create_time createTime,
         b.sku_id skuId,b.sku_name skuName,b.sku_jd_price skuJdPrice,b.sku_count skuCount,
-        b.sku_store_price skuStorePrice,b.sku_cost_price skuCostPrice,b.sku_weight skuWeight,b.sku_status skuStatus
+        b.sku_store_price skuStorePrice,b.sku_cost_price skuCostPrice,b.sku_weight skuWeight,
+        b.sku_status skuStatus,a.order_start_time orderStartTime
         FROM order_jd a
         JOIN product_order_jd b ON b.order_id = a.order_id
         <where>
             <if test="orderId!=null and orderId.trim()!=''">
                 AND a.order_id = #{orderId}
             </if>
+            <if test="deliveryStationNo!=null and deliveryStationNo.trim()!=''">
+                AND a.produce_station_no = #{deliveryStationNo}
+            </if>
         </where>
+        ORDER BY a.create_time DESC
     </select>
 
     <!--
@@ -24,9 +29,10 @@
     <select id="getOrderShopJdList" resultType="OrderUnion">
         SELECT a.order_id orderId,a.order_num orderNum,b.sku_id skuId,b.sku_name skuName,
         b.sku_count skuCount,b.sku_store_price skuStorePrice,b.sku_status skuStatus,
-        a.order_buyer_remark orderBuyerRemark,a.create_time createTime
+        a.order_buyer_remark orderBuyerRemark,a.create_time createTime,c.img_url imgUrl
         FROM order_jd a
         JOIN product_order_jd b ON b.order_id=a.order_id
+        JOIN product_jd c ON c.sku_id=b.sku_id
         WHERE a.produce_station_no = #{belongStationNo} AND a.`status` = #{orderStatus}
         <if test="startTime != null and endTime != null">
             AND a.create_time BETWEEN #{startTime} AND #{endTime}

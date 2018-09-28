@@ -21,6 +21,7 @@ public class OrderUnion {
     private String status;
     private String orderBuyerRemark;
     private Date createTime;
+    private String orderStartTime;
 
     private Long skuId;
     private String skuName;
@@ -31,5 +32,6 @@ public class OrderUnion {
     private Integer skuJdPrice;
     private Integer skuCostPrice;
     private Float skuWeight;
+    private String imgUrl;
 
 }

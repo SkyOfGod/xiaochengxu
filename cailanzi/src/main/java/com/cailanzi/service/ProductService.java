@@ -3,9 +3,11 @@ package com.cailanzi.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.cailanzi.Exception.ServiceException;
 import com.cailanzi.mapper.*;
 import com.cailanzi.pojo.ProductListInput;
 import com.cailanzi.pojo.ProductStatusInput;
+import com.cailanzi.pojo.QueryStockRequest;
 import com.cailanzi.pojo.entities.*;
 import com.cailanzi.utils.ConstantsUtil;
 import com.cailanzi.utils.JdHttpCilentUtil;
@@ -35,6 +37,7 @@ public class ProductService {
     public void asynProduct() throws Exception {
         ProductListInput productListInput = new ProductListInput();
         productListInput.setPageSize(50);//每页最大只能为50
+        productListInput.setIsFilterDel("0");
 
         int pageNo = 1;
         JSONArray products = new JSONArray();
@@ -72,8 +75,14 @@ public class ProductService {
             jd.setSyncTime(date);
             list.add(jd);
         }
+        //备份图片地址
+        productJdMapper.backupImgUrl();
+
         productJdMapper.truncateProductJd();
         productJdMapper.insertList(list);
+        //重新插入图片地址
+        productJdMapper.callImgUrl();
+        productJdMapper.truncateProductJdBak();
     }
 
     private String getJdProductList(ProductListInput productListInput) throws Exception {
@@ -216,4 +225,52 @@ public class ProductService {
         return data.getJSONArray("result");
     }
 
+    public void updateProductPrice(Long skuId, String stationNo, Integer price) throws Exception {
+        String url = "https://openo2o.jd.com/djapi/price/updateStationPrice";
+        Map<String,Object> map = new HashMap<>();
+        map.put("skuId",skuId);
+        map.put("stationNo",stationNo);
+        map.put("price",price);
+        String jdParamJson = JSON.toJSONString(map);
+        log.info("ProductService updateProductPrice String jdParamJson={}", jdParamJson);
+        try {
+            JdHttpCilentUtil.doGetAndGetData(url,jdParamJson);
+        }catch (ServiceException e){
+            log.info("修改京东商品价格失败："+e.getMessage());
+            throw new ServiceException("修改京东商品价格失败："+e.getMessage(),e);
+        }
+    }
+
+    public void updateProductVendibility(String stationNo, Long skuId, Byte vendibility) throws Exception {
+        String url = "https://openo2o.jd.com/djapi/stock/updateVendibility";
+        QueryStockRequest queryStockRequest = new QueryStockRequest(stationNo,skuId.toString(),vendibility.toString());
+        Map<String,Object> map = new HashMap<>();
+        List<QueryStockRequest> list = new ArrayList<QueryStockRequest>();
+        list.add(queryStockRequest);
+        map.put("listBaseStockCenterRequest",list);
+        String jdParamJson = JSON.toJSONString(map);
+        log.info("ProductService updateProductVendibility String jdParamJson={}", jdParamJson);
+        try {
+            JdHttpCilentUtil.doGetAndGetData(url,jdParamJson,"0","retCode","retMsg");
+        }catch (ServiceException e){
+            log.info("修改京东商品可售状态失败："+e.getMessage());
+            throw new ServiceException("修改京东商品可售状态失败："+e.getMessage(),e);
+        }
+    }
+
+    public void updateProductStore(String stationNo, Long skuId, Integer currentQty) throws Exception {
+        String url = "https://openo2o.jd.com/djapi/stock/update";
+        Map<String,Object> map = new HashMap<>();
+        map.put("stationNo",stationNo);
+        map.put("skuId",skuId);
+        map.put("currentQty",currentQty);
+        String jdParamJson = JSON.toJSONString(map);
+        log.info("ProductService updateProductStore String jdParamJson={}", jdParamJson);
+        try {
+            JdHttpCilentUtil.doGetAndGetData(url,jdParamJson,"0","retCode","retMsg");
+        }catch (ServiceException e){
+            log.info("修改京东商品库存失败："+e.getMessage());
+            throw new ServiceException("修改京东商品库存失败："+e.getMessage(),e);
+        }
+    }
 }

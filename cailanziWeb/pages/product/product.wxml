@@ -39,7 +39,7 @@
       </view>
       <view class='right-list' wx:for="{{products}}">
         <view class="shop df">        
-          <image class="sh_slt" src="/images/search_no.png"/>
+          <image class="sh_slt" src="{{urlPrefix}}{{item.imgUrl}}"/>
           <view class="df_1">            
               <view class="sp_text">
                   <!-- <navigator url="../index/detail?productId={{item.skuId}}" hover-class="changestyle"> -->

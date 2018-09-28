@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.xml.transform.Result;
 import java.util.*;
@@ -33,20 +34,12 @@ public class ProductItemService {
     private ProductStatusMapper productStatusMapper;
     @Autowired
     private ProductCategoryMapper productCategoryMapper;
+    @Autowired
+    private ProductService productService;
 
     public EasyUIResult queryJdProductPage(ProductListInput productListInput) {
         PageHelper.startPage(productListInput.getPageNo(),productListInput.getPageSize());
-        ProductJd product = new ProductJd();
-        if(StringUtils.isNotBlank(productListInput.getSkuId())){
-            product.setSkuId(Long.parseLong(productListInput.getSkuId()));
-        }
-        if(StringUtils.isNotBlank(productListInput.getFixedStatus())){
-            product.setFixedStatus(Byte.parseByte(productListInput.getFixedStatus()));
-        }
-        if(StringUtils.isNotBlank(productListInput.getSkuName())){
-            product.setSkuName(productListInput.getSkuName());
-        }
-        List<ProductJd> list = productJdMapper.select(product);
+        List<ProductJd> list = productJdMapper.selectDynamic(productListInput);
         log.info("ProductItemService queryJdProductPage list={}", list);
         PageInfo<ProductJd> pageInfo = new PageInfo<>(list);
         return new EasyUIResult(pageInfo.getTotal(),pageInfo.getList());
@@ -82,16 +75,39 @@ public class ProductItemService {
         productMapper.insertSelective(product);
     }
 
-
-    public void updateProduct(Product product) throws Exception{
+    /*public void updateProduct(Product product) throws Exception{
         product.setUpdateTime(new Date());
         productMapper.updateByPrimaryKeySelective(product);
-    }
+    }*/
 
-    private void updateProductOfStorePriceVendibility(Product product) {
+    /**
+     * 修改商户商品 库存/价格/可售状态  根据比率触发京东商品
+     * @param product
+     */
+    @Transactional
+    public void updateProductOfStorePriceVendibility(Product product) throws Exception{
         product.setUpdateTime(new Date());
         log.info("ProductItemService updateProductOfStorePriceVendibility product={}", product);
+
+        ProductStatus productStatus = new ProductStatus();
+        productStatus.setStationNo(product.getBelongStationNo());
+        productStatus.setSkuId(product.getSkuId());
+        if(product.getPrice()!=null){
+            Integer rate = productMapper.getRateBySkuId(product.getSkuId());
+            if(rate==null){
+                throw new ServiceException("未设置商品对应的比率");
+            }
+            Integer ratePrice = product.getPrice()*rate/100;
+            productStatus.setPrice(ratePrice);
+        }
+        if(product.getStoreNum()!=null){
+            productStatus.setCurrentQty(product.getStoreNum());
+        }
+        if(product.getIsSell()!=null){
+            productStatus.setVendibility(product.getIsSell());
+        }
         productMapper.updateProductOfStorePriceVendibility(product);
+        updateProductStatusOfStorePriceVendibility(productStatus);
     }
 
     public void deleteProduct(String ids) throws Exception{
@@ -187,35 +203,54 @@ public class ProductItemService {
     /****************************** ProductStatus **************************************/
     public EasyUIResult queryProductStatusPage(ProductListInput productListInput) {
         PageHelper.startPage(productListInput.getPageNo(),productListInput.getPageSize());
-
-        ProductStatus product = new ProductStatus();
-        if(StringUtils.isNotBlank(productListInput.getStationNo())){
-            product.setStationNo(productListInput.getStationNo());
-        }
-        if(StringUtils.isNotBlank(productListInput.getVendibility())){
-            product.setVendibility(Byte.parseByte(productListInput.getVendibility()));
-        }
-        List<ProductStatus> list = productStatusMapper.select(product);
+        List<ProductStatus> list = productStatusMapper.selectDynamic(productListInput);
         log.info("ProductItemService queryProductStatusPage list={}", list);
         PageInfo<ProductStatus> pageInfo = new PageInfo<>(list);
         return new EasyUIResult(pageInfo.getTotal(),pageInfo.getList());
     }
 
-    public void updateProductStatusOfStorePriceVendibility(ProductStatus productStatus) throws Exception{
+    /**
+     * 修改京东商品 库存/价格/可售状态 触发京东接口修改
+     * @param productStatus
+     * @throws Exception
+     */
+    @Transactional
+    public void updateProductStatusOfStorePriceVendibility(ProductStatus productStatus) throws Exception {
         log.info("ProductItemService updateProduct productStatus={}", productStatus);
-        productStatusMapper.updateStoreAndStatus(productStatus);
+        //修改京东价格
+        Long skuId = productStatus.getSkuId();
+        String stationNo = productStatus.getStationNo();
+        if(productStatus.getPrice()!=null){
+            productService.updateProductPrice(skuId,stationNo,productStatus.getPrice());
+        }
+        //修改京东现货库存
+        if(productStatus.getCurrentQty()!=null){
+            productService.updateProductStore(stationNo,skuId,productStatus.getCurrentQty());
+        }
+        //修改京东可售状态
+        if(productStatus.getVendibility()!=null){
+            productService.updateProductVendibility(stationNo,skuId,productStatus.getVendibility());
+        }
+        productStatusMapper.updateProductStatusOfStorePriceVendibility(productStatus);
     }
 
+    @Transactional
     public SysResult updateStorePriceVendibility(ProductListInput productListInput) throws Exception {
         Integer store = null,price = null;
         Byte vendibility = null;
+        Product product = new Product();
         try{
-            if(StringUtils.isNotBlank(productListInput.getSkuStore())&&StringUtils.isNotBlank(productListInput.getSkuPrice())){
+            if(StringUtils.isNotBlank(productListInput.getSkuStore())){
                 store = Integer.parseInt(productListInput.getSkuStore());
+                product.setStoreNum(store);
+            }
+            if(StringUtils.isNotBlank(productListInput.getSkuPrice())){
                 price = Integer.parseInt(productListInput.getSkuPrice());
+                product.setPrice(price);
             }
             if(StringUtils.isNotBlank(productListInput.getVendibility())){
                 vendibility = Byte.parseByte(productListInput.getVendibility());
+                product.setIsSell(vendibility);
             }
         }catch (Exception e){
             return SysResult.build(201,"数据格式不正确");
@@ -225,22 +260,17 @@ public class ProductItemService {
         String stationNo = productListInput.getStationNo();
         String type = productListInput.getType();
         if(ConstantsUtil.UserType.READYER.equals(type)){
-            Product product = new Product();
             product.setPhone(phone);
             product.setBelongStationNo(stationNo);
             product.setSkuId(skuId);
-            product.setIsSell(vendibility);
-            product.setPrice(price);
-            product.setStoreNum(store);
             updateProductOfStorePriceVendibility(product);
-            /*ProductStatus productStatus = new ProductStatus();
-            productStatus.setStationNo(stationNo);
-            productStatus.setSkuId(Long.parseLong(skuId));
-            updateProductStatusOfStorePrice(productStatus);*/
             return SysResult.build(200);
-        }else {
+        } else {
             return SysResult.build(201,"未开放修改功能");
         }
     }
 
+    public void updateProductImg(ProductJd productjd) {
+        productJdMapper.updateByPrimaryKeySelective(productjd);
+    }
 }

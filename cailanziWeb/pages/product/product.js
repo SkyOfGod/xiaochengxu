@@ -1,6 +1,7 @@
 var app = getApp();
 Page({
   data: {
+    urlPrefix: app.globalData.urlPrefix,
     categoriesList: [],
     products: null,
     pageNo: 0,
@@ -164,10 +165,6 @@ Page({
     var that = this;
     var storeInput = this.data.storeInput;
     var priceInput = this.data.priceInput;
-    if (!parseInt(storeInput) || !parseInt(priceInput)){
-      wx.showToast({ title: '数据格式不正确！', duration: 2000, icon: 'none' });
-      return;
-    }
     wx.showLoading({ title: '保存中', icon: 'loading' });
     var userInfo = wx.getStorageSync("userInfo");
     var product = this.data.setProduct;
@@ -199,7 +196,7 @@ Page({
           }
           that.setData({ products: products});
         } else if (res.data.status === 201){
-          wx.showToast({ title: res.data.msg, duration: 1000, icon: 'none' });
+          wx.showToast({ title: res.data.msg, duration: 2000, icon: 'none' });
         }
       },
       error: function (e) {
@@ -242,7 +239,7 @@ Page({
           }
           that.setData({ products: products });
         } else if (res.data.status === 201) {
-          wx.showToast({ title: res.data.msg, duration: 1000, icon: 'none' });
+          wx.showToast({ title: res.data.msg, duration: 2000, icon: 'none' });
         }
       },
       error: function (e) {

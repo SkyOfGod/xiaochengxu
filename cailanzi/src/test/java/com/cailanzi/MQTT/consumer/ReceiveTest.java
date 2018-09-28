@@ -7,7 +7,7 @@ import com.aliyun.openservices.ons.api.order.MessageOrderListener;
 import com.aliyun.openservices.ons.api.order.OrderAction;
 import com.aliyun.openservices.ons.api.order.OrderConsumer;
 import com.cailanzi.MQTT.MqConfig;
-import com.cailanzi.RabbitMQ.MessageNotify.pojo.MqOrder;
+import com.cailanzi.rabbitMQ.messageNotify.pojo.MqOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;

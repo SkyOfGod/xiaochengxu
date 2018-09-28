@@ -39,8 +39,6 @@ public class Product {
 
     private String description;
 
-    private String imgUrl;
-
     private Date createTime;
 
     private Date updateTime;

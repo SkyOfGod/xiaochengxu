@@ -28,5 +28,6 @@ public class OrderJd {
     private String status;
     private Date createTime;
     private String orderBuyerRemark;
+    private String orderStartTime;
 
 }

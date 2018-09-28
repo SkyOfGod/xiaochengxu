@@ -3,8 +3,8 @@ package com.cailanzi;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.cailanzi.RabbitMQ.MessageNotify.pojo.JdOrderImport;
-import com.cailanzi.RabbitMQ.RabbitListener.OrderServiceListener;
+import com.cailanzi.rabbitMQ.messageNotify.pojo.JdOrderImport;
+import com.cailanzi.rabbitMQ.rabbitListener.OrderServiceListener;
 import com.cailanzi.mapper.OrderJdMapper;
 import com.cailanzi.mapper.ProductJdMapper;
 import com.cailanzi.mapper.ProductMapper;
@@ -83,9 +83,10 @@ public class XiaochengxuApplicationTests {
 	@Test
 	public void testGetOrderListResultData() throws Exception {
 		OrderListInput orderListInput = new OrderListInput();
-		orderListInput.setDeliveryStationNo("11673747");//菜蓝子－扫把塘店
+		orderListInput.setDeliveryStationNo("11805772");
 		orderListInput.setPageSize(100);
 		orderListInput.setOrderStatus(ConstantsUtil.Status.READY);
+		orderListInput.setOrderId("822686242000441");
 
 		String result = orderServiceListener.getOrderListResultData(orderListInput);
 		JSONObject resultJson = JSON.parseObject(result);

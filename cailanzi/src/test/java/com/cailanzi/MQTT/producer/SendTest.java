@@ -10,7 +10,7 @@ import com.aliyun.openservices.ons.api.SendResult;
 
 import com.aliyun.openservices.ons.api.order.OrderProducer;
 import com.cailanzi.MQTT.MqConfig;
-import com.cailanzi.RabbitMQ.MessageNotify.pojo.MqOrder;
+import com.cailanzi.rabbitMQ.messageNotify.pojo.MqOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;

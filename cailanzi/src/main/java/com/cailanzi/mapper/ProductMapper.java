@@ -20,4 +20,6 @@ public interface ProductMapper extends MyMapper<Product>{
     void updateProductStatusEqualOrderShop(OrderListInput orderListInput);
 
     void updateProductOfStorePriceVendibility(Product product);
+
+    Integer getRateBySkuId(Long skuId);
 }

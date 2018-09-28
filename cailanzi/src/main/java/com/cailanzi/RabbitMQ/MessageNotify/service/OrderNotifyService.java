@@ -1,10 +1,10 @@
-package com.cailanzi.RabbitMQ.MessageNotify.service;
+package com.cailanzi.rabbitMQ.messageNotify.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONPObject;
-import com.cailanzi.RabbitMQ.MessageNotify.pojo.JdOrderImport;
-import com.cailanzi.RabbitMQ.MessageNotify.pojo.MqOrder;
+import com.cailanzi.rabbitMQ.messageNotify.pojo.JdOrderImport;
+import com.cailanzi.rabbitMQ.messageNotify.pojo.MqOrder;
 import com.cailanzi.pojo.JdResult;
 import com.cailanzi.utils.JdHelper;
 import com.cailanzi.utils.JdHttpCilentUtil;
@@ -29,7 +29,7 @@ public class OrderNotifyService {
 
     private final static String EXCHANGE_DIRECT = "exchange.direct";
 
-    private final static String ADD_ROUTING_KEY = "order.add";
+    private final static String ADD_ROUTING_KEY = "order.create";
 
     private final static String QUIT_ROUTING_KEY = "order.quit";
 

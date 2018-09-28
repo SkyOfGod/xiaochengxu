@@ -14,7 +14,7 @@ import java.util.List;
 @Mapper
 public interface OrderMapper {
 
-    List<OrderJdVo> getOrderList(OrderListInput orderListInput);
+    List<OrderUnion> getOrderList(OrderListInput orderListInput);
 
     List<OrderUnion> getOrderShopJdList(OrderListInput orderListInput);
 }

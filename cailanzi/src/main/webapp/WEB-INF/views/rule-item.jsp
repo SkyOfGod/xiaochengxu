@@ -54,7 +54,7 @@
             {field:'ruleId',title:'组ID',width:100,align:'center'},
             {field:'ruleName',title:'组名称',width:200,align:'center'},
             {field:'skuId',title:'到家商品编码',width:200,align:'center'},
-            {field:'skuName',title:'商品名称',width:300,align:'center'},
+            {field:'skuName',title:'商品名称',width:450,align:'center'},
             {field:'createTime',title:'创建时间',width:150,align:'center'},
         ]],
         onBeforeLoad: function (param) {

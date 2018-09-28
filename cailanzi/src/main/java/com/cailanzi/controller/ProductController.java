@@ -66,10 +66,21 @@ public class ProductController {
         return SysResult.build(200);
     }
 
-    @RequestMapping(value = "updateProduct",method = RequestMethod.POST)
+   /* @RequestMapping(value = "updateProduct",method = RequestMethod.POST)
     public SysResult updateProduct(Product product) throws Exception {
-        productItemService.updateProduct(product);
         log.info("ProductController updateProduct product={}",product);
+        productItemService.updateProduct(product);
+        return SysResult.build(200);
+    }*/
+
+    @RequestMapping(value = "updateProductOfStorePriceVendibility",method = RequestMethod.POST)
+    public SysResult updateProductOfStorePriceVendibility(Product product) throws Exception {
+        log.info("ProductController updateProductOfStorePriceVendibility product={}",product);
+        try {
+            productItemService.updateProductOfStorePriceVendibility(product);
+        }catch (ServiceException e){
+            return SysResult.build(201,e.getMessage());
+        }
         return SysResult.build(200);
     }
 
@@ -114,7 +125,7 @@ public class ProductController {
     }
 
     /**
-     * 后台管理界面：修改商品（product_status）库存、价格、可售状态
+     * 后台管理界面：修改京东商品（product_status）库存、价格、可售状态
      * @param productStatus
      * @return
      * @throws Exception
@@ -122,8 +133,23 @@ public class ProductController {
     @RequestMapping(value = "updateProductStatusOfStorePriceVendibility",method = RequestMethod.POST)
     public SysResult updateProductStatusOfStorePriceVendibility(ProductStatus productStatus) throws Exception {
         log.info("ProductController updateProductStatusOfStorePriceVendibility productStatus={}",productStatus);
-        productItemService.updateProductStatusOfStorePriceVendibility(productStatus);
-        return SysResult.build(200);
+        try {
+            productItemService.updateProductStatusOfStorePriceVendibility(productStatus);
+            return SysResult.build(200);
+        }catch (ServiceException e){
+            return SysResult.build(201,e.getMessage());
+        }
+    }
+
+    @RequestMapping(value = "updateProductImg",method = RequestMethod.POST)
+    public SysResult updateProductImg(ProductJd productjd) throws Exception {
+        log.info("ProductController updateProductImg productjd={}",productjd);
+        try {
+            productItemService.updateProductImg(productjd);
+            return SysResult.build(200);
+        }catch (ServiceException e){
+            return SysResult.build(201,e.getMessage());
+        }
     }
 
 

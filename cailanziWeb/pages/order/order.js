@@ -2,9 +2,7 @@
 var app = getApp();
 Page({
   data: {
-    urlPrefix: app.globalData.urlPrefix,
-    winWidth: 0,
-    winHeight: 0,
+    imgUrlPrefix: app.globalData.imgUrlPrefix,
     // tab切换  
     currentTab: 0,
     page: 0,
@@ -72,9 +70,7 @@ Page({
         startTime: that.data.readyDate,
         endTime: that.data.readyEndDate
       },
-      header: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
+      header: {"Content-Type": "application/x-www-form-urlencoded"},
       success: function (res) {
         if (res.data.data&&res.data.data.length>0){
           that.setData({ orders: res.data.data});
@@ -208,15 +204,6 @@ Page({
     });
   },
 
-  initSystemInfo: function () {
-    var that = this;
-    wx.getSystemInfo({
-      success: function (res) {
-        that.setData({winWidth: res.windowWidth,winHeight: res.windowHeight});
-      } 
-    });
-  },
-
   toDelivery: function (e){
     var that = this;
     wx.showModal({
@@ -300,32 +287,43 @@ Page({
   },
 
   onLoad: function (options) {
+    this.initDate();
     if (app.validateUser()) {
-      // this.initSystemInfo();
-      this.initDate();
       this.loadOrderList();
       this.loadOrder2List();
       app.connectSocket();
+      this.onMessage();
     };
+  },
+
+  onMessage: function(){
+    var that = this;
+    wx.onSocketMessage(function (res) {
+      console.log("收到服务器消息：" + res.data)
+      that.loadOrderList();
+    })
+  },
+
+  onShow: function () {
+    var userInfo = wx.getStorageSync('userInfo');
+    if (userInfo) {
+      if (userInfo.type == 1) {
+        this.setData({ isReadyer: true });
+      } else {
+        this.setData({ isReadyer: false });
+      }
+      if (userInfo.type == 2) {
+        this.setData({ isSender: true });
+      } else {
+        this.setData({ isSender: false });
+      }
+    }
   },
 
   initDate: function(){
     var date = new Date();
     var time = date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate();
     this.setData({ nowDate:time,readyDate:time,readyEndDate:time,finishDate:time,returnDate:time });
-  },
-
-  onShow: function(){
-    if (wx.getStorageSync('userInfo').type == 1) {
-      this.setData({ isReadyer: true});
-    }else{
-      this.setData({ isReadyer: false});
-    }
-    if (wx.getStorageSync('userInfo').type == 2) {
-      this.setData({ isSender: true });
-    } else {
-      this.setData({ isSender: false });
-    }
   },
 
   onReachBottom: function () {
@@ -344,52 +342,6 @@ Page({
     }
   },
 
-  kindToggle: function (e) {
-    var id = e.currentTarget.dataset.orderid, list = this.data.orders;
-    for (var i = 0, len = list.length; i < len; ++i) {
-      if (list[i].orderId == id) {
-        list[i].open = !list[i].open
-      }
-    }
-    this.setData({orders: list});
-  },
-  kindToggle2: function (e) {
-    var id = e.currentTarget.dataset.orderid, list = this.data.orders2;
-    for (var i = 0, len = list.length; i < len; ++i) {
-      if (list[i].orderId == id) {
-        list[i].open = !list[i].open
-      }
-    }
-    this.setData({ orders2: list });
-  },
-  kindToggle3: function (e) {
-    var id = e.currentTarget.dataset.orderid, list = this.data.orders3;
-    for (var i = 0, len = list.length; i < len; ++i) {
-      if (list[i].orderId == id) {
-        list[i].open = !list[i].open
-      }
-    }
-    this.setData({ orders3: list });
-  },
-  kindToggle4: function (e) {
-    var id = e.currentTarget.dataset.orderid, list = this.data.orders4;
-    for (var i = 0, len = list.length; i < len; ++i) {
-      if (list[i].orderId == id) {
-        list[i].open = !list[i].open
-      }
-    }
-    this.setData({ orders4: list });
-  },
-  kindToggle5: function (e) {
-    var id = e.currentTarget.dataset.orderid, list = this.data.orders5;
-    for (var i = 0, len = list.length; i < len; ++i) {
-      if (list[i].orderId == id) {
-        list[i].open = !list[i].open
-      }
-    }
-    this.setData({ orders5: list });
-  },
-
   bindReadyDateChange: function (e) {
     this.setData({ readyDate: e.detail.value });
     this.loadOrderList();
@@ -405,6 +357,60 @@ Page({
   bindReturnDateChange: function (e) {
     this.setData({ returnDate: e.detail.value });
     this.loadOrder5List();
+  },
+
+  formSubmit: function (e) {
+    var id = e.currentTarget.dataset.orderid, list = this.data.orders;
+    this.kindToggleInit(id, list);
+    this.setData({ orders: list });
+    this.collectFormId(e.detail.formId);
+  },
+
+  formSubmit2: function (e) {
+    var id = e.currentTarget.dataset.orderid, list = this.data.orders2;
+    this.kindToggleInit(id, list);
+    this.setData({ orders2: list });
+    this.collectFormId(e.detail.formId);
+  },
+
+  formSubmit3: function (e) {
+    var id = e.currentTarget.dataset.orderid, list = this.data.orders3;
+    this.kindToggleInit(id, list);
+    this.setData({ orders3: list });
+    this.collectFormId(e.detail.formId);
+  },
+
+  formSubmit4: function (e) {
+    var id = e.currentTarget.dataset.orderid, list = this.data.orders4;
+    this.kindToggleInit(id, list);
+    this.setData({ orders4: list });
+    this.collectFormId(e.detail.formId); 
+  },
+
+  formSubmit5: function (e) {
+    var id = e.currentTarget.dataset.orderid, list = this.data.orders5;
+    this.kindToggleInit(id, list);
+    this.setData({ orders5: list });
+    this.collectFormId(e.detail.formId); 
+  },
+
+  kindToggleInit: function (id, list) {
+    for (var i = 0, len = list.length; i < len; ++i) {
+      if (list[i].orderId == id) {
+        list[i].open = !list[i].open
+      }
+    }
+  },
+
+  //保存推送码
+  collectFormId: function(formId){
+    console.log(formId);
+    if ("the formId is a mock one" == formId){
+      return;
+    }
+    wx.request({
+      url: app.globalData.urlPrefix + '/order/web/collectFormId?formId=' + formId,
+    })
   },
 
 })

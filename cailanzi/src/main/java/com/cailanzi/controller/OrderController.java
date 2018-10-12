@@ -3,7 +3,9 @@ package com.cailanzi.controller;
 import com.cailanzi.pojo.EasyUIResult;
 import com.cailanzi.pojo.OrderListInput;
 import com.cailanzi.pojo.SysResult;
+import com.cailanzi.rabbitMQ.messageNotify.pojo.MqOrder;
 import com.cailanzi.service.OrderService;
+import com.cailanzi.websocket.AddOrderSocket;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -65,6 +67,14 @@ public class OrderController {
         return data;
     }
 
+    @RequestMapping("web/collectFormId")
+    private void collectFormId(String formId) throws Exception {
+        log.info("OrderController collectFormId formId={}", formId);
+        orderService.collectFormId(formId);
+    }
+
+
+
     @RequestMapping("orderList")
     private EasyUIResult getOrderList(OrderListInput orderListInput) throws Exception {
         log.info("OrderController getOrderList OrderListInput orderListInput={}", orderListInput);
@@ -85,7 +95,6 @@ public class OrderController {
     private SysResult deleteOrder(String orderId) throws Exception {
         log.info("OrderController deleteOrder String orderId={}", orderId);
         SysResult data = orderService.deleteOrder(orderId);
-        log.info("OrderController deleteOrder return {}", data);
         return data;
     }
 
@@ -113,6 +122,13 @@ public class OrderController {
         return orderService.updateProductToStockout(orderListInput);
     }
 
+    //测试
+    @Autowired
+    private AddOrderSocket addOrderSocket;
 
+    @RequestMapping("testSendMsg")
+    private void testSendMsg(MqOrder mqOrder) throws Exception {
+        addOrderSocket.orderCreateMsg(mqOrder);
+    }
 
 }

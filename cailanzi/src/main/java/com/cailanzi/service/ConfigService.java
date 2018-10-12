@@ -2,7 +2,8 @@ package com.cailanzi.service;
 
 import com.cailanzi.mapper.ConfigMapper;
 import com.cailanzi.pojo.JdResult;
-import com.cailanzi.pojo.entities.TokenJd;
+import com.cailanzi.pojo.entities.Config;
+import com.cailanzi.utils.SpringContextUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,17 +22,13 @@ public class ConfigService {
     private ConfigMapper configMapper;
 
     public JdResult saveToken(HttpServletRequest request) {
-        TokenJd tokenJd = new TokenJd();
-        tokenJd.setToken(request.getParameter("token"));
-        tokenJd.setExpiresIn(request.getParameter("expires_in"));
-        tokenJd.setTime(request.getParameter("time"));
-        tokenJd.setUid(request.getParameter("uid"));
-        tokenJd.setUserNick(request.getParameter("user_nick"));
-        tokenJd.setVenderId(request.getParameter("venderId"));
-        log.info("ConfigService saveToken TokenJd tokenJd={}", tokenJd);
-        tokenJd.setCreateTime(new Date());
-        configMapper.insert(tokenJd);
-        return JdResult.ok(tokenJd);
+        Config config = new Config();
+        config.setName("token_jd");
+        config.setValue(request.getParameter("token"));
+        config.setCreateTime(new Date());
+        log.info("ConfigService saveToken Config config={}", config);
+        configMapper.insert(config);
+        return JdResult.ok(config);
     }
 
 }

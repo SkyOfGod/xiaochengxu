@@ -111,7 +111,7 @@
   padding: 5px 5px;
 }
 .product-input{
-  margin-left:70px;
+  margin-left:86px;
   margin-right: 12px;
   background-color: white;
   width: 50%;

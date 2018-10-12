@@ -1,11 +1,13 @@
 var app = getApp();
 Page({
   data: {
-    urlPrefix: app.globalData.urlPrefix,
+    imgUrlPrefix: app.globalData.imgUrlPrefix,
+    winWidth: 0,
+    winHeight: 0,
     categoriesList: [],
     products: null,
     pageNo: 0,
-    id:null,
+    id: null,
     total:0,
     skuName:null,
     searchType:0,//0为默认种类搜索，1为搜索框搜索
@@ -16,6 +18,7 @@ Page({
   },
 
   onLoad: function (options) {
+    this.initSystemInfo();
     this.loadCategories();
     this.getProducts(null);
   },
@@ -67,19 +70,20 @@ Page({
         stationNo: userInfo.belongStationNo,
         type: userInfo.type,
         pageNo: page,
-        pageSize: 10,
+        pageSize: 100,
         skuName: skuName,
       },
       header: {"Content-Type": "application/x-www-form-urlencoded"},
       success: function (res) {
-        wx.hideLoading();
         if (res.data.status===200) {
           if (res.data.data.length > 0) {
             for (var i = 0; i < res.data.data.length; i++) {
               products.push(res.data.data[i]);
             }
             that.setData({ products: products, total: res.data.count });
+            wx.hideLoading();
           }else{
+            wx.hideLoading();
             if (that.data.total>0){
               wx.showToast({title: '我也是有底线的',icon: 'none',duration: 1000});
             }
@@ -92,7 +96,17 @@ Page({
     })
   },
 
-  lower: function () {
+  initSystemInfo: function () {
+    var that = this;
+    wx.getSystemInfo({
+      success: function (res) {
+        that.setData({ winWidth: res.windowWidth, winHeight: res.windowHeight });
+      }
+    });
+  },
+
+  loadMore: function () {
+    console.log("loadMore")
     var page = this.data.pageNo + 1;
     this.setData({ pageNo: page });
     var type = this.data.searchType;
@@ -101,6 +115,13 @@ Page({
     } else if (type==1){
       this.getProducts(this.data.skuName);
     }
+  },
+
+  /**
+   * 页面上拉触底事件的处理函数
+   */
+  onReachBottom: function () {
+    console.log("onReachBottom")
   },
 
   clickGetProducts: function (e) {
@@ -249,3 +270,4 @@ Page({
   }
 
 })
+

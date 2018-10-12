@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONPObject;
 import com.cailanzi.rabbitMQ.messageNotify.pojo.JdOrderImport;
 import com.cailanzi.rabbitMQ.messageNotify.pojo.MqOrder;
 import com.cailanzi.pojo.JdResult;
+import com.cailanzi.service.ConfigService;
 import com.cailanzi.utils.JdHelper;
 import com.cailanzi.utils.JdHttpCilentUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,9 @@ import java.util.Map;
 @Service
 @Slf4j
 public class OrderNotifyService {
+
+    @Autowired
+    private ConfigService configService;
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
@@ -80,7 +84,7 @@ public class OrderNotifyService {
             code =  "10005";
             msg = "必填项参数未填";
         }else {
-            if(!JdHttpCilentUtil.JD_TAKEN.equals(token)){
+            if(!JdHttpCilentUtil.TAKEN_JD.equals(token)){
                 code = "10013";
                 msg = "无效Token令牌";
             } else {

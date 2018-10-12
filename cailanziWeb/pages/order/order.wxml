@@ -35,13 +35,17 @@
             </view>
             <view class="sp_tit">订单号：{{item.orderId}}</view>
             <view class="sp_tit">备注：{{item.orderBuyerRemark}}</view>
-            <view class='order-detail-btn' data-orderid="{{item.orderId}}" bindtap="kindToggle">
-              订单详情
-              <image wx:if="{{!item.open}}" src="/images/dropDown.png"></image>
-              <image wx:if="{{item.open}}" src="/images/upArrow.png"></image>
-            </view>
+            
+            <form bindsubmit='formSubmit' report-submit data-orderid="{{item.orderId}}">
+              <button class='order-detail-btn' form-type='submit' >
+                订单详情
+                <image wx:if="{{!item.open}}" src="/images/dropDown.png"></image>
+                <image wx:if="{{item.open}}" src="/images/upArrow.png"></image>
+              </button>
+            </form>
+
             <view class="order_product {{item.open ? 'order_product-show' : ''}}" wx:for="{{item.product}}" wx:for-item="product" wx:key="this">
-              <image class="order_product_img" src="{{urlPrefix}}{{product.imgUrl}}"></image>
+              <image class="order_product_img" src="{{imgUrlPrefix}}{{product.imgUrl}}"></image>
               <view class="order_product_data">
                 <view class="order_product_data_name">名称：{{product.skuName}}</view>
                 <view class="sp_tit">
@@ -83,13 +87,17 @@
             </view>
           <view class="sp_tit">订单号：{{item.orderId}}</view>
           <view class="sp_tit">备注：{{item.orderBuyerRemark}}</view>
-          <view class='order-detail-btn' data-orderid="{{item.orderId}}" bindtap="kindToggle2">
-            订单详情
-            <image wx:if="{{!item.open}}" src="/images/dropDown.png"></image>
-            <image wx:if="{{item.open}}" src="/images/upArrow.png"></image>
-          </view>
+
+          <form bindsubmit='formSubmit2' report-submit data-orderid="{{item.orderId}}">
+            <button class='order-detail-btn' form-type='submit' >
+              订单详情
+              <image wx:if="{{!item.open}}" src="/images/dropDown.png"></image>
+              <image wx:if="{{item.open}}" src="/images/upArrow.png"></image>
+            </button>
+          </form>
+         
           <view class="order_product {{item.open ? 'order_product-show' : ''}}"wx:for="{{item.product}}" wx:for-item="product" wx:key="this">
-            <image class="order_product_img" src="{{urlPrefix}}{{product.imgUrl}}"></image>
+            <image class="order_product_img" src="{{imgUrlPrefix}}{{product.imgUrl}}"></image>
             <view class="order_product_data">
               <view class="order_product_data_name">名称：{{product.skuName}}</view>
               <view class="sp_tit">
@@ -99,7 +107,7 @@
                 状态：<text class="{{product.status==2 ? 'sp_jg' : ''}}">{{product.status==2 ? '缺货' : '有货'}}</text>
             </view>
           </view>
-            <!-- <button wx:if="{{isSender}}" data-orderId="{{item.orderId}}" type='primary' bindtap='toDelivery2'>已发货,转配送中</button> -->
+          
         </view>
         <view class="c_t61"></view>
       </view>
@@ -121,17 +129,21 @@
             </view>
             <view class="sp_tit">订单号：{{item.orderId}}</view>
             <view class="sp_tit">备注：{{item.orderBuyerRemark}}</view>
-            <view class='order-detail-btn' data-orderid="{{item.orderId}}" bindtap="kindToggle3">
-              订单详情
-              <image wx:if="{{!item.open}}" src="/images/dropDown.png"></image>
-              <image wx:if="{{item.open}}" src="/images/upArrow.png"></image>
-            </view>
+
+            <form bindsubmit='formSubmit3' report-submit data-orderid="{{item.orderId}}">
+              <button class='order-detail-btn' form-type='submit' >
+                订单详情
+                <image wx:if="{{!item.open}}" src="/images/dropDown.png"></image>
+                <image wx:if="{{item.open}}" src="/images/upArrow.png"></image>
+              </button>
+            </form>
+            
             <view class="order_product {{item.open ? 'order_product-show' : ''}}" wx:for="{{item.product}}" wx:for-item="product" wx:key="this">
-              <image class="order_product_img" src="{{urlPrefix}}{{product.imgUrl}}"></image>
+              <image class="order_product_img" src="{{imgUrlPrefix}}{{product.imgUrl}}"></image>
               <view class="order_product_data">
                 <view class="order_product_data_name">产品名称：{{product.skuName}}</view>
                 <view class="sp_tit">
-                  数量：×<text>{{product.skuCount}}</text>
+                  数量：×<text class='sp_jg'>{{product.skuCount}}</text>
                   <text>单价：¥{{product.skuStorePrice/100}}</text>
                 </view>
                 状态：<text class="{{product.status==2 ? 'sp_jg' : ''}}">{{product.status==2 ? '缺货' : '有货'}}</text>
@@ -170,17 +182,21 @@
             <view class="sp_tit">订单号：{{item.orderId}}</view>
             <view class="sp_tit">备注：{{item.orderBuyerRemark}}</view>
             <view class="sp_tit">订单总额：￥<text class='sp_jg'>{{item.costTotal/100}}</text></view>
-            <view class='order-detail-btn' data-orderid="{{item.orderId}}" bindtap="kindToggle4">
-              订单详情
-              <image wx:if="{{!item.open}}" src="/images/dropDown.png"></image>
-              <image wx:if="{{item.open}}" src="/images/upArrow.png"></image>
-            </view>
+            
+            <form bindsubmit='formSubmit4' report-submit data-orderid="{{item.orderId}}">
+              <button class='order-detail-btn' form-type='submit' >
+                订单详情
+                <image wx:if="{{!item.open}}" src="/images/dropDown.png"></image>
+                <image wx:if="{{item.open}}" src="/images/upArrow.png"></image>
+              </button>
+            </form>
+            
             <view class="order_product {{item.open ? 'order_product-show' : ''}}" wx:for="{{item.product}}" wx:for-item="product" wx:key="this">
-              <image class="order_product_img" src="{{urlPrefix}}{{product.imgUrl}}"></image>
+              <image class="order_product_img" src="{{imgUrlPrefix}}{{product.imgUrl}}"></image>
               <view class="order_product_data">
                 <view class="order_product_data_name">产品名称：{{product.skuName}}</view>
                 <view class="sp_tit">
-                  数量：×<text>{{product.skuCount}}</text>
+                  数量：×<text class='sp_jg'>{{product.skuCount}}</text>
                   <text>单价：¥{{product.skuStorePrice/100}}</text>
                 </view>
                 状态：<text class="{{product.status==2 ? 'sp_jg' : ''}}">{{product.status==2 ? '缺货' : '有货'}}</text>
@@ -214,17 +230,21 @@
             <view class="sp_tit">订单号：{{item.orderId}}</view>
             <view class="sp_tit">备注：{{item.orderBuyerRemark}}</view>
             <view class="sp_tit">订单总额：￥<text class='sp_jg'>{{item.costTotal/100}}</text></view>
-            <view class='order-detail-btn' data-orderid="{{item.orderId}}" bindtap="kindToggle5">
-              订单详情
-              <image wx:if="{{!item.open}}" src="/images/dropDown.png"></image>
-              <image wx:if="{{item.open}}" src="/images/upArrow.png"></image>
-            </view>
+
+            <form bindsubmit='formSubmit5' report-submit data-orderid="{{item.orderId}}">
+              <button class='order-detail-btn' form-type='submit' >
+                订单详情
+                <image wx:if="{{!item.open}}" src="/images/dropDown.png"></image>
+                <image wx:if="{{item.open}}" src="/images/upArrow.png"></image>
+              </button>
+            </form>
+           
             <view class="order_product {{item.open ? 'order_product-show' : ''}}" wx:for="{{item.product}}" wx:for-item="product" wx:key="this">
-              <image class="order_product_img" src="{{urlPrefix}}{{product.imgUrl}}"></image>
+              <image class="order_product_img" src="{{imgUrlPrefix}}{{product.imgUrl}}"></image>
               <view class="order_product_data">
                 <view class="order_product_data_name">产品名称：{{product.skuName}}</view>
                 <view class="sp_tit">
-                  数量：×<text>{{product.skuCount}}</text>
+                  数量：×<text class='sp_jg'>{{product.skuCount}}</text>
                   <text>单价：¥{{product.skuStorePrice/100}}</text>
                 </view>
                 状态：<text class="{{product.status==2 ? 'sp_jg' : ''}}">{{product.status==2 ? '缺货' : '有货'}}</text>
@@ -237,3 +257,4 @@
   </swiper-item>
 
 </swiper>
+

@@ -1,5 +1,6 @@
 package com.cailanzi.utils;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cailanzi.Exception.ServiceException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -14,6 +15,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustStrategy;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -112,11 +114,11 @@ public class HttpClientUtil {
         return result;
     }
 
-    public static String doPost(String apiUrl) {
+    /*public static String doPost(String apiUrl) {
         return doPost(apiUrl, new HashMap<String, Object>());
-    }
+    }*/
 
-    public static String doPost(String apiUrl, Map<String, Object> params) {
+   /* public static String doPost(String apiUrl, Map<String, Object> params) {
         CloseableHttpClient httpClient = null;
         if (apiUrl.startsWith("https")) {
             httpClient = HttpClients.custom().setSSLSocketFactory(createSSLConnSocketFactory())
@@ -135,7 +137,52 @@ public class HttpClientUtil {
                 NameValuePair pair = new BasicNameValuePair(entry.getKey(), entry.getValue().toString());
                 pairList.add(pair);
             }
-            httpPost.setEntity(new UrlEncodedFormEntity(pairList, Charset.forName("UTF-8")));
+            // 构建消息实体
+            StringEntity stringEntity = new UrlEncodedFormEntity(pairList, Charset.forName("UTF-8"));
+//            stringEntity.setContentEncoding("UTF-8");
+//            stringEntity.setContentType("application/json");
+            httpPost.setEntity(stringEntity);
+//            httpPost.setHeader("Content-type", "application/json; charset=utf-8");
+            log.info("HttpClientUtil doPost httpPost={},Entity={}",httpPost,httpPost.getEntity());
+            response = httpClient.execute(httpPost);
+            HttpEntity entity = response.getEntity();
+            httpStr = EntityUtils.toString(entity, "UTF-8");
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            throw new ServiceException(e.getMessage());
+        } finally {
+            if (response != null) {
+                try {
+                    EntityUtils.consume(response.getEntity());
+                } catch (IOException e) {
+                    log.error(e.getMessage(), e);
+                    throw new ServiceException(e.getMessage());
+                }
+            }
+        }
+        return httpStr;
+    }*/
+    public static String doPost(String apiUrl, JSONObject jsonObject) {
+        CloseableHttpClient httpClient = null;
+        if (apiUrl.startsWith("https")) {
+            httpClient = HttpClients.custom().setSSLSocketFactory(createSSLConnSocketFactory())
+                    .setConnectionManager(connMgr).setDefaultRequestConfig(requestConfig).build();
+        } else {
+            httpClient = HttpClients.createDefault();
+        }
+        String httpStr = null;
+        HttpPost httpPost = new HttpPost(apiUrl);
+        CloseableHttpResponse response = null;
+
+        try {
+            httpPost.setConfig(requestConfig);
+            // 构建消息实体
+            StringEntity stringEntity = new StringEntity(jsonObject.toString(), Charset.forName("UTF-8"));
+            stringEntity.setContentEncoding("UTF-8");
+            // 发送Json格式的数据请求
+            stringEntity.setContentType("application/json");
+            httpPost.setEntity(stringEntity);
+            log.info("HttpClientUtil doPost httpPost={},Entity={}",httpPost,httpPost.getEntity());
             response = httpClient.execute(httpPost);
             HttpEntity entity = response.getEntity();
             httpStr = EntityUtils.toString(entity, "UTF-8");

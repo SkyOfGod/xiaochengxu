@@ -15,10 +15,7 @@ import com.cailanzi.pojo.entities.ProductJd;
 import com.cailanzi.service.OrderService;
 import com.cailanzi.service.ProductService;
 import com.cailanzi.service.ShopService;
-import com.cailanzi.utils.ConstantsUtil;
-import com.cailanzi.utils.HttpClientUtil;
-import com.cailanzi.utils.JdHttpCilentUtil;
-import com.cailanzi.utils.MD5Util;
+import com.cailanzi.utils.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +40,11 @@ public class XiaochengxuApplicationTests {
 	private OrderServiceListener orderServiceListener;
 	@Autowired
 	private OrderJdMapper orderJdMapper;
+
+	@Test
+	public void getAccessToken(){
+		WxHttpClientUtil.getAccessToken();
+	}
 
 	@Test
 	public void testAsynProduct() throws Exception {

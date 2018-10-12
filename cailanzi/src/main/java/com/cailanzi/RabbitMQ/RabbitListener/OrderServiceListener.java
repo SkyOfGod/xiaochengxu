@@ -42,16 +42,6 @@ public class OrderServiceListener {
         asynOrderJdByMqOrder(mqOrder);
     }
 
-    @RabbitListener(queues = "order.create.two")
-    public void orderCreateTwo(MqOrder mqOrder){//京东状态码：32000
-        log.info("OrderServiceListener orderCreateTwo MqOrder mqOrder={}", mqOrder);
-        if(orderAsync.isExitOrder(mqOrder.getBillId())){
-            orderAsync.insertOrderShop(mqOrder.getBillId(),ConstantsUtil.Status.READY);
-            return;
-        }
-        asynOrderJdByMqOrder(mqOrder);
-    }
-
     @RabbitListener(queues = "order.delivery")
     public void deliveryToOrder(MqOrder mqOrder){//京东状态码：33040
         log.info("OrderServiceListener deliveryToOrder MqOrder mqOrder={}", mqOrder);
@@ -103,7 +93,7 @@ public class OrderServiceListener {
         try {
             String result = getOrderListResultData(orderListInput);
             JSONObject resultJson = JSON.parseObject(result);
-            JSONArray jsonArray = resultJson.getJSONArray("resultList");
+            JSONArray jsonArray = resultJson.getJSONArray("resultList");//订单列表
             if(jsonArray!=null&&!jsonArray.isEmpty()){
                 orderAsync.insertOrderJd(jsonArray);
             }

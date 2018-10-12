@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableAsync
 @EnableRabbit//开启基于注解的监听
 @EnableTransactionManagement
-//@EnableWebSocket
 public class XiaochengxuApplication  extends SpringBootServletInitializer {
 
 	public static void main(String[] args) {

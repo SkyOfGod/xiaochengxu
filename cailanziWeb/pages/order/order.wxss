@@ -54,8 +54,8 @@
   display: block; 
   height: 91%; 
   width: 100%; 
-  overflow: hidden; 
-  }  
+  overflow: auto; 
+}  
 
 .clearbutton{
     background: #fff; 
@@ -74,7 +74,12 @@
     margin-top: 27px;
 }
 .order-detail-btn{
+  width: 40%;
   text-align: center;
+  border: none;
+  margin-left: 2;
+  line-height: 1.5;
+
 }
 .order-detail-btn image{
   display: inline-block;
@@ -235,4 +240,3 @@
   display: inline-block;
   margin-left: 10px;
 }
-

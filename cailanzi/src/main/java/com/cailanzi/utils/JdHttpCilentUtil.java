@@ -26,19 +26,24 @@ import java.util.Map;
 @Slf4j
 public class JdHttpCilentUtil {
 
-    public final static String APP_KEY = "6bd9123fd3224c4299e06c9a9651a5cf";
-
-    public final static String APP_SECRET = "810f1b6b35fa4d9d8898c551387f353e";
-
-    public static String JD_TAKEN = "8bf2ba29-573a-434c-896c-4e2926926925";
+    @Autowired
+    private ConfigService configService;
 
     public final static String V = "1.0";
 
     public final static String FORMAT = "json";
 
+    public static String APP_KEY ;
+
+    public static String APP_SECRET ;
+
+    public static String TAKEN_JD ;
+
     static {
         ConfigMapper configMapper = SpringContextUtil.getBean(ConfigMapper.class);
-        JD_TAKEN = configMapper.getNewToken();
+        APP_KEY = configMapper.getValueByName("app_key_jd");
+        APP_SECRET = configMapper.getValueByName("app_secret_jd");
+        TAKEN_JD = configMapper.getValueByName("token_jd");
     }
 
     public static JSONObject doGetAndGetData(String url,String jdParamJson,String successCode,String successCodeKey,String msgKey) throws Exception {
@@ -129,7 +134,7 @@ public class JdHttpCilentUtil {
         param.put("v",V);
         param.put("format",FORMAT);
         param.put("app_key",APP_KEY);
-        param.put("token",JD_TAKEN);
+        param.put("token",TAKEN_JD);
         param.put("jd_param_json",jdParamJson);
         param.put("timestamp",timestamp);
         String sign = JdHelper.getSign(param,APP_SECRET);
@@ -139,7 +144,7 @@ public class JdHttpCilentUtil {
         map.put("format",FORMAT);
         map.put("app_key",APP_KEY);
         map.put("app_secret",APP_SECRET);
-        map.put("token",JD_TAKEN);
+        map.put("token",TAKEN_JD);
         map.put("jd_param_json",jdParamJson);
         map.put("timestamp",timestamp);
         map.put("sign",sign);

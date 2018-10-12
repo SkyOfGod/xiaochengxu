@@ -40,6 +40,8 @@ public class OrderService {
     private OrderShopMapper orderShopMapper;
     @Autowired
     private OrderJdMapper orderJdMapper;
+    @Autowired
+    private FormIdMapper formIdMapper;
 
     public SysResult getWebOrderList(OrderListInput orderListInput) throws Exception {
         if(StringUtils.isBlank(orderListInput.getUsername())||StringUtils.isBlank(orderListInput.getBelongStationNo())
@@ -199,5 +201,13 @@ public class OrderService {
         productOrderJd.setOrderId(orderId);
         productOrderJdMapper.delete(productOrderJd);
         return SysResult.build(200);
+    }
+
+    public void collectFormId(String formId) {
+        FormId formIdEntity = new FormId();
+        formIdEntity.setFormId(formId);
+        formIdEntity.setIsValid((byte)0);
+        formIdEntity.setCreateTime(new Date());
+        formIdMapper.insert(formIdEntity);
     }
 }

@@ -6,8 +6,7 @@
 </view>
 <view class="section">
     <view>
-      <text decode="{{true}}" space="{{true}}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</text>
-    共有{{total}}个商品
+      <text decode="{{true}}" space="{{true}}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;共有{{total}}个商品</text>
     </view>
     <!-- 左侧类型 -->
     <scroll-view scroll-y="true" class="left">
@@ -32,14 +31,14 @@
     </scroll-view>  
 
     <!-- 右侧数据 -->
-    <scroll-view class="right" scroll-y="true" bindscrolltolower='lower' lower-threshold='50px'>
+    <scroll-view class="right" scroll-y="true" bindscrolltolower='loadMore' lower-threshold='50px'>
       <view class="search_no" wx:if="{{!products}}">
           <view><image class="scimg" src="/images/search_no.png"/></view>
           <text>没有任何商品/(ㄒoㄒ)/~~</text>
       </view>
       <view class='right-list' wx:for="{{products}}">
         <view class="shop df">        
-          <image class="sh_slt" src="{{urlPrefix}}{{item.imgUrl}}"/>
+          <image class="sh_slt" src="{{imgUrlPrefix}}{{item.imgUrl}}"/>
           <view class="df_1">            
               <view class="sp_text">
                   <!-- <navigator url="../index/detail?productId={{item.skuId}}" hover-class="changestyle"> -->

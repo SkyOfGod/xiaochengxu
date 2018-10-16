@@ -88,28 +88,36 @@ public class HttpClientUtil {
 
     public static String doGet(String url) {
         String result = null;
-        HttpClient httpClient = null;
-        /*if (url.startsWith("https")) {
+        CloseableHttpClient  httpClient = null;
+        if (url.startsWith("https")) {
             httpClient = HttpClients.custom().setSSLSocketFactory(createSSLConnSocketFactory())
                     .setConnectionManager(connMgr)
                     .setDefaultRequestConfig(requestConfig)
                     .build();
         } else {
-        }*/
-        httpClient = HttpClients.createDefault();
-        HttpResponse response = null;
+            httpClient = HttpClients.createDefault();
+        }
+        CloseableHttpResponse response = null;
         try {
             HttpGet httpGet = new HttpGet(url);
             response = httpClient.execute(httpGet);
             HttpEntity entity = response.getEntity();
             if (entity != null) {
-                InputStream instream = entity.getContent();
-                result = IOUtils.toString(instream, "UTF-8");
-                instream.close();//关闭连接等待复用
+                InputStream in = entity.getContent();
+                result = IOUtils.toString(in, "UTF-8");
+                in.close();//关闭连接等待复用
             }
         } catch (IOException e) {
             log.error(e.getMessage(), e);
             throw new ServiceException(e.getMessage());
+        } finally {
+            if(response!=null){
+                try {//这里特别注意的是，如果不使用in.close();而仅仅使用response.close();结果就是连接会被关闭，并且不能被复用，这样就失去了采用连接池的意义
+                    response.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return result;
     }

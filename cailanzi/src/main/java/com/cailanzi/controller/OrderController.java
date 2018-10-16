@@ -23,15 +23,24 @@ public class OrderController {
     private OrderService orderService;
 
     //待备货数据
-    @RequestMapping("web/orderList")
-    private SysResult getWebOrderList(OrderListInput orderListInput) throws Exception {
-        log.info("OrderController getWebOrderList OrderListInput orderListInput={}", orderListInput);
-        SysResult data = orderService.getWebOrderList(orderListInput);
-        log.info("OrderController getWebOrderList return {}", data);
+    @RequestMapping("web/order0List")
+    private SysResult getWebOrder0List(OrderListInput orderListInput) throws Exception {
+        log.info("OrderController getWebOrder0List OrderListInput orderListInput={}", orderListInput);
+        SysResult data = orderService.getWebOrder0List(orderListInput);
+        log.info("OrderController getWebOrder0List return {}", data);
         return data;
     }
 
     //待收货数据
+    @RequestMapping("web/order1List")
+    private SysResult getWebOrder1List(OrderListInput orderListInput) throws Exception {
+        log.info("OrderController getWebOrder1List OrderListInput orderListInput={}", orderListInput);
+        SysResult data = orderService.getWebOrder1List(orderListInput);
+        log.info("OrderController getWebOrder1List return {}", data);
+        return data;
+    }
+
+    //待配送数据
     @RequestMapping("web/order2List")
     private SysResult getWebOrder2List(OrderListInput orderListInput) throws Exception {
         log.info("OrderController getWebOrder2List OrderListInput orderListInput={}", orderListInput);
@@ -40,7 +49,7 @@ public class OrderController {
         return data;
     }
 
-    //待配送数据
+    //已完成数据
     @RequestMapping("web/order3List")
     private SysResult getWebOrder3List(OrderListInput orderListInput) throws Exception {
         log.info("OrderController getWebOrder3List OrderListInput orderListInput={}", orderListInput);
@@ -49,21 +58,12 @@ public class OrderController {
         return data;
     }
 
-    //已完成数据
+    //已退订单数据
     @RequestMapping("web/order4List")
     private SysResult getWebOrder4List(OrderListInput orderListInput) throws Exception {
         log.info("OrderController getWebOrder4List OrderListInput orderListInput={}", orderListInput);
         SysResult data = orderService.getWebOrder4List(orderListInput);
         log.info("OrderController getWebOrder4List return {}", data);
-        return data;
-    }
-
-    //已退订单数据
-    @RequestMapping("web/order5List")
-    private SysResult getWebOrder5List(OrderListInput orderListInput) throws Exception {
-        log.info("OrderController getWebOrder5List OrderListInput orderListInput={}", orderListInput);
-        SysResult data = orderService.getWebOrder5List(orderListInput);
-        log.info("OrderController getWebOrder5List return {}", data);
         return data;
     }
 
@@ -80,6 +80,14 @@ public class OrderController {
         log.info("OrderController getOrderList OrderListInput orderListInput={}", orderListInput);
         EasyUIResult data = orderService.getOrderList(orderListInput);
         log.info("OrderController getOrderList return {}", data);
+        return data;
+    }
+
+    @RequestMapping("orderProductList")
+    private EasyUIResult getOrderProductList(OrderListInput orderListInput) throws Exception {
+        log.info("OrderController getOrderProductList OrderListInput orderListInput={}", orderListInput);
+        EasyUIResult data = orderService.getOrderProductList(orderListInput);
+        log.info("OrderController getOrderProductList return {}", data);
         return data;
     }
 

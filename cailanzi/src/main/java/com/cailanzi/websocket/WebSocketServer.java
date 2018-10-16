@@ -32,12 +32,11 @@ public class WebSocketServer {
     @OnOpen
     public void onOpen(Session session) {
         this.session = session;
-        System.out.println(session.getQueryString());
         webSocketSet.add(this);
         //加入set中
         addOnlineCount();
         //在线数加1
-        log.info("有新连接加入！当前在线人数为" + getOnlineCount());
+        log.info("有新连接加入->"+session.getQueryString()+"！当前在线人数为" + getOnlineCount());
         try {
             sendMessage("连接成功");
         } catch (IOException e) {
@@ -51,7 +50,7 @@ public class WebSocketServer {
         //从set中删除
         subOnlineCount();
         //在线数减1
-        log.info("有一连接关闭！当前在线人数为" + getOnlineCount());
+        log.info("有一连接关闭"+this.getSession().getQueryString()+"！当前在线人数为" + getOnlineCount());
     }
 
     @OnMessage

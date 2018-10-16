@@ -5,6 +5,7 @@ spring:
     #url: jdbc:mysql://localhost:3306/program?useUnicode=true&characterEncoding=UTF8
     url: jdbc:mysql://119.23.232.221:3306/program?useUnicode=true&characterEncoding=UTF8
     username: root
+    type: com.zaxxer.hikari.HikariDataSource
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8

@@ -53,26 +53,10 @@
                     return value;
                 }
             },
-            {field:'orderStartTime',title:'订单开始时间',width:150,align:'center'},
             {field:'createTime',title:'创建时间',width:150,align:'center'},
-
-            {field:'skuId',title:'到家商品编码',width:100,align:'center'},
-            {field:'skuName',title:'商品名称',width:200,align:'center'},
-            {field:'skuStatus',title:'商品状态',width:70,align:'center',
-                formatter: function(value,row,index){
-                    if(value==0){
-                        return "待拣货";
-                    }else if(value==1){
-                        return '<span style="color:red;">已拣货</span>';
-                    }
-                    return value;
-                }
-            },
-            {field:'skuCount',title:'下单数量',width:60,align:'center'},
-            {field:'skuStorePrice',title:'到家商品门店价（分）',width:150,align:'center'},
-            {field:'skuJdPrice',title:'到家商品销售价（分）',width:150,align:'center'},
-            {field:'skuCostPrice',title:'到家商品成本价（分）',width:150,align:'center'},
-            {field:'skuWeight',title:'商品重量（千克）',width:120,align:'center'}
+            {field:'updateTime',title:'修改时间',width:150,align:'center'},
+            {field:'orderStartTime',title:'订单开始时间',width:150,align:'center'},
+            {field:'orderBuyerRemark',title:'备注',width:600,align:'center'},
         ]],
         onBeforeLoad: function (param) {
             param.pageNo = param.page;

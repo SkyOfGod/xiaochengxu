@@ -3,24 +3,16 @@
 
 <mapper namespace="com.cailanzi.mapper.OrderMapper">
 
-    <select id="getOrderList" resultType="OrderUnion">
-        SELECT a.order_id orderId,a.order_num orderNum,a.produce_station_no produceStationNo,
-        a.produce_station_name produceStationName,a.buyer_full_name buyerFullName,a.`status`,
-        a.buyer_full_address buyerFullAddress,a.buyer_mobile buyerMobile,a.create_time createTime,
-        b.sku_id skuId,b.sku_name skuName,b.sku_jd_price skuJdPrice,b.sku_count skuCount,
-        b.sku_store_price skuStorePrice,b.sku_cost_price skuCostPrice,b.sku_weight skuWeight,
-        b.sku_status skuStatus,a.order_start_time orderStartTime
-        FROM order_jd a
-        JOIN product_order_jd b ON b.order_id = a.order_id
+    <select id="getOrderProductList" resultType="OrderUnion">
+        SELECT id,sku_id skuId,sku_name skuName,sku_jd_price skuJdPrice,sku_count skuCount,
+        sku_store_price skuStorePrice,sku_cost_price skuCostPrice,sku_weight skuWeight,
+        sku_status skuStatus,order_id orderId
+        FROM  product_order_jd
         <where>
             <if test="orderId!=null and orderId.trim()!=''">
-                AND a.order_id = #{orderId}
-            </if>
-            <if test="deliveryStationNo!=null and deliveryStationNo.trim()!=''">
-                AND a.produce_station_no = #{deliveryStationNo}
+                AND order_id = #{orderId}
             </if>
         </where>
-        ORDER BY a.create_time DESC
     </select>
 
     <!--
@@ -28,14 +20,14 @@
     -->
     <select id="getOrderShopJdList" resultType="OrderUnion">
         SELECT a.order_id orderId,a.order_num orderNum,b.sku_id skuId,b.sku_name skuName,
-        b.sku_count skuCount,b.sku_store_price skuStorePrice,b.sku_status skuStatus,
+        b.sku_count skuCount,b.sku_store_price skuStorePrice,b.sku_status skuStatus,a.update_time updateTime,
         a.order_buyer_remark orderBuyerRemark,a.create_time createTime,c.img_url imgUrl
         FROM order_jd a
         JOIN product_order_jd b ON b.order_id=a.order_id
         JOIN product_jd c ON c.sku_id=b.sku_id
         WHERE a.produce_station_no = #{belongStationNo} AND a.`status` = #{orderStatus}
         <if test="startTime != null and endTime != null">
-            AND a.create_time BETWEEN #{startTime} AND #{endTime}
+            AND a.update_time BETWEEN #{startTime} AND #{endTime}
         </if>
     </select>
 

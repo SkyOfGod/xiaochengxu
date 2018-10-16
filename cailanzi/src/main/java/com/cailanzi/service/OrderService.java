@@ -43,7 +43,7 @@ public class OrderService {
     @Autowired
     private FormIdMapper formIdMapper;
 
-    public SysResult getWebOrderList(OrderListInput orderListInput) throws Exception {
+    public SysResult getWebOrder0List(OrderListInput orderListInput) throws Exception {
         if(StringUtils.isBlank(orderListInput.getUsername())||StringUtils.isBlank(orderListInput.getBelongStationNo())
                 ||StringUtils.isBlank(orderListInput.getType())){
             return SysResult.build(400);
@@ -54,22 +54,22 @@ public class OrderService {
         return getWebOrderShopListBasic(orderListInput,ConstantsUtil.Status.READY);
     }
 
-    public SysResult getWebOrder2List(OrderListInput orderListInput) {
+    public SysResult getWebOrder1List(OrderListInput orderListInput) {
         return getWebOrderShopListBasic(orderListInput,ConstantsUtil.Status.DELIVERY);
     }
 
-    public SysResult getWebOrder3List(OrderListInput orderListInput) {
+    public SysResult getWebOrder2List(OrderListInput orderListInput) {
         return getWebOrderShopListBasic(orderListInput,ConstantsUtil.Status.DELIVERY_TO);
     }
 
-    public SysResult getWebOrder4List(OrderListInput orderListInput) {
+    public SysResult getWebOrder3List(OrderListInput orderListInput) {
         if(StringUtils.isNotBlank(orderListInput.getStartTime())){
             orderListInput.setEndTime(orderListInput.getStartTime()+" 23:59:59");
         }
         return getWebOrderShopListBasic(orderListInput,ConstantsUtil.Status.FINISH);
     }
 
-    public SysResult getWebOrder5List(OrderListInput orderListInput) {
+    public SysResult getWebOrder4List(OrderListInput orderListInput) {
         if(StringUtils.isNotBlank(orderListInput.getStartTime())){
             orderListInput.setEndTime(orderListInput.getStartTime()+" 23:59:59");
         }
@@ -78,7 +78,14 @@ public class OrderService {
 
     public EasyUIResult getOrderList(OrderListInput orderListInput) {
         PageHelper.startPage(orderListInput.getPageNo(),orderListInput.getPageSize());
-        List<OrderUnion> list = orderMapper.getOrderList(orderListInput);
+        List<OrderUnion> list = orderJdMapper.getOrderList(orderListInput);
+        PageInfo<OrderUnion> pageInfo = new PageInfo<>(list);
+        return new EasyUIResult(pageInfo.getTotal(),pageInfo.getList());
+    }
+
+    public EasyUIResult getOrderProductList(OrderListInput orderListInput) {
+        PageHelper.startPage(orderListInput.getPageNo(),orderListInput.getPageSize());
+        List<OrderUnion> list = orderMapper.getOrderProductList(orderListInput);
         PageInfo<OrderUnion> pageInfo = new PageInfo<>(list);
         return new EasyUIResult(pageInfo.getTotal(),pageInfo.getList());
     }
@@ -115,7 +122,10 @@ public class OrderService {
             }
         }
         if(flag){
-            orderJdMapper.updateOrderStatusByOrderId(orderId,ConstantsUtil.Status.DELIVERY);
+            orderListInput.setOrderStatus(ConstantsUtil.Status.DELIVERY);
+            orderListInput.setUpdateTime(new Date());
+            orderListInput.setUsername(null);
+            orderJdMapper.updateOrderStatusByOrderId(orderListInput);
         }
     }
 
@@ -163,6 +173,7 @@ public class OrderService {
 
                 OrderJdVo temp = new OrderJdVo();
                 temp.setCreateTime(union.getCreateTime());
+                temp.setUpdateTime(union.getUpdateTime());
                 temp.setOrderId(orderId);
                 temp.setOrderNum(union.getOrderNum());
                 temp.setOrderBuyerRemark(union.getOrderBuyerRemark());
@@ -210,4 +221,6 @@ public class OrderService {
         formIdEntity.setCreateTime(new Date());
         formIdMapper.insert(formIdEntity);
     }
+
+
 }

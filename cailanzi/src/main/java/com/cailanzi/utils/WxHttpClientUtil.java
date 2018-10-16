@@ -72,7 +72,7 @@ public class WxHttpClientUtil {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("touser",openId);
         jsonObject.put("template_id",NEW_ORDER_TEMPLATE_ID);
-        jsonObject.put("page","/pages/order/order");
+//        jsonObject.put("page","/pages/order/order");
         jsonObject.put("form_id",formId);
         jsonObject.put("data",data);
         log.info("WxHttpClientUtil sendTemplateMsg jsonObject={}",jsonObject);
@@ -81,6 +81,11 @@ public class WxHttpClientUtil {
         JSONObject resultJson = JSON.parseObject(result);
         if("0".equals(resultJson.getString("errcode"))||"ok".equals(resultJson.getString("errmsg"))){
             configMapper.updateValidByFormId(formId);
+        }
+        if("41028".equals(resultJson.getString("errcode"))){//invalid form id hint: [qIVzOa06104924]
+            log.info("WxHttpClientUtil sendTemplateMsg invalid formId={}",formId);
+            configMapper.updateValidByFormId(formId);
+            sendTemplateMsg(openId,data);
         }
     }
 

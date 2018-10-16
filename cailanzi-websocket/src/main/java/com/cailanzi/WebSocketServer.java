@@ -12,7 +12,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  * Created by v-hel27 on 2018/10/4.
  */
 @Slf4j
-@ServerEndpoint(value = "/websocketserver")
+@ServerEndpoint(value = "/websocket")
 @Component
 public class WebSocketServer {
 

@@ -3,8 +3,25 @@
 
 <mapper namespace="com.cailanzi.mapper.OrderJdMapper">
 
+    <select id="getOrderList" resultType="OrderUnion">
+        SELECT id,order_id orderId,order_num orderNum,produce_station_no produceStationNo,
+        produce_station_name produceStationName,buyer_full_name buyerFullName,status,
+        buyer_full_address buyerFullAddress,buyer_mobile buyerMobile,create_time createTime,
+        update_time updateTime,order_buyer_remark orderBuyerRemark,order_start_time orderStartTime
+        FROM order_jd
+        <where>
+            <if test="orderId!=null and orderId.trim()!=''">
+                AND order_id = #{orderId}
+            </if>
+            <if test="deliveryStationNo!=null and deliveryStationNo.trim()!=''">
+                AND produce_station_no = #{deliveryStationNo}
+            </if>
+        </where>
+        ORDER BY create_time DESC
+    </select>
+
     <update id="updateOrderStatusByOrderId">
-        UPDATE order_jd SET `status` = #{status}
+        UPDATE order_jd SET `status` = #{orderStatus},update_time = #{updateTime}
         WHERE  order_id = #{orderId}
     </update>
 

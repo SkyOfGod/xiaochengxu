@@ -108,6 +108,6 @@ public class OrderServiceListener {
         orderListInput.setOrderStatus(status);
         orderListInput.setUpdateTime(new Date());
         orderShopMapper.updateOrderStatus(orderListInput);
-        orderJdMapper.updateOrderStatusByOrderId(orderId,status);
+        orderJdMapper.updateOrderStatusByOrderId(orderListInput);
     }
 }

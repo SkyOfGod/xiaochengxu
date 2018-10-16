@@ -34,14 +34,25 @@ public class AddOrderSocket {
     @RabbitListener(queues = "order.create.msg")
     public void orderCreateMsg(MqOrder mqOrder) throws Exception {
         log.info("AddOrderSocket orderCreateMsg MqOrder mqOrder={}", mqOrder);
-        List<User> list = getUserList(mqOrder);
+        OrderListInput orderListInput = new OrderListInput();
+        orderListInput.setOrderId(mqOrder.getBillId());
+        orderListInput.setOrderStatus(mqOrder.getStatusId());
+
+        String result = orderServiceListener.getOrderListResultData(orderListInput);
+        JSONObject resultJson = JSON.parseObject(result);
+        JSONArray jsonArray = resultJson.getJSONArray("resultList");
+        log.info("AddOrderSocket getUserList resultList={}", jsonArray);
+        JSONObject orderJsonObject = JSON.parseObject(jsonArray.get(0).toString());
+        String orderNum = orderJsonObject.getString("orderNum");
+
+        List<User> list = getUserList(mqOrder,orderJsonObject);
         Set<String> usernames = new HashSet<>();
         for (User user : list) {
             usernames.add(user.getUsername());
             String openId = user.getOpenId();
             if(StringUtils.isNotBlank(openId)){
                 JSONObject keyword1 = new JSONObject();
-                keyword1.put("value",mqOrder.getBillId());
+                keyword1.put("value",mqOrder.getBillId()+" #"+orderNum);
                 JSONObject keyword2 = new JSONObject();
                 keyword2.put("value",mqOrder.getTimestamp());
                 JSONObject data = new JSONObject();
@@ -54,17 +65,8 @@ public class AddOrderSocket {
         WebSocketServer.sendInfo(mqOrder.toString(),usernames);
     }
 
-    private List<User> getUserList(MqOrder mqOrder) throws Exception {
-        OrderListInput orderListInput = new OrderListInput();
-        orderListInput.setOrderId(mqOrder.getBillId());
-        orderListInput.setOrderStatus(mqOrder.getStatusId());
-
-        String result = orderServiceListener.getOrderListResultData(orderListInput);
-        JSONObject resultJson = JSON.parseObject(result);
-        JSONArray jsonArray = resultJson.getJSONArray("resultList");
-        JSONObject orderJsonObject = JSON.parseObject(jsonArray.get(0).toString());
+    private List<User> getUserList(MqOrder mqOrder,JSONObject orderJsonObject) throws Exception {
         String stationNo = orderJsonObject.getString("produceStationNo");
-
         User user = new User();
         user.setBelongStationNo(stationNo);
         return userMapper.select(user);

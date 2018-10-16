@@ -13,6 +13,7 @@ import com.cailanzi.pojo.entities.Product;
 import com.cailanzi.pojo.entities.ProductOrderJd;
 import com.cailanzi.utils.ConstantsUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.message.ReusableMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -88,9 +89,23 @@ public class OrderAsync {
     }
 
     private OrderJd getOrderJd(JSONObject orderJsonObject,String status) {
+        String orderPreStartDeliveryTime = orderJsonObject.getString("orderPreStartDeliveryTime");
+        String orderPreEndDeliveryTime = orderJsonObject.getString("orderPreEndDeliveryTime");
+        String businessTag = orderJsonObject.getString("businessTag");
+        String temp = "[立即送达]";
+        if(businessTag.contains("one_dingshida")){//定时达
+            temp = "[请于"+orderPreStartDeliveryTime.substring(0,16)+" ~ "+orderPreEndDeliveryTime.substring(11,16)+" 送达]";
+        }
+
         OrderJd orderJd = JSONObject.toJavaObject(orderJsonObject,OrderJd.class);
         orderJd.setStatus(status);
         orderJd.setCreateTime(new Date());
+        orderJd.setUpdateTime(orderJd.getCreateTime());
+        if(StringUtils.isBlank(orderJd.getOrderBuyerRemark())){
+            orderJd.setOrderBuyerRemark(temp);
+        }else {
+            orderJd.setOrderBuyerRemark(orderJd.getOrderBuyerRemark()+temp);
+        }
         return orderJd;
     }
 

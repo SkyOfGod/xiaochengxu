@@ -4,7 +4,7 @@
 <script type="text/javascript">
     $('#shop-jd-list').datagrid({
         url:'/shop/list',
-        title: '商户列表',
+        title: '门店列表',
         pagePosition: 'top',
         singleSelect: false ,
         collapsible:true,
@@ -21,10 +21,10 @@
                         $.messager.progress();
                         $.post("/shop/syncShop", null, function(data) {
                             if (data.status == 200) {
-                                $.messager.alert('提示', '商户同步成功!', 'info');
+                                $.messager.alert('提示', '同步成功!', 'info');
                                 $('#shop-jd-list').datagrid('reload');
                             }else {
-                                $.messager.alert('提示', '商户同步失败：'+data.msg , 'info');
+                                $.messager.alert('提示', '同步失败：'+data.msg , 'info');
                             }
                             $.messager.progress('close');
                         });

@@ -17,7 +17,9 @@ import java.util.Set;
 @Mapper
 public interface OrderJdMapper extends MyMapper<OrderJd> {
 
-    void updateOrderStatusByOrderId(@Param("orderId") String orderId,@Param("status") String status);
+    List<OrderUnion> getOrderList(OrderListInput orderListInput);
+
+    void updateOrderStatusByOrderId(OrderListInput orderListInput);
 
     /**
      * 获取order_jd不在status状态下的订单

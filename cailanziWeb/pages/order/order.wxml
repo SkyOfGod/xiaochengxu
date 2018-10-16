@@ -23,20 +23,21 @@
       </view>
     </view>
     <view class='swi-item-finish'>
-      <view class="search_no" wx:if="{{!orders}}">
+      <view class="search_no" wx:if="{{!orders0}}">
           <view class="font_14"><image class="scimg" src="/images/search_no.png"></image></view>
           <text>没有可用订单/(ㄒoㄒ)/~~</text>
       </view>
-      <view class="shop df" wx:for="{{orders}}" wx:key="orderId">
+      <view class="shop df" wx:for="{{orders0}}" wx:key="orderId">
         <view class="df_1 sp_text">
             <view class="sp_tit">
               <text class="ovh2">#{{item.orderNum}}</text>
               <text class="order_product_data_name">{{item.createTime}}</text>
+              <text class="order_product_data_name">{{item.updateTime}}</text>
             </view>
             <view class="sp_tit">订单号：{{item.orderId}}</view>
             <view class="sp_tit">备注：{{item.orderBuyerRemark}}</view>
             
-            <form bindsubmit='formSubmit' report-submit data-orderid="{{item.orderId}}">
+            <form bindsubmit='formSubmit0' report-submit data-orderid="{{item.orderId}}">
               <button class='order-detail-btn' form-type='submit' >
                 订单详情
                 <image wx:if="{{!item.open}}" src="/images/dropDown.png"></image>
@@ -74,21 +75,22 @@
 
   <!-- 待收货 -->
   <swiper-item>
-    <view class="search_no" wx:if="{{!orders2}}">
+    <view class="search_no" wx:if="{{!orders1}}">
         <view class="font_14"><image class="scimg" src="/images/search_no.png"/></view>
         <text>没有可用订单/(ㄒoㄒ)/~~</text>
     </view>
     <view class='swi-item'>
-      <view class="shop df" wx:for="{{orders2}}" wx:key="orderId">        
+      <view class="shop df" wx:for="{{orders1}}" wx:key="orderId">        
         <view class="df_1 sp_text">
           <view class="sp_tit">
               <text class="ovh2">#{{item.orderNum}}</text>
               <text class="order_product_data_name">{{item.createTime}}</text>
+              <text class="order_product_data_name">{{item.updateTime}}</text>
             </view>
           <view class="sp_tit">订单号：{{item.orderId}}</view>
           <view class="sp_tit">备注：{{item.orderBuyerRemark}}</view>
 
-          <form bindsubmit='formSubmit2' report-submit data-orderid="{{item.orderId}}">
+          <form bindsubmit='formSubmit1' report-submit data-orderid="{{item.orderId}}">
             <button class='order-detail-btn' form-type='submit' >
               订单详情
               <image wx:if="{{!item.open}}" src="/images/dropDown.png"></image>
@@ -116,21 +118,22 @@
 
   <!-- 待配送-->
   <swiper-item>
-    <view class="search_no" wx:if="{{!orders3}}">
+    <view class="search_no" wx:if="{{!orders2}}">
         <view class="font_14"><image class="scimg" src="/images/search_no.png"/></view>
         <text>没有可用订单/(ㄒoㄒ)/~~</text>
     </view>
     <view class='swi-item'>
-      <view class="shop df" wx:for="{{orders3}}" wx:key="orderId">        
+      <view class="shop df" wx:for="{{orders2}}" wx:key="orderId">        
           <view class="df_1 sp_text">
             <view class="sp_tit">
               <text class="ovh2">#{{item.orderNum}}</text>
               <text class="order_product_data_name">{{item.createTime}}</text>
+              <text class="order_product_data_name">{{item.updateTime}}</text>
             </view>
             <view class="sp_tit">订单号：{{item.orderId}}</view>
             <view class="sp_tit">备注：{{item.orderBuyerRemark}}</view>
 
-            <form bindsubmit='formSubmit3' report-submit data-orderid="{{item.orderId}}">
+            <form bindsubmit='formSubmit2' report-submit data-orderid="{{item.orderId}}">
               <button class='order-detail-btn' form-type='submit' >
                 订单详情
                 <image wx:if="{{!item.open}}" src="/images/dropDown.png"></image>
@@ -169,21 +172,22 @@
       </view>
     </view>  
     <view class='swi-item-finish'>
-      <view class="search_no" wx:if="{{!orders4}}">
+      <view class="search_no" wx:if="{{!orders3}}">
         <view class="font_14"><image class="scimg" src="/images/search_no.png"></image></view>
         <text>没有可用订单/(ㄒoㄒ)/~~</text>
       </view>
-      <view class="shop df" wx:for="{{orders4}}" wx:key="orderId">        
+      <view class="shop df" wx:for="{{orders3}}" wx:key="orderId">        
         <view class="df_1 sp_text">
             <view class="sp_tit">
               <text class="ovh2">#{{item.orderNum}}</text>
               <text class="order_product_data_name">{{item.createTime}}</text>
+              <text class="order_product_data_name">{{item.updateTime}}</text>
             </view>
             <view class="sp_tit">订单号：{{item.orderId}}</view>
             <view class="sp_tit">备注：{{item.orderBuyerRemark}}</view>
             <view class="sp_tit">订单总额：￥<text class='sp_jg'>{{item.costTotal/100}}</text></view>
             
-            <form bindsubmit='formSubmit4' report-submit data-orderid="{{item.orderId}}">
+            <form bindsubmit='formSubmit3' report-submit data-orderid="{{item.orderId}}">
               <button class='order-detail-btn' form-type='submit' >
                 订单详情
                 <image wx:if="{{!item.open}}" src="/images/dropDown.png"></image>
@@ -217,21 +221,22 @@
       </view>
     </view>  
     <view class='swi-item-finish'>
-      <view class="search_no" wx:if="{{!orders5}}">
+      <view class="search_no" wx:if="{{!orders4}}">
         <view class="font_14"><image class="scimg" src="/images/search_no.png"></image></view>
         <text>没有可用订单/(ㄒoㄒ)/~~</text>
       </view>
-      <view class="shop df" wx:for="{{orders5}}" wx:key="orderId">        
+      <view class="shop df" wx:for="{{orders4}}" wx:key="orderId">        
         <view class="df_1 sp_text">
             <view class="sp_tit">
               <text class="ovh2">#{{item.orderNum}}</text>
               <text class="order_product_data_name">{{item.createTime}}</text>
+              <text class="order_product_data_name">{{item.updateTime}}</text>
             </view>
             <view class="sp_tit">订单号：{{item.orderId}}</view>
             <view class="sp_tit">备注：{{item.orderBuyerRemark}}</view>
             <view class="sp_tit">订单总额：￥<text class='sp_jg'>{{item.costTotal/100}}</text></view>
 
-            <form bindsubmit='formSubmit5' report-submit data-orderid="{{item.orderId}}">
+            <form bindsubmit='formSubmit4' report-submit data-orderid="{{item.orderId}}">
               <button class='order-detail-btn' form-type='submit' >
                 订单详情
                 <image wx:if="{{!item.open}}" src="/images/dropDown.png"></image>

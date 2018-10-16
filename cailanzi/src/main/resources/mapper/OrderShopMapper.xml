@@ -40,14 +40,14 @@
     -->
     <select id="getOrderShopList" resultType="OrderUnion">
         SELECT a.order_id orderId,a.order_num orderNum,b.sku_id skuId,b.sku_name skuName,
-        b.sku_count skuCount,b.sku_price skuStorePrice,b.sku_status skuStatus,
+        b.sku_count skuCount,b.sku_price skuStorePrice,b.sku_status skuStatus,a.update_time updateTime,
         a.order_buyer_remark orderBuyerRemark,a.create_time createTime,c.img_url imgUrl
         FROM order_jd a
         JOIN order_shop b ON b.order_id=a.order_id AND b.username = #{username}
         JOIN product_jd c ON c.sku_id=b.sku_id
         WHERE a.produce_station_no = #{belongStationNo} AND b.order_status = #{orderStatus}
         <if test="startTime != null and endTime != null">
-            AND a.create_time BETWEEN #{startTime} AND #{endTime}
+            AND a.update_time BETWEEN #{startTime} AND #{endTime}
         </if>
     </select>
 

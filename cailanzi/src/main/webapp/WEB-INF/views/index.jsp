@@ -30,6 +30,7 @@
          		<span>订单管理</span>
          		<ul>
 	         		<li data-options="attributes:{'url':'/page/order'}">查询订单</li>
+	         		<li data-options="attributes:{'url':'/page/order-item'}">查询订单-商品</li>
 	         		<li data-options="attributes:{'url':'/page/order-shop'}">查询订单-商户</li>
 	         	</ul>
          	</li>

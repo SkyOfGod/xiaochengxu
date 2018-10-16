@@ -27,6 +27,7 @@ public class OrderJd {
     private String buyerMobile;
     private String status;
     private Date createTime;
+    private Date updateTime;
     private String orderBuyerRemark;
     private String orderStartTime;
 

@@ -38,10 +38,16 @@ App({
     })
     wx.onSocketOpen(function (res) {
       console.log('WebSocket open！')
+      wx.showToast({ title: 'WebSocket open!', duration: 1000, icon: 'none' });
     }) 
     wx.onSocketError(function (res) {
       console.log('WebSocket error！')
+      wx.showToast({ title: 'WebSocket error!', duration: 1000, icon: 'none' });
     })
+    wx.onSocketClose(function(res){
+      console.log('WebSocket close！')
+      wx.showToast({ title: 'WebSocket close!', duration: 1000, icon: 'none' });
+    }) 
     
   }
 

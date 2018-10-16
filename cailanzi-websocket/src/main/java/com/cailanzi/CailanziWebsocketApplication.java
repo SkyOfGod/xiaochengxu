@@ -36,10 +36,10 @@ public class CailanziWebsocketApplication  extends SpringBootServletInitializer 
 	 * 此处需要注意，仅使用Application文件启动项目才使用此配置。如果使用本地tomcat启动项目，无需进行此步配置，
 	 * 否则会产生java.lang.IllegalStateException: Failed to register @ServerEndpoint class的错误
 	 */
-	/*@Bean
+	@Bean
 	public ServerEndpointExporter serverEndpointExporter(){
 		return new ServerEndpointExporter();
-	}*/
+	}
 
 
 }

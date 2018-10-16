@@ -63,6 +63,10 @@ public class ProductService {
         List<ProductJd> list = new ArrayList<>();
         for (Object product : products) {
             JSONObject data = JSONObject.parseObject(product.toString());
+            Integer fixedStatus = data.getInteger("fixedStatus");
+            if(fixedStatus==2){
+                continue;
+            }
             ProductJd jd = JSONObject.toJavaObject(data,ProductJd.class);
             if(jd.getShopCategories()!=null){
                 String temp = jd.getShopCategories().substring(1,jd.getShopCategories().length()-1);

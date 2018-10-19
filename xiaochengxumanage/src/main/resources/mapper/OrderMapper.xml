@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cailanzi.mapper.OrderMapper">
+
+    <select id="getOrderProductList" resultType="OrderUnion">
+        SELECT id,sku_id skuId,sku_name skuName,sku_jd_price skuJdPrice,sku_count skuCount,
+        sku_store_price skuStorePrice,sku_cost_price skuCostPrice,sku_weight skuWeight,
+        sku_status skuStatus,order_id orderId
+        FROM  product_order_jd
+        <where>
+            <if test="orderId!=null and orderId.trim()!=''">
+                AND order_id = #{orderId}
+            </if>
+        </where>
+    </select>
+
+</mapper>

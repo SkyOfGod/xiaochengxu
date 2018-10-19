@@ -31,10 +31,21 @@
                 a.shop_categories shopCategories,a.img_url imgUrl
         FROM product_jd a
         INNER JOIN product_status b ON b.sku_id=a.sku_id AND b.station_no = #{belongStationNo} AND b.vendibility=0
-        WHERE a.fixed_status = 1
+        LEFT JOIN product c ON c.sku_id = b.sku_id AND c.belong_station_no = b.station_no AND c.phone = #{username}
+        WHERE a.fixed_status = 1 AND c.id IS NULL
         <if test="q != null">
           AND a.sku_name LIKE CONCAT('%',#{q},'%')
         </if>
+    </select>
+
+    <select id="getProductJdBySkuIds" resultType="com.cailanzi.pojo.entities.ProductJd">
+        SELECT a.sku_id skuId,a.sku_name skuName,b.price skuPrice,b.current_qty stockNum,a.shop_categories shopCategories
+        FROM product_jd a
+        INNER JOIN product_status b ON b.sku_id=a.sku_id AND b.station_no = #{belongStationNo}
+        WHERE a.sku_id IN
+        <foreach collection="skuIds" item="temp" separator="," open="(" close=")">
+            #{temp}
+        </foreach>
     </select>
 
     <select id="getProductsByCategoryId" resultType="com.cailanzi.pojo.ProductVo">

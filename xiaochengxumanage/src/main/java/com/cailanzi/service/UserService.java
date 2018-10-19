@@ -47,6 +47,16 @@ public class UserService {
         return SysResult.ok(userList.get(0));
     }
 
+    public SysResult isExitSign(String sign) {
+        User user = new User();
+        user.setSign(sign);
+        List<User> userList = userMapper.select(user);
+        if(userList.isEmpty()){
+            return SysResult.build(400);
+        }
+        return SysResult.build(200);
+    }
+
     public EasyUIResult userList(UserImport userImport) {
         PageHelper.startPage(userImport.getPage(),userImport.getRows());
 

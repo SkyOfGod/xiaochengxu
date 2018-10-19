@@ -19,7 +19,7 @@ public interface ProductJdMapper extends MyMapper<ProductJd> {
 
     void truncateProductJd();
 
-    List<ProductJd> comgridJdList(@Param("q") String q,@Param("belongStationNo") String belongStationNo);
+    List<ProductJd> comgridJdList(@Param("q") String q,@Param("belongStationNo") String belongStationNo,@Param("username") String username);
 
     List<ProductVo> getProductsByCategoryId(ProductListInput productListInput);
 
@@ -38,4 +38,6 @@ public interface ProductJdMapper extends MyMapper<ProductJd> {
     void callImgUrl();
 
     void truncateProductJdBak();
+
+    List<ProductJd> getProductJdBySkuIds(@Param("skuIds")String[] skuIds,@Param("belongStationNo") String belongStationNo);
 }

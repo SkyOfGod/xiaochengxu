@@ -53,27 +53,39 @@ public class ProductItemService {
         return new EasyUIResult(pageInfo.getTotal(),pageInfo.getList());
     }
 
-    public List<ProductJd> comgridJdList(String q,String belongStationNo) {
+    public List<ProductJd> comgridJdList(String q,String belongStationNo,String username) {
         log.info("ProductItemService comgridJdList q={}", q);
-        List<ProductJd> list = productJdMapper.comgridJdList(q,belongStationNo);
+        List<ProductJd> list = productJdMapper.comgridJdList(q,belongStationNo,username);
         log.info("ProductItemService comgridJdList return list={}", list);
         return list;
     }
 
-    public void addProduct(Product product) throws ServiceException{
-        Product product1 = new Product();
-        product1.setPhone(product.getPhone());
-        product1.setSkuId(product.getSkuId());
-        List<Product> list = productMapper.select(product1);
-        if(!list.isEmpty()){
-            throw new ServiceException("该商户下已经拥有此商品！");
-        }
+    public void addProduct(ProductListInput productListInput) throws ServiceException{
+        Date date = new Date();
+        String[] skuIds = productListInput.getSkuId().split(",");
+        List<ProductJd> list = productJdMapper.getProductJdBySkuIds(skuIds,productListInput.getStationNo());
+        List<Product> inList = new ArrayList<>();
+        for (ProductJd productJd :list) {
+            Product product = new Product();
+            product.setPhone(productListInput.getPhone());
+            product.setBelongStationNo(productListInput.getStationNo());
+            product.setBelongStationName(productListInput.getStationName());
 
-        product.setCreateTime(new Date());
-        product.setUpdateTime(product.getCreateTime());
-        log.info("ProductItemService addProduct product={}", product);
-        productMapper.insertSelective(product);
+            product.setSkuId(productJd.getSkuId());
+            product.setName(productJd.getSkuName());
+            product.setPrice(productJd.getSkuPrice());
+            product.setStoreNum(productJd.getStockNum());
+            product.setShopCategories(productJd.getShopCategories());
+//            product.setDescription(productListInput.getDescription());
+            product.setIsSell((byte)0);
+            product.setCreateTime(date);
+            product.setUpdateTime(date);
+            inList.add(product);
+        }
+        log.info("ProductItemService addProduct inList={}", inList);
+        productMapper.insertList(inList);
     }
+
 
     /*public void updateProduct(Product product) throws Exception{
         product.setUpdateTime(new Date());

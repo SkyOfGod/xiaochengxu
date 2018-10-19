@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cailanzi.mapper.ProductMapper">
+
+    <select id="selectDynamic" resultType="com.cailanzi.pojo.entities.Product">
+        SELECT id,phone,belong_station_no belongStationNo,belong_station_name belongStationName,
+        sku_id skuId,`name`,shop_categories shopCategories,price,store_num storeNum,is_sell isSell,
+        description,create_time createTime,update_time updateTime
+        FROM product
+        <where>
+            <if test="phone!=null and phone.trim()!=''">
+                AND phone = #{phone}
+            </if>
+            <if test="skuName!=null and skuName.trim()!=''">
+                AND `name` LIKE CONCAT('%',#{skuName},'%')
+            </if>
+            <if test="stationNo!=null and stationNo.trim()!=''">
+                AND belong_station_no = #{stationNo}
+            </if>
+            <if test="skuIds!=null and skuIds.size()!=0">
+                AND sku_id IN
+                <foreach collection="skuIds" separator="," item="temp" open="(" close=")">
+                    #{temp}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <update id="updateProductOfStorePriceVendibility">
+        UPDATE product
+        <set>
+            update_time = #{updateTime},
+            <if test="price!=null">
+                price=#{price},
+            </if>
+            <if test="storeNum!=null">
+                store_num=#{storeNum},
+            </if>
+            <if test="isSell!=null">
+                is_sell=#{isSell},
+            </if>
+        </set>
+        WHERE belong_station_no=#{belongStationNo} AND sku_id=#{skuId} AND phone=#{phone}
+    </update>
+
+    <select id="getRateBySkuId" resultType="Integer">
+        SELECT rate FROM rule a
+        JOIN rule_product b ON b.rule_id=a.id AND b.sku_id=#{skuId}
+    </select>
+
+</mapper>

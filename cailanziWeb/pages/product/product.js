@@ -166,16 +166,18 @@ Page({
   },
 
   minusStore:function(){
-    var store = this.data.storeInput;
-    if (store!=0){
-      this.setData({ storeInput: store - 1 })
-    }
+    // var store = this.data.storeInput;
+    // if (store!=0){
+    //   this.setData({ storeInput: store - 1 })
+    // }
+    this.setData({ storeInput: 0 })
   },
   plusStore: function(){
-    var store = parseInt(this.data.storeInput);
-    if (store != 999) {
-      this.setData({ storeInput: store + 1 })
-    }
+    // var store = parseInt(this.data.storeInput);
+    // if (store != 999) {
+    //   this.setData({ storeInput: store + 1 })
+    // }
+    this.setData({ storeInput: 999 })
   },
 
   hideBox: function (e) {

@@ -5,34 +5,17 @@
 	        <tr>
 	            <td>商户:</td>
 	            <td>
-					<input id="add_phone" name="phone" style="width: 300px;"/>
-					<input id="add_belongStationNo" name="belongStationNo" type="hidden"/>
-					<input id="add_belongStationName" name="belongStationName"type="hidden"/>
+					<input id="add_phone" name="phone" style="width: 200px;"/>
+					<input id="add_belongStationNo" name="stationNo" type="hidden"/>
+					<input id="add_belongStationName" name="stationName"type="hidden"/>
 	            </td>
 	        </tr>
 	        <tr>
 	            <td>商品类型:</td>
 	            <td>
-					<input id="add_product" name="name" class="easyui-combogrid" style="width: 300px;"/>
-					<input id="add_skuId" type="hidden" name="skuId">
-					<input id="add_shopCategories" type="hidden" name="shopCategories">
+					<input id="add_product" name="skuId" class="easyui-combogrid" style="width: 400px;"/>
 				</td>
 	        </tr>
-	        <tr>
-	            <td>商品价格:</td>
-	            <td>
-					<input type="text" name="initPrice" data-options="editable:false" />
-					<input type="hidden" name="price">
-	            </td>
-	        </tr>
-	        <tr>
-	            <td>库存数量:</td>
-	            <td><input type="text" name="storeNum" data-options="editable:false" /></td>
-	        </tr>
-			<tr>
-				<td>商品描述:</td>
-				<td><input class="easyui-textbox" name="description" data-options="multiline:true,validType:'length[0,150]'" style="height:60px;width: 280px;"></input></td>
-			</tr>
 	    </table>
 	</form>
 	<div style="padding:5px">
@@ -43,7 +26,7 @@
 <script type="text/javascript" charset="utf-8">
 
     $('#add_phone').combogrid({
-        panelWidth:400,
+        panelWidth:500,
         idField:'username',
         textField:'username',
         url:'/user/comgridList',
@@ -54,22 +37,24 @@
             {field:'username',title:'号码',width:100,align:'center'},
             {field:'belongStationNo',title:'到家门店编码',width:100,align:'center'},
             {field:'belongStationName',title:'门店名称',width:180,align:'center'},
+            {field:'remark',title:'备注',width:100,align:'center'},
         ]],
         onSelect: function (index,row) {
 			$("#add_belongStationNo").val(row.belongStationNo);
 			$("#add_belongStationName").val(row.belongStationName);
-            getProductCombogrid(row.belongStationNo);
+            getProductCombogrid(row.belongStationNo,row.username);
         }
     });
 
-    getProductCombogrid = function (belongStationNo) {
+    getProductCombogrid = function (belongStationNo,username) {
         $('#add_product').combogrid({
             panelWidth:960,
-            idField:'skuName',
-            textField:'skuName',
+            idField:'skuId',
+            textField:'skuId',
             url:'/product/jd/comgridList',
             mode: 'remote',
             delay: 500,
+            multiple: true,
             required:true,
             columns:[[
                 {field:'skuId',title:'到家商品编码',width:100,align:'center'},
@@ -84,26 +69,19 @@
                 {field:'shopCategories',title:'分类编码',width:120,align:'center'}
             ]],
             onSelect: function (index,row) {
-                $("#add_skuId").val(row.skuId);
-                $("#add_shopCategories").val(row.shopCategories);
-                $("#itemAddForm [name=initPrice]").val(row.skuPrice/100);
-                $("#itemAddForm [name=storeNum]").val(row.stockNum);
             },
             onBeforeLoad: function (param) {
                 param.belongStationNo = belongStationNo;
+                param.username = username;
             }
         });
     }
-
 
     function submitForm() {
         //表单校验
         if (!$('#itemAddForm').form('validate')) {
             return false;
         }
-        //转化价格单位，将元转化为分
-        var price = eval($("#itemAddForm [name=initPrice]").val()) * 100;
-        $("#itemAddForm [name=price]").val(parseInt(price));
         var params = $("#itemAddForm").serialize();
         $.post("/product/addProduct", params, function(data) {
             if (data.status == 200) {

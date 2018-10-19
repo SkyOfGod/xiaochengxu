@@ -13,6 +13,8 @@ public class ProductListInput {
     private String phone;
     //到家门店编码
     private String stationNo;
+    //到家门店编码
+    private String stationName;
     //到家商品编码
     private String skuId;
     //商家商品上下架状态(1:上架;2:下架;4:删除;)
@@ -44,4 +46,7 @@ public class ProductListInput {
     private String skuStore;
 
     private String isFilterDel;
+
+    private String description;
+
 }

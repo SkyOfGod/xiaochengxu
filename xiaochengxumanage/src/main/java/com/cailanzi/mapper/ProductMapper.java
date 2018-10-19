@@ -16,8 +16,6 @@ public interface ProductMapper extends MyMapper<Product> {
 
     List<Product> selectDynamic(ProductListInput productListInput);
 
-    void updateProductStatusEqualOrderShop(OrderListInput orderListInput);
-
     void updateProductOfStorePriceVendibility(Product product);
 
     Integer getRateBySkuId(Long skuId);

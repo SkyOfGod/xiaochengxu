@@ -4,7 +4,8 @@
 <mapper namespace="com.cailanzi.mapper.UserMapper">
 
     <select id="comgridList" resultType="com.cailanzi.pojo.entities.User">
-        SELECT username,belong_station_no belongStationNo,belong_station_name belongStationName FROM `user`
+        SELECT username,belong_station_no belongStationNo,belong_station_name belongStationName,
+         remark FROM `user`
         WHERE type <![CDATA[ <> ]]> 0
     </select>
 

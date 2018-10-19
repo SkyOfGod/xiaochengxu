@@ -51,15 +51,15 @@ public class ProductController {
     }
 
     @RequestMapping(value = "jd/comgridList",method = RequestMethod.POST)
-    public List<ProductJd> comgridJdList(String q,String belongStationNo) throws Exception {
-        return productItemService.comgridJdList(q,belongStationNo);
+    public List<ProductJd> comgridJdList(String q,String belongStationNo,String username) throws Exception {
+        return productItemService.comgridJdList(q,belongStationNo,username);
     }
 
     @RequestMapping(value = "addProduct",method = RequestMethod.POST)
-    public SysResult addProduct(Product product) throws Exception {
-        log.info("ProductController addProduct product = {}",product);
+    public SysResult addProduct(ProductListInput productListInput) throws Exception {
+        log.info("ProductController addProduct productListInput = {}",productListInput);
         try {
-            productItemService.addProduct(product);
+            productItemService.addProduct(productListInput);
         }catch (ServiceException e){
             return SysResult.build(400,e.getMessage());
         }

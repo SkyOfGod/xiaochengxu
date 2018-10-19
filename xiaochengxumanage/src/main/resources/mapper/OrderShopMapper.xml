@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cailanzi.mapper.OrderShopMapper">
+
+    <select id="getOrderShopPageList" resultType="com.cailanzi.pojo.entities.OrderShop">
+        SELECT id,username,belong_station_no belongStationNo,order_id orderId,sku_id skuId,order_status orderStatus,
+        sku_name skuName,sku_count skuCount,sku_price skuPrice,sku_status skuStatus,create_time createTime,update_time updateTime
+        FROM order_shop
+        <where>
+            <if test="username!=null and username.trim()!=''">
+                AND username =#{username}
+            </if>
+            <if test="orderId!=null and orderId.trim()!=''">
+                AND order_id =#{orderId}
+            </if>
+        </where>
+    </select>
+
+    <update id="updateOrderStatus">
+         UPDATE order_shop SET order_status = #{orderStatus},update_time = #{updateTime}
+        WHERE order_id = #{orderId}
+        <if test="username!=null and username.trim()!=''">
+            AND username = #{username}
+        </if>
+    </update>
+
+    <select id="getOrderShopListInitData" resultType="com.cailanzi.pojo.entities.OrderShop">
+        SELECT a.phone username,a.belong_station_no belongStationNo,a.sku_id skuId,a.`name` skuName,
+                a.price skuPrice,b.sku_count skuCount,b.order_id orderId
+        FROM product a
+        JOIN product_order_jd b ON b.sku_id = a.sku_id AND b.order_id = #{orderId}
+        JOIN order_jd c ON c.order_id = b.order_id AND c.produce_station_no = a.belong_station_no
+    </select>
+
+</mapper>

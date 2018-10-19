@@ -3,10 +3,18 @@ package com.cailanzi.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.cailanzi.Exception.ServiceException;
+import com.cailanzi.exception.ServiceException;
+import com.cailanzi.mapper.ProductCategoryMapper;
+import com.cailanzi.mapper.ProductJdMapper;
+import com.cailanzi.mapper.ProductStatusMapper;
+import com.cailanzi.mapper.ShopMapper;
 import com.cailanzi.pojo.ProductListInput;
 import com.cailanzi.pojo.ProductStatusInput;
 import com.cailanzi.pojo.QueryStockRequest;
+import com.cailanzi.pojo.entities.ProductCategory;
+import com.cailanzi.pojo.entities.ProductJd;
+import com.cailanzi.pojo.entities.ProductStatus;
+import com.cailanzi.pojo.entities.ShopJd;
 import com.cailanzi.utils.JdHttpCilentUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -199,7 +207,6 @@ public class ProductService {
 
         Date date = new Date();
         List<ProductCategory> list = new ArrayList<>();
-//        list.add(new ProductCategory(ConstantsUtil.ProductCategory.ALL_ID,"0","所有分类","0","0",date));
         for (Object o : result) {
             JSONObject jsonObject = JSONObject.parseObject(o.toString());
             ProductCategory productCategory = new ProductCategory();
@@ -274,4 +281,5 @@ public class ProductService {
             throw new ServiceException("修改京东商品库存失败："+e.getMessage(),e);
         }
     }
+
 }

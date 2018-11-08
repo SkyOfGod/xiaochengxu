@@ -20,4 +20,5 @@ public interface RuleProductMapper extends MyMapper<RuleProduct>{
 
     List<RuleProduct> selectDynamic(RuleProductListInput ruleProductListInput);
 
+    void updateRuleName(@Param("oldRuleName") String oldRuleName,@Param("newRuleName") String newRuleName);
 }

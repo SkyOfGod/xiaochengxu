@@ -7,7 +7,7 @@
 
     <button style="margin-left: 10px" class="easyui-linkbutton" iconCls="icon-search" onclick="itemStatusListSearch()">搜索</button>
 </div>
-<table id="item-status-list" style="width:100%;height:800px"></table>
+<table id="item-status-list" style="width:100%;height:700px"></table>
 
 <div id="editItemStatus" class="easyui-dialog" data-options="closed:true">
     <form id="editItemStatusForm" method="post">
@@ -152,8 +152,10 @@
             buttons:[{
                 text:'保存',
                 handler:function(){
+                    $.messager.progress();
                     var params = $("#editItemStatusForm").serialize();
                     $.post("/product/updateProductStatusOfStorePriceVendibility", params, function(data) {
+                        $.messager.progress('close');
                         if (data.status == 200) {
                             $.messager.alert('提示', '修改商品库存成功!', 'info',
                                 function() {

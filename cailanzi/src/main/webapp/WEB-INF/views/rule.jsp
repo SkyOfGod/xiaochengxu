@@ -3,7 +3,7 @@
     名称:&nbsp;&nbsp;<input  class="easyui-textbox" id="ruleList_searchName">
     <button class="easyui-linkbutton" iconCls="icon-search" onclick="ruleListSearch()">搜索</button>
 </div>
-<table id="rule-list" style="width:100%;height:800px"></table>
+<table id="rule-list" style="width:100%;height:700px"></table>
 
 <div id="editRule" class="easyui-dialog" data-options="closed:true">
     <form id="editRuleForm" method="post">
@@ -175,7 +175,7 @@
             $.messager.alert('提示', '未选中商品!');
             return;
         }
-        $.messager.confirm('确认', '删除ID为 ' + ids + ' 的数据将会删除关联的商品数据？', function(r) {
+        $.messager.confirm('确认', '删除选中的数据将会删除关联的商品数据？', function(r) {
             if (r) {
                 var params = {"ids" : ids};
                 $.post("/rule/deleteRule", params, function(data) {

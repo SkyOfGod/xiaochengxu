@@ -62,6 +62,7 @@ public class RuleService {
         Rule oldRule = ruleMapper.selectByPrimaryKey(rule.getId());
         if(!oldRule.getName().equals(rule.getName())){
             validateRuleName(rule);
+            ruleProductMapper.updateRuleName(oldRule.getName(),rule.getName());
         }
         rule.setUpdateTime(new Date());
         log.info("RuleService updateRule rule={}", rule);

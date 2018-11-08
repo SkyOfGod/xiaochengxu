@@ -6,7 +6,7 @@
     <select id="comgridList" resultType="com.cailanzi.pojo.entities.User">
         SELECT username,belong_station_no belongStationNo,belong_station_name belongStationName,
          remark FROM `user`
-        WHERE type <![CDATA[ <> ]]> 0
+        WHERE type = 1
     </select>
 
     <select id="selectByUsername" resultType="com.cailanzi.pojo.entities.User">

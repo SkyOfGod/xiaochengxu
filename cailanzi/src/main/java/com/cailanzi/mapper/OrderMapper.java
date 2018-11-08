@@ -16,5 +16,5 @@ public interface OrderMapper {
 
     List<OrderUnion> getOrderProductList(OrderListInput orderListInput);
 
-    List<OrderUnion> getOrderShopJdList(OrderListInput orderListInput);
+    List<OrderUnion> getOrderJdList(OrderListInput orderListInput);
 }

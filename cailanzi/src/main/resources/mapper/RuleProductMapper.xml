@@ -24,5 +24,9 @@
         </where>
     </select>
 
+    <update id="updateRuleName">
+        UPDATE rule_product SET rule_name = #{newRuleName}
+        WHERE rule_name = #{oldRuleName}
+    </update>
 
 </mapper>

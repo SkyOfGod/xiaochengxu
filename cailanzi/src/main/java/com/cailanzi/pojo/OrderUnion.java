@@ -30,6 +30,7 @@ public class OrderUnion {
     private String skuCount;
     private String skuStorePrice;
     private Byte skuStatus;
+    private Integer promotionType;
 
     private Integer skuJdPrice;
     private Integer skuCostPrice;

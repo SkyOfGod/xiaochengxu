@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.TransferQueue;
 
@@ -42,6 +43,8 @@ public class OrderService {
     private OrderJdMapper orderJdMapper;
     @Autowired
     private FormIdMapper formIdMapper;
+    @Autowired
+    private UserBalanceDayMapper userBalanceDayMapper;
 
     public SysResult getWebOrder0List(OrderListInput orderListInput) throws Exception {
         if(StringUtils.isBlank(orderListInput.getUsername())||StringUtils.isBlank(orderListInput.getBelongStationNo())
@@ -143,19 +146,29 @@ public class OrderService {
         if(ConstantsUtil.UserType.READYER.equals(orderListInput.getType())){
             list = orderShopMapper.getOrderShopList(orderListInput);
         }else if(ConstantsUtil.UserType.SENDER.equals(orderListInput.getType())){
-            list = orderMapper.getOrderShopJdList(orderListInput);
+            list = orderMapper.getOrderJdList(orderListInput);
         } else {
             list = new ArrayList<>();
         }
         Map<String,OrderJdVo> map = getOrderJdVoMap(list);
         Collection<OrderJdVo> collection = map.values();
         int total = 0;
+        int balance = 0;
         if(ConstantsUtil.Status.FINISH.equals(orderStatus)){
             for(OrderJdVo orderJdVo: collection){
                 total += orderJdVo.getCostTotal();
             }
+            String username = orderListInput.getUsername();
+//            Integer temp = userBalanceDayMapper.getBalance(username, LocalDate.now());
+            UserBalanceDay userBalanceDay = new UserBalanceDay();
+            userBalanceDay.setUsername(username);
+            userBalanceDay.setCreateDate(LocalDate.now());
+            UserBalanceDay temp = userBalanceDayMapper.selectOne(userBalanceDay);
+            if(temp != null){
+                balance = temp.getBalance();
+            }
         }
-        return SysResult.ok(collection,total);
+        return SysResult.ok(collection,total,balance);
     }
 
     private Map<String,OrderJdVo> getOrderJdVoMap(List<OrderUnion> list) {

@@ -4,7 +4,7 @@
     商品名称:&nbsp;&nbsp;<input  class="easyui-textbox" id="list_searchSkuName">
     <button class="easyui-linkbutton" iconCls="icon-search" onclick="itemListSearch()">搜索</button>
 </div>
-<table id="item-list" style="width:100%;height:800px"></table>
+<table id="item-list" style="width:100%;height:700px"></table>
 
 <div id="editItem" class="easyui-dialog" data-options="closed:true">
     <form id="editItemForm" method="post">
@@ -160,7 +160,7 @@
             $.messager.alert('提示', '未选中商品!');
             return;
         }
-        $.messager.confirm('确认', '确定删除ID为 ' + ids + ' 的商品吗？', function(r) {
+        $.messager.confirm('确认', '确定删除选中的商品吗？', function(r) {
             if (r) {
                 var params = {"ids" : ids};
                 $.post("/product/deleteProduct", params, function(data) {

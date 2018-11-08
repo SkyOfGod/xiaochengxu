@@ -39,6 +39,8 @@
          		<ul>
 	         		<li data-options="attributes:{'url':'/page/shop'}">查询门店</li>
 	         		<li data-options="attributes:{'url':'/page/user'}">查询用户</li>
+					<li data-options="attributes:{'url':'/page/user-balance'}">商户余额</li>
+					<li data-options="attributes:{'url':'/page/user-charge-log'}">充值记录</li>
 	         	</ul>
          	</li>
          	<li>

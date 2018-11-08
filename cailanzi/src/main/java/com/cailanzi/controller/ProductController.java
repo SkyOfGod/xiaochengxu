@@ -55,6 +55,11 @@ public class ProductController {
         return productItemService.comgridJdList(q,belongStationNo,username);
     }
 
+    @RequestMapping(value = "jd/addProductPage",method = RequestMethod.POST)
+    public EasyUIResult addProductPage(ProductListInput productListInput) throws Exception {
+        return productItemService.addProductPage(productListInput);
+    }
+
     @RequestMapping(value = "addProduct",method = RequestMethod.POST)
     public SysResult addProduct(ProductListInput productListInput) throws Exception {
         log.info("ProductController addProduct productListInput = {}",productListInput);

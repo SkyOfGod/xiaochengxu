@@ -41,7 +41,7 @@ public class AddOrderSocket {
         String result = orderServiceListener.getOrderListResultData(orderListInput);
         JSONObject resultJson = JSON.parseObject(result);
         JSONArray jsonArray = resultJson.getJSONArray("resultList");
-        log.info("AddOrderSocket getUserList resultList={}", jsonArray);
+        log.info("AddOrderSocket orderCreateMsg order resultList={}", jsonArray);
         JSONObject orderJsonObject = JSON.parseObject(jsonArray.get(0).toString());
         String orderNum = orderJsonObject.getString("orderNum");
 

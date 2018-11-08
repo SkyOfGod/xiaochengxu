@@ -55,7 +55,7 @@ public class RuleProductService {
 
     public List<ProductJd> productJdComgrid(String q) {
         log.info("RuleProductService productJdComgrid q={}", q);
-        List<ProductJd> list = productJdMapper.productJdComgrid(q);
+        List<ProductJd> list = productJdMapper.productJdComgridExcludeInRuleProduct(q);
         log.info("RuleProductService productJdComgrid return list={}", list);
         return list;
     }

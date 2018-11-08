@@ -57,4 +57,9 @@
         JOIN rule_product b ON b.rule_id=a.id AND b.sku_id=#{skuId}
     </select>
 
+    <update id="updatePhone">
+        UPDATE product SET phone=#{newUsername}
+        WHERE phone=#{oldUsername}
+    </update>
+
 </mapper>

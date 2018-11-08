@@ -3,7 +3,7 @@
 	到家门店编码:&nbsp;&nbsp;<input  class="easyui-textbox" id="searchNo">
 	<button class="easyui-linkbutton" iconCls="icon-search" onclick="userSearch()">搜索</button>
 </div>
-<table id="user-list" style="width:100%;height:800px"></table>
+<table id="user-list" style="width:100%;height:700px"></table>
 
 <div id="addUserDialog" class="easyui-dialog" data-options="closed:true">
 	<form id="addUserForm" method="post">
@@ -50,7 +50,7 @@
 				<td>用户名:</td>
 				<td>
 					<input type="hidden" name="id">
-					<input class="easyui-textbox" type="text" name="username" data-options="editable:false" style="width: 240px;"/>
+					<input class="easyui-textbox" type="text" name="username" style="width: 240px;"/>
 				</td>
 			</tr>
 			<tr>
@@ -221,7 +221,7 @@
             $.messager.alert('提示', '未选中数据!');
             return;
         }
-        $.messager.confirm('确认', '删除用户 ' + ids + ' 的数据将会删除关联的商品数据？', function(r) {
+        $.messager.confirm('确认', '删除选中用户的数据将会删除关联的商品数据？', function(r) {
             if (r) {
                 var params = {"names" : ids};
                 $.post("/user/deleteUser", params, function(data) {

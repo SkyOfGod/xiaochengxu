@@ -105,6 +105,11 @@ public class UserService {
     }
 
     public void editUser(User user) {
+        //判断是否要修改product的数据
+        User old = userMapper.selectByPrimaryKey(user.getId());
+        if(!user.getUsername().equals(old.getUsername())){
+            productMapper.updatePhone(old.getUsername(),user.getUsername());
+        }
         userMapper.updateByPrimaryKeySelective(user);
     }
 

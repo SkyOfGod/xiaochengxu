@@ -18,6 +18,7 @@ Page({
     readyEndDate: null,
     finishDate: null,
     finishTotal:0,
+    finishPrepay:0,
     returnDate:null,
   },
   bindChange: function (e) {
@@ -30,7 +31,8 @@ Page({
       return false;
     } else {
       this.setData({currentTab: parseInt(current)});
-      this.flashOrderList(current);
+      //自动触发bindChange()
+      // this.flashOrderList(current);
     };
   },
   flashOrderList(current){
@@ -158,7 +160,7 @@ Page({
           }else{
             that.setData({ orders3: null });
           }
-          that.setData({ finishTotal: res.data.count });
+          that.setData({ finishTotal: res.data.count, finishPrepay: res.data.balance});
         }
         wx.hideLoading();
       },

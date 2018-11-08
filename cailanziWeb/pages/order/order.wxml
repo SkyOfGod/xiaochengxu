@@ -22,7 +22,7 @@
         <picker mode="date" value="{{date}}" start="{{readyDate}}" end="{{nowDate}}" bindchange="bindReadyEndDateChange">{{readyEndDate}}</picker>
       </view>
     </view>
-    <view class='swi-item-finish'>
+    <view class='swi-item-date'>
       <view class="search_no" wx:if="{{!orders0}}">
           <view class="font_14"><image class="scimg" src="/images/search_no.png"></image></view>
           <text>没有可用订单/(ㄒoㄒ)/~~</text>
@@ -167,10 +167,19 @@
         <!-- <image src="/images/dropDown.png"></image> -->
       </view>
       <view class='allTotal'>
-        <text>总金额：</text>
+        <text>订单总金额：</text>
         ￥<text class='sp_jg'>{{finishTotal/100}}</text>
       </view>
+      <view class='prepay'>
+        <text>预付款金额：</text>
+        ￥<text class='sp_jg'>{{finishPrepay}}</text>
+      </view>
+      <view class='balance'>
+        <text>剩余金额：</text>
+        ￥<text class='sp_jg'>{{(finishPrepay-finishTotal)/100}}</text>
+      </view>
     </view>  
+    
     <view class='swi-item-finish'>
       <view class="search_no" wx:if="{{!orders3}}">
         <view class="font_14"><image class="scimg" src="/images/search_no.png"></image></view>
@@ -220,7 +229,7 @@
         <picker mode="date" value="{{date}}" start="2018-9-1" end="{{nowDate}}" bindchange="bindReturnDateChange">{{returnDate}}</picker>
       </view>
     </view>  
-    <view class='swi-item-finish'>
+    <view class='swi-item-date'>
       <view class="search_no" wx:if="{{!orders4}}">
         <view class="font_14"><image class="scimg" src="/images/search_no.png"></image></view>
         <text>没有可用订单/(ㄒoㄒ)/~~</text>

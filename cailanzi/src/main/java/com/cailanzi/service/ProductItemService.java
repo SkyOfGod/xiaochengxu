@@ -60,6 +60,16 @@ public class ProductItemService {
         return list;
     }
 
+    public EasyUIResult addProductPage(ProductListInput productListInput) {
+        PageHelper.startPage(productListInput.getPageNo(),productListInput.getPageSize());
+        List<ProductJd> list = new ArrayList<>();
+        if(StringUtils.isNotBlank(productListInput.getStationNo())&&StringUtils.isNotBlank(productListInput.getPhone())){
+            list = productJdMapper.comgridJdList(null,productListInput.getStationNo(),productListInput.getPhone());
+        }
+        PageInfo<ProductJd> pageInfo = new PageInfo<>(list);
+        return new EasyUIResult(pageInfo.getTotal(),pageInfo.getList());
+    }
+
     public void addProduct(ProductListInput productListInput) throws ServiceException{
         Date date = new Date();
         String[] skuIds = productListInput.getSkuId().split(",");
@@ -285,4 +295,6 @@ public class ProductItemService {
     public void updateProductImg(ProductJd productjd) {
         productJdMapper.updateByPrimaryKeySelective(productjd);
     }
+
+
 }

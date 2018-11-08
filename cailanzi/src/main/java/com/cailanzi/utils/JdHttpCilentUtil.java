@@ -110,12 +110,12 @@ public class JdHttpCilentUtil {
      */
     private static JSONObject doGetAndGetDataBasic(String url,String jdParamJson) throws Exception {
         JSONObject result = JSONObject.parseObject(doGet(url,jdParamJson));
-        log.info("JdHttpCilentUtil doGet result={}", result);
+//        log.info("JdHttpCilentUtil doGet result={}", result);
         if(!"0".equals(result.getString("code"))){
             throw new ServiceException(result.getString("msg"));
         }
         JSONObject data = JSONObject.parseObject(result.getString("data"));
-        log.info("JdHttpCilentUtil doGetAndGetData data={}", data);
+//        log.info("JdHttpCilentUtil doGetAndGetData data={}", data);
         return data;
     }
 

@@ -86,7 +86,7 @@ public class OrderServiceListener {
         return data.getString("result");
     }
 
-    private void asynOrderJdByMqOrder(MqOrder mqOrder) {
+    public void asynOrderJdByMqOrder(MqOrder mqOrder) {
         OrderListInput orderListInput = new OrderListInput();
         orderListInput.setOrderId(mqOrder.getBillId());
         orderListInput.setOrderStatus(mqOrder.getStatusId());
@@ -95,10 +95,11 @@ public class OrderServiceListener {
             JSONObject resultJson = JSON.parseObject(result);
             JSONArray jsonArray = resultJson.getJSONArray("resultList");//订单列表
             if(jsonArray!=null&&!jsonArray.isEmpty()){
+                log.info("OrderServiceListener asynOrderJdByMqOrder order resultList={}",jsonArray.get(0));
                 orderAsync.insertOrderJd(jsonArray);
             }
         } catch (Exception e) {
-            log.info("OrderServiceListener addOrder:",e);
+            log.error("OrderServiceListener addOrder error:",e);
         }
     }
 

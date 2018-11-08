@@ -3,7 +3,7 @@
     订单ID:&nbsp;&nbsp;<input  class="easyui-textbox" id="orderItemJdList_searchOrderId">
     <button class="easyui-linkbutton" iconCls="icon-search" onclick="orderItemJdListSearch()">搜索</button>
 </div>
-<table id="order-item-jd-list" style="width:100%;height:800px"></table>
+<table id="order-item-jd-list" style="width:100%;height:700px"></table>
 
 <script type="text/javascript">
     $('#order-item-jd-list').datagrid({
@@ -31,11 +31,23 @@
                     return value;
                 }
             },
-            {field:'skuCount',title:'下单数量',width:60,align:'center'},
+            {field:'skuCount',title:'下单数量',width:70,align:'center'},
             {field:'skuStorePrice',title:'到家商品门店价（分）',width:150,align:'center'},
             {field:'skuJdPrice',title:'到家商品销售价（分）',width:150,align:'center'},
             {field:'skuCostPrice',title:'到家商品成本价（分）',width:150,align:'center'},
-            {field:'skuWeight',title:'商品重量（千克）',width:120,align:'center'}
+            {field:'skuWeight',title:'商品重量（千克）',width:120,align:'center'},
+            {field:'promotionType',title:'促销类型',width:70,align:'center',
+                formatter: function(value,row,index){
+                    if(value==1){
+                        return "无优惠";
+                    }else if(value==3){
+                        return "单品直降";
+                    }else if(value==4){
+                        return "限时抢购";
+                    }
+                    return value;
+                }
+            }
         ]],
         onBeforeLoad: function (param) {
             param.pageNo = param.page;

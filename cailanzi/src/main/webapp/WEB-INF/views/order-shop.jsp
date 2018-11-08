@@ -4,7 +4,7 @@
     订单ID:&nbsp;&nbsp;<input  class="easyui-textbox" id="orderShopList_searchOrderId">
     <button class="easyui-linkbutton" iconCls="icon-search" onclick="orderShopListSearch()">搜索</button>
 </div>
-<table id="order-shop-list" style="width:100%;height:800px"></table>
+<table id="order-shop-list" style="width:100%;height:700px"></table>
 
 <script type="text/javascript">
     $('#order-shop-list').datagrid({

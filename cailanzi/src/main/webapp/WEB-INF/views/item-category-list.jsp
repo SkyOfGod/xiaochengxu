@@ -3,7 +3,7 @@
     父ID:&nbsp;&nbsp;<input  class="easyui-textbox" id="itemCategory_search">
     <button class="easyui-linkbutton" iconCls="icon-search" onclick="itemCategoryListSearch()">搜索</button>
 </div>
-<table id="item-category-list" style="width:100%;height:800px"></table>
+<table id="item-category-list" style="width:100%;height:700px"></table>
 
 <script type="text/javascript">
     $('#item-category-list').datagrid({

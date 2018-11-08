@@ -4,7 +4,7 @@
 	商品名称:&nbsp;&nbsp;<input class="easyui-textbox" id="ruleProductList_searchSkuName">
 	<button class="easyui-linkbutton" iconCls="icon-search" onclick="userSearch()">搜索</button>
 </div>
-<table id="rule-product-list" style="width:100%;height:800px"></table>
+<table id="rule-product-list" style="width:100%;height:700px"></table>
 
 <div id="addRuleProductDialog" class="easyui-dialog" data-options="closed:true">
 	<form id="addRuleProductForm" method="post">
@@ -66,48 +66,53 @@
         }
     });
 
-    $('#rule_combogrid').combogrid({
-        panelWidth:400,
-        idField:'name',
-        textField:'name',
-        url:'/ruleProduct/ruleCompgird',
-        mode: 'remote',
-        delay: 500,
-        columns:[[
-            {field:'id',title:'组ID',width:100,align:'center'},
-            {field:'name',title:'组名称',width:100,align:'center'},
-            {field:'rate',title:'比率',width:180,align:'center',
-                formatter:function (value,row,index) {
-                    return value+"%";
-                }
-			},
-        ]],
-        onSelect: function (index,row) {
-            $("#addRuleProductForm [name=ruleId]").val(row.id);
-        }
-    });
+    getRuleCombogrid = function () {
+        $('#rule_combogrid').combogrid({
+            panelWidth:400,
+            idField:'name',
+            textField:'name',
+            url:'/ruleProduct/ruleCompgird',
+            mode: 'remote',
+            delay: 500,
+            columns:[[
+                {field:'id',title:'组ID',width:100,align:'center'},
+                {field:'name',title:'组名称',width:100,align:'center'},
+                {field:'rate',title:'比率',width:180,align:'center',
+                    formatter:function (value,row,index) {
+                        return value+"%";
+                    }
+                },
+            ]],
+            onSelect: function (index,row) {
+                $("#addRuleProductForm [name=ruleId]").val(row.id);
+            }
+        });
+    }
 
-    $('#sku_combgrid').combogrid({
-        panelWidth:600,
-        idField:'skuName',
-        textField:'skuName',
-        url:'/ruleProduct/productJdComgrid',
-        mode: 'remote',
-        delay: 500,
-        required:true,
-        columns:[[
-            {field:'skuId',title:'到家商品编码',width:100,align:'center'},
-            {field:'skuName',title:'商品名称',width:400,align:'center'},
-            {field:'skuPrice',title:'商品价格',width:60,align:'center',
-                formatter:function (value,row,index) {
-                    return value/100;
-                }
+
+    getSkuCombogrid = function () {
+        $('#sku_combgrid').combogrid({
+            panelWidth:600,
+            idField:'skuName',
+            textField:'skuName',
+            url:'/ruleProduct/productJdComgrid',
+            mode: 'remote',
+            delay: 500,
+            required:true,
+            columns:[[
+                {field:'skuId',title:'到家商品编码',width:100,align:'center'},
+                {field:'skuName',title:'商品名称',width:400,align:'center'},
+                {field:'skuPrice',title:'商品价格',width:60,align:'center',
+                    formatter:function (value,row,index) {
+                        return value/100;
+                    }
+                },
+            ]],
+            onSelect: function (index,row) {
+                $("#addRuleProductForm [name=skuId]").val(row.skuId);
             },
-        ]],
-        onSelect: function (index,row) {
-            $("#addRuleProductForm [name=skuId]").val(row.skuId);
-        },
-    });
+        });
+    }
 
     addRuleProduct = function () {
         $('#addRuleProductDialog').dialog({
@@ -144,6 +149,8 @@
                 $("#addRuleProductDialog").form("clear");
             }
         });
+        getRuleCombogrid();
+        getSkuCombogrid();
     }
 
     deleteRuleProduct = function () {
@@ -152,7 +159,7 @@
             $.messager.alert('提示', '未选中数据!');
             return;
         }
-        $.messager.confirm('确认', '确定删除ID为 ' + ids + ' 的数据吗？', function(r) {
+        $.messager.confirm('确认', '确定删除选中的数据吗？', function(r) {
             if (r) {
                 var params = {"ids" : ids};
                 $.post("/ruleProduct/deleteRuleProduct", params, function(data) {

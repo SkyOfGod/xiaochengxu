@@ -7,7 +7,7 @@
 
     <button style="margin-left: 10px" class="easyui-linkbutton" iconCls="icon-search" onclick="itemJdListSearch()">搜索</button>
 </div>
-<table id="item-jd-list" style="width:100%;height:800px"></table>
+<table id="item-jd-list" style="width:100%;height:700px"></table>
 
 <div id="editItemJd" class="easyui-dialog" data-options="closed:true">
     <form id="editItemJdForm" method="post">

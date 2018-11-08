@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<table id="item-img-category-list" style="width:100%;height:800px"></table>
+<table id="item-img-category-list" style="width:100%;height:700px"></table>
 
 <div id="editImgCategoryItem" class="easyui-dialog" data-options="closed:true">
     <form id="editImgCategoryItemForm" method="post">

@@ -26,12 +26,13 @@
         TRUNCATE TABLE product_jd
     </delete>
 
+    <!-- AND c.phone = #{username}在当前门店下商品被唯一关联 -->
     <select id="comgridJdList" resultType="com.cailanzi.pojo.entities.ProductJd">
         SELECT a.sku_id skuId,a.sku_name skuName,b.price skuPrice,b.current_qty stockNum,b.vendibility fixedStatus,
                 a.shop_categories shopCategories,a.img_url imgUrl
         FROM product_jd a
         INNER JOIN product_status b ON b.sku_id=a.sku_id AND b.station_no = #{belongStationNo} AND b.vendibility=0
-        LEFT JOIN product c ON c.sku_id = b.sku_id AND c.belong_station_no = b.station_no AND c.phone = #{username}
+        LEFT JOIN product c ON c.sku_id = b.sku_id AND c.belong_station_no = b.station_no
         WHERE a.fixed_status = 1 AND c.id IS NULL
         <if test="q != null">
           AND a.sku_name LIKE CONCAT('%',#{q},'%')
@@ -42,7 +43,9 @@
         SELECT a.sku_id skuId,a.sku_name skuName,b.price skuPrice,b.current_qty stockNum,a.shop_categories shopCategories
         FROM product_jd a
         INNER JOIN product_status b ON b.sku_id=a.sku_id AND b.station_no = #{belongStationNo}
-        WHERE a.sku_id IN
+        LEFT JOIN product c ON c.sku_id = b.sku_id AND c.belong_station_no = b.station_no
+        WHERE c.id IS NULL
+        AND a.sku_id IN
         <foreach collection="skuIds" item="temp" separator="," open="(" close=")">
             #{temp}
         </foreach>
@@ -107,11 +110,12 @@
         WHERE b.sku_id IS NULL AND a.fixed_status=1
     </select>
 
-    <select id="productJdComgrid" resultType="com.cailanzi.pojo.entities.ProductJd">
-        SELECT sku_id skuId,sku_name skuName,sku_price skuPrice FROM product_jd
-        WHERE fixed_status=1
+    <select id="productJdComgridExcludeInRuleProduct" resultType="com.cailanzi.pojo.entities.ProductJd">
+        SELECT a.sku_id skuId,a.sku_name skuName,a.sku_price skuPrice FROM product_jd a
+        LEFT JOIN rule_product b ON b.sku_id=a.sku_id
+        WHERE fixed_status=1 AND b.sku_id IS NULL
         <if test="q !=  null and q.trim() != ''">
-            AND sku_name LIKE CONCAT('%',#{q},'%')
+            AND a.sku_name LIKE CONCAT('%',#{q},'%')
         </if>
     </select>
 

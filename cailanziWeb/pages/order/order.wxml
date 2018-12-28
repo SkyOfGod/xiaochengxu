@@ -170,17 +170,18 @@
         <text>订单总金额：</text>
         ￥<text class='sp_jg'>{{finishTotal/100}}</text>
       </view>
-      <view class='prepay'>
+      <!-- <view class='prepay'>
         <text>预付款金额：</text>
         ￥<text class='sp_jg'>{{finishPrepay}}</text>
       </view>
       <view class='balance'>
         <text>剩余金额：</text>
         ￥<text class='sp_jg'>{{(finishPrepay-finishTotal)/100}}</text>
-      </view>
+      </view> -->
     </view>  
     
-    <view class='swi-item-finish'>
+    <!-- <view class='swi-item-finish'> 商家余额样式-->
+    <view class='swi-item-date'>
       <view class="search_no" wx:if="{{!orders3}}">
         <view class="font_14"><image class="scimg" src="/images/search_no.png"></image></view>
         <text>没有可用订单/(ㄒoㄒ)/~~</text>

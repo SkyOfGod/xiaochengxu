@@ -1,6 +1,6 @@
 package com.cailanzi.controller;
 
-import com.cailanzi.Exception.ServiceException;
+import com.cailanzi.exception.ServiceException;
 import com.cailanzi.pojo.*;
 import com.cailanzi.pojo.entities.ProductImg;
 import com.cailanzi.pojo.entities.ProductImgCategory;

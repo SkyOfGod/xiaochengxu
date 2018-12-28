@@ -1,22 +1,16 @@
-package com.cailanzi.Async;
+package com.cailanzi.async;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cailanzi.mapper.*;
-import com.cailanzi.pojo.OrderJdVo;
-import com.cailanzi.pojo.OrderListInput;
-import com.cailanzi.pojo.ProductOrderJdVo;
 import com.cailanzi.pojo.entities.OrderJd;
 import com.cailanzi.pojo.entities.OrderShop;
-import com.cailanzi.pojo.entities.Product;
 import com.cailanzi.pojo.entities.ProductOrderJd;
 import com.cailanzi.utils.ConstantsUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.message.ReusableMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -35,7 +29,7 @@ public class OrderAsync {
     @Autowired
     private OrderShopMapper orderShopMapper;
 
-//    @Async
+//    @async
     public void insertOrderJd(JSONArray jsonArray) {
         JSONObject orderJsonObject = JSON.parseObject(jsonArray.get(0).toString());
         String orderId = orderJsonObject.getString("orderId");

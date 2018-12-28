@@ -2,7 +2,7 @@ package com.cailanzi.utils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.cailanzi.Exception.ServiceException;
+import com.cailanzi.exception.ServiceException;
 import com.cailanzi.mapper.ConfigMapper;
 import com.cailanzi.pojo.entities.Config;
 import lombok.extern.slf4j.Slf4j;

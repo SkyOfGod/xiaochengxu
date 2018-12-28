@@ -1,6 +1,6 @@
 package com.cailanzi.controller;
 
-import com.cailanzi.Exception.ServiceException;
+import com.cailanzi.exception.ServiceException;
 import com.cailanzi.pojo.EasyUIResult;
 import com.cailanzi.pojo.SysResult;
 import com.cailanzi.pojo.UserImport;

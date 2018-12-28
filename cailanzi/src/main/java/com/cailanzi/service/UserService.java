@@ -1,16 +1,13 @@
 package com.cailanzi.service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.cailanzi.Exception.ServiceException;
-import com.cailanzi.mapper.OrderShopMapper;
+import com.cailanzi.exception.ServiceException;
 import com.cailanzi.mapper.ProductMapper;
 import com.cailanzi.mapper.UserMapper;
 import com.cailanzi.pojo.EasyUIResult;
 import com.cailanzi.pojo.SysResult;
 import com.cailanzi.pojo.UserImport;
-import com.cailanzi.pojo.entities.OrderShop;
 import com.cailanzi.pojo.entities.Product;
-import com.cailanzi.pojo.entities.ProductJd;
 import com.cailanzi.pojo.entities.User;
 import com.cailanzi.utils.*;
 import com.github.pagehelper.PageHelper;
@@ -22,9 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by v-hel27 on 2018/8/11.

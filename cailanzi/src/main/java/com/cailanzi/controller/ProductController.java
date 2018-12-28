@@ -1,6 +1,6 @@
 package com.cailanzi.controller;
 
-import com.cailanzi.Exception.ServiceException;
+import com.cailanzi.exception.ServiceException;
 import com.cailanzi.pojo.*;
 import com.cailanzi.pojo.entities.Product;
 import com.cailanzi.pojo.entities.ProductJd;
@@ -72,7 +72,7 @@ public class ProductController {
     }
 
    /* @RequestMapping(value = "updateProduct",method = RequestMethod.POST)
-    public SysResult updateProduct(Product product) throws Exception {
+    public SysResult updateProduct(Product product) throws exception {
         log.info("ProductController updateProduct product={}",product);
         productItemService.updateProduct(product);
         return SysResult.build(200);

@@ -1,19 +1,11 @@
 package com.cailanzi.service;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.cailanzi.Async.OrderAsync;
-import com.cailanzi.Exception.ServiceException;
 import com.cailanzi.mapper.*;
 import com.cailanzi.pojo.*;
 import com.cailanzi.pojo.entities.*;
 import com.cailanzi.utils.ConstantsUtil;
-import com.cailanzi.utils.JdHttpCilentUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.sun.javafx.scene.control.skin.VirtualFlow;
-import jdk.nashorn.internal.ir.ReturnNode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.concurrent.TransferQueue;
 
 /**
  * Created by v-hel27 on 2018/8/7.
@@ -158,7 +149,7 @@ public class OrderService {
             for(OrderJdVo orderJdVo: collection){
                 total += orderJdVo.getCostTotal();
             }
-            String username = orderListInput.getUsername();
+           /* String username = orderListInput.getUsername();
 //            Integer temp = userBalanceDayMapper.getBalance(username, LocalDate.now());
             UserBalanceDay userBalanceDay = new UserBalanceDay();
             userBalanceDay.setUsername(username);
@@ -166,7 +157,7 @@ public class OrderService {
             UserBalanceDay temp = userBalanceDayMapper.selectOne(userBalanceDay);
             if(temp != null){
                 balance = temp.getBalance();
-            }
+            }*/
         }
         return SysResult.ok(collection,total,balance);
     }

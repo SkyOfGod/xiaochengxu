@@ -22,7 +22,7 @@ public class BalanceScheduling {
     @Autowired
     private UserBalanceDayMapper userBalanceDayMapper;
 
-    @Scheduled(cron = "0 0 0 * * ?")
+//    @Scheduled(cron = "0 0 0 * * ?")
 //    @Scheduled(cron = "0 27 19 * * ?")
     public void schedulTask(){
         LocalDate localDate = LocalDate.now();

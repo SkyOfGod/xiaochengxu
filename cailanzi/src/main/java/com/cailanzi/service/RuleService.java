@@ -1,19 +1,16 @@
 package com.cailanzi.service;
 
-import com.cailanzi.Exception.ServiceException;
+import com.cailanzi.exception.ServiceException;
 import com.cailanzi.mapper.RuleMapper;
 import com.cailanzi.mapper.RuleProductMapper;
 import com.cailanzi.pojo.EasyUIResult;
 import com.cailanzi.pojo.RuleListInput;
-import com.cailanzi.pojo.SysResult;
 import com.cailanzi.pojo.entities.Rule;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Date;
 import java.util.HashSet;

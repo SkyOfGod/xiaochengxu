@@ -1,6 +1,6 @@
 package com.cailanzi.controller.web;
 
-import com.cailanzi.Exception.ServiceException;
+import com.cailanzi.exception.ServiceException;
 import com.cailanzi.pojo.CategoriesVo;
 import com.cailanzi.pojo.ProductListInput;
 import com.cailanzi.pojo.SysResult;

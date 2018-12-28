@@ -1,24 +1,19 @@
 package com.cailanzi.service;
 
-import com.cailanzi.Exception.ServiceException;
+import com.cailanzi.exception.ServiceException;
 import com.cailanzi.mapper.ProductImgCategoryMapper;
 import com.cailanzi.mapper.ProductImgMapper;
 import com.cailanzi.pojo.EasyUIResult;
 import com.cailanzi.pojo.ProductImgInput;
 import com.cailanzi.pojo.ProductImgUnion;
-import com.cailanzi.pojo.SysResult;
-import com.cailanzi.pojo.entities.Product;
 import com.cailanzi.pojo.entities.ProductImg;
 import com.cailanzi.pojo.entities.ProductImgCategory;
-import com.cailanzi.pojo.entities.ProductJd;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.io.File;
 import java.util.Date;

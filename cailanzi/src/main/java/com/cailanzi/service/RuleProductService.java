@@ -1,6 +1,6 @@
 package com.cailanzi.service;
 
-import com.cailanzi.Exception.ServiceException;
+import com.cailanzi.exception.ServiceException;
 import com.cailanzi.mapper.ProductJdMapper;
 import com.cailanzi.mapper.RuleMapper;
 import com.cailanzi.mapper.RuleProductMapper;
@@ -17,9 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by v-hel27 on 2018/9/18.

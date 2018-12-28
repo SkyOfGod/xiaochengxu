@@ -1,6 +1,6 @@
 package com.cailanzi.service;
 
-import com.cailanzi.Exception.ServiceException;
+import com.cailanzi.exception.ServiceException;
 import com.cailanzi.mapper.ProductCategoryMapper;
 import com.cailanzi.mapper.ProductJdMapper;
 import com.cailanzi.mapper.ProductMapper;
@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.xml.transform.Result;
 import java.util.*;
 
 /**
@@ -97,7 +96,7 @@ public class ProductItemService {
     }
 
 
-    /*public void updateProduct(Product product) throws Exception{
+    /*public void updateProduct(Product product) throws exception{
         product.setUpdateTime(new Date());
         productMapper.updateByPrimaryKeySelective(product);
     }*/

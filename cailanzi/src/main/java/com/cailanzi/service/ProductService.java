@@ -3,13 +3,12 @@ package com.cailanzi.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.cailanzi.Exception.ServiceException;
+import com.cailanzi.exception.ServiceException;
 import com.cailanzi.mapper.*;
 import com.cailanzi.pojo.ProductListInput;
 import com.cailanzi.pojo.ProductStatusInput;
 import com.cailanzi.pojo.QueryStockRequest;
 import com.cailanzi.pojo.entities.*;
-import com.cailanzi.utils.ConstantsUtil;
 import com.cailanzi.utils.JdHttpCilentUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -156,7 +155,7 @@ public class ProductService {
     }
 
     /* 	根据商家商品编码和门店编码批量查询商品库存及可售状态信息接口
-    public void asynProductStatus() throws Exception {
+    public void asynProductStatus() throws exception {
         ProductJd selectProduct = new ProductJd();
         selectProduct.setFixedStatus((byte)1);//只处理了上架商品
         List<ProductJd> productJdList = productJdMapper.select(selectProduct);
@@ -183,7 +182,7 @@ public class ProductService {
         }
     }
 
-    public void getJdProductStatusList(ProductStatusJdImport productStatusJdImport, List<ProductStatus> productStatusList) throws Exception {
+    public void getJdProductStatusList(ProductStatusJdImport productStatusJdImport, List<ProductStatus> productStatusList) throws exception {
         log.info("ProductService getJdProductStatusList ProductStatusJdImport productStatusJdImport={},productStatusList={}", productStatusJdImport,productStatusList);
         String jdParamJson = JSON.toJSONString(productStatusJdImport);
 

@@ -15,8 +15,8 @@ import java.util.concurrent.CopyOnWriteArraySet;
  */
 @Slf4j
 @Data
-@ServerEndpoint(value = "/websocket")
-@Component
+//@ServerEndpoint(value = "/websocket")
+//@Component
 public class WebSocketServer {
 
     //静态变量，用来记录当前在线连接数。应该把它设计成线程安全的。

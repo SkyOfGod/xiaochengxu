@@ -1,4 +1,4 @@
-package com.cailanzi.Exception;
+package com.cailanzi.exception;
 
 /**
  * Created by v-hel27 on 2018/8/7.

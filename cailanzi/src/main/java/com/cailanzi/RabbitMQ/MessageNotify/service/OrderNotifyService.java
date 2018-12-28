@@ -114,7 +114,7 @@ public class OrderNotifyService {
         return JdResult.build(code,msg,data);
     }
 
-    /*public static void main(String[] args) throws Exception {
+    /*public static void main(String[] args) throws exception {
         MqOrder mqOrder = new MqOrder();
         mqOrder.setBillId("10003129");
         mqOrder.setTimestamp("2015-10-16 13:23:30");

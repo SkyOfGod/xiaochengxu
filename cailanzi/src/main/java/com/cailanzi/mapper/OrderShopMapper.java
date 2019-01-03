@@ -18,7 +18,7 @@ public interface OrderShopMapper extends MyMapper<OrderShop> {
 
     List<OrderShop> getOrderShopPageList(OrderListInput orderListInput);
 
-    List<OrderUnion> getOrderShopList(@Param("username") String username,@Param("stationNo") String stationNo,@Param("orderStatus") String orderStatus);
+    List<OrderUnion> getOrderShopList(OrderListInput orderListInput);
 
     /**
      *

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cailanzi.mapper.UserBalanceDayMapper">
+
+    <select id="selectDynamic" resultType="com.cailanzi.pojo.entities.UserBalanceDay">
+        SELECT username,balance,yesterday_bill yesterdayBill,create_date createDate,update_time updateTime
+        FROM user_balance_day
+        <where>
+            <if test="username!=null and username.trim()!=''">
+                AND username =#{username}
+            </if>
+        </where>
+        ORDER BY create_date DESC
+    </select>
+
+    <select id="selectMultile" resultType="java.lang.String">
+        SELECT username FROM user_balance_day
+        WHERE username IN
+        <foreach collection="usernames" item="temp" open="(" close=")" separator=",">
+            #{temp}
+        </foreach>
+    </select>
+
+    <update id="updateBalance">
+        UPDATE user_balance_day SET balance = balance + #{price},update_time = #{date}
+        WHERE username IN
+        <foreach collection="usernames" item="temp" open="(" close=")" separator=",">
+            #{temp}
+        </foreach>
+    </update>
+
+    <update id="statisticsUserBalanceEveryday">
+        INSERT INTO user_balance_day(username,balance,yesterday_bill,create_date,update_time)
+        SELECT b.username,IFNULL(c.balance,0)-b.total balance,b.total,#{localDate},#{localDateTime} FROM
+        (
+            SELECT username,SUM(skuTatol) total
+            FROM (
+                SELECT username ,sku_count*sku_price skuTatol FROM order_shop
+                WHERE update_time BETWEEN #{yesterday} AND CONCAT(#{yesterday},' 23:59:59')
+                AND order_status = '35000'
+            ) a
+            GROUP BY username
+        ) b
+        LEFT JOIN user_balance_day c ON c.username=b.username AND c.create_date = #{yesterday}
+    </update>
+
+</mapper>

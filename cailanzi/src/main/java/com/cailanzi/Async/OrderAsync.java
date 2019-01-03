@@ -1,20 +1,16 @@
-package com.cailanzi.Async;
+package com.cailanzi.async;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cailanzi.mapper.*;
-import com.cailanzi.pojo.OrderJdVo;
-import com.cailanzi.pojo.OrderListInput;
-import com.cailanzi.pojo.ProductOrderJdVo;
 import com.cailanzi.pojo.entities.OrderJd;
 import com.cailanzi.pojo.entities.OrderShop;
-import com.cailanzi.pojo.entities.Product;
 import com.cailanzi.pojo.entities.ProductOrderJd;
 import com.cailanzi.utils.ConstantsUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -33,12 +29,11 @@ public class OrderAsync {
     @Autowired
     private OrderShopMapper orderShopMapper;
 
-//    @Async
+//    @async
     public void insertOrderJd(JSONArray jsonArray) {
-        Date date = new Date();
-
         JSONObject orderJsonObject = JSON.parseObject(jsonArray.get(0).toString());
         String orderId = orderJsonObject.getString("orderId");
+        String orderStatus = getOrderStatus(orderJsonObject);
 
         List<ProductOrderJd> productList = new ArrayList<>();
         JSONArray proJSonArray = orderJsonObject.getJSONArray("product");
@@ -47,14 +42,27 @@ public class OrderAsync {
             productList.add(getProductOrderJd(orderId,orderProductJsonObject));
         }
         if(!productList.isEmpty()){
-            OrderJd orderJd = getOrderJd(date,orderJsonObject);
+            OrderJd orderJd = getOrderJd(orderJsonObject,orderStatus);
             log.info("OrderAsync insertOrderJd OrderJd orderJd={}", orderJd);
             orderJdMapper.insert(orderJd);
             log.info("OrderAsync insertOrderJd insertList List<ProductOrderJd> productList={}", productList);
             productOrderJdMapper.insertList(productList);
 
-            insertOrderShop(orderId);
+            insertOrderShop(orderId,orderStatus);
         }
+    }
+
+    private String getOrderStatus(JSONObject orderJsonObject) {
+        String status = ConstantsUtil.Status.READY;
+        String orderStatus = orderJsonObject.getString("orderStatus");
+        if("33040".equals(orderStatus)){
+            status = ConstantsUtil.Status.DELIVERY_TO;
+        }else if("33060".equals(orderStatus)){
+            status = ConstantsUtil.Status.FINISH;
+        }else if("20020".equals(orderStatus)){
+            status = ConstantsUtil.Status.QUIT;
+        }
+        return status;
     }
 
     public boolean isExitOrder(String orderId) {
@@ -74,14 +82,28 @@ public class OrderAsync {
         return productOrderJd;
     }
 
-    private OrderJd getOrderJd(Date date,JSONObject orderJsonObject) {
+    private OrderJd getOrderJd(JSONObject orderJsonObject,String status) {
+        String orderPreStartDeliveryTime = orderJsonObject.getString("orderPreStartDeliveryTime");
+        String orderPreEndDeliveryTime = orderJsonObject.getString("orderPreEndDeliveryTime");
+        String businessTag = orderJsonObject.getString("businessTag");
+        String temp = "[立即送达]";
+        if(businessTag.contains("one_dingshida")){//定时达
+            temp = "[请于"+orderPreStartDeliveryTime.substring(0,16)+" ~ "+orderPreEndDeliveryTime.substring(11,16)+" 送达]";
+        }
+
         OrderJd orderJd = JSONObject.toJavaObject(orderJsonObject,OrderJd.class);
-        orderJd.setStatus(ConstantsUtil.Status.READY);
-        orderJd.setCreateTime(date);
+        orderJd.setStatus(status);
+        orderJd.setCreateTime(new Date());
+        orderJd.setUpdateTime(orderJd.getCreateTime());
+        if(StringUtils.isBlank(orderJd.getOrderBuyerRemark())){
+            orderJd.setOrderBuyerRemark(temp);
+        }else {
+            orderJd.setOrderBuyerRemark(orderJd.getOrderBuyerRemark()+temp);
+        }
         return orderJd;
     }
 
-    public void insertOrderShop(String orderId) {
+    public void insertOrderShop(String orderId,String orderStatus) {
         Date date = new Date();
         List<OrderShop> inList = new ArrayList<>();
 
@@ -91,11 +113,10 @@ public class OrderAsync {
             if(isExitOrderShop(orderId,username)){
                 continue;
             }
-            orderShop.setOrderId(orderId);
             orderShop.setCreateTime(date);
             orderShop.setUpdateTime(date);
-            orderShop.setSkuStatus(ConstantsUtil.productStatus.READY);
-            orderShop.setOrderStatus(ConstantsUtil.Status.READY);
+            orderShop.setSkuStatus(ConstantsUtil.ProductStatus.READY);
+            orderShop.setOrderStatus(orderStatus);
             inList.add(orderShop);
         }
         if(!inList.isEmpty()){

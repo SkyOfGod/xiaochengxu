@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cailanzi.mapper.RuleProductMapper">
+
+    <delete id="deleteByRuleIds">
+        DELETE FROM rule_product
+        WHERE rule_id IN 
+        <foreach collection="ruleIds" open="(" close=")" separator="," item="temp">
+            #{temp}
+        </foreach>
+    </delete>
+
+    <select id="selectDynamic" resultType="com.cailanzi.pojo.entities.RuleProduct">
+        SELECT id,rule_id ruleId,rule_name ruleName,sku_id skuId,sku_name skuName,create_time createTime
+        FROM rule_product
+        <where>
+            <if test="ruleName!=null and ruleName.trim()!=''">
+                AND rule_name LIKE CONCAT('%',#{ruleName},'%')
+            </if>
+            <if test="skuName!=null and skuName.trim()!=''">
+                AND sku_name LIKE CONCAT('%',#{skuName},'%')
+            </if>
+        </where>
+    </select>
+
+    <update id="updateRuleName">
+        UPDATE rule_product SET rule_name = #{newRuleName}
+        WHERE rule_name = #{oldRuleName}
+    </update>
+
+</mapper>

@@ -1,11 +1,12 @@
-package com.cailanzi.RabbitMQ.MessageNotify.service;
+package com.cailanzi.rabbitMQ.messageNotify.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONPObject;
-import com.cailanzi.RabbitMQ.MessageNotify.pojo.JdOrderImport;
-import com.cailanzi.RabbitMQ.MessageNotify.pojo.MqOrder;
+import com.cailanzi.rabbitMQ.messageNotify.pojo.JdOrderImport;
+import com.cailanzi.rabbitMQ.messageNotify.pojo.MqOrder;
 import com.cailanzi.pojo.JdResult;
+import com.cailanzi.service.ConfigService;
 import com.cailanzi.utils.JdHelper;
 import com.cailanzi.utils.JdHttpCilentUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -25,15 +26,18 @@ import java.util.Map;
 public class OrderNotifyService {
 
     @Autowired
+    private ConfigService configService;
+
+    @Autowired
     private RabbitTemplate rabbitTemplate;
 
     private final static String EXCHANGE_DIRECT = "exchange.direct";
 
-    private final static String ADD_ROUTING_KEY = "order.add";
+    private final static String ADD_ROUTING_KEY = "order.create";
 
     private final static String QUIT_ROUTING_KEY = "order.quit";
 
-    private final static String DELIVERY_TO_ROUTING_KEY = "order.delivery.to";
+    private final static String DELIVERY_TO_ROUTING_KEY = "order.delivery";
 
     private final static String FINISH_ROUTING_KEY = "order.finish";
 
@@ -80,7 +84,7 @@ public class OrderNotifyService {
             code =  "10005";
             msg = "必填项参数未填";
         }else {
-            if(!JdHttpCilentUtil.JD_TAKEN.equals(token)){
+            if(!JdHttpCilentUtil.TAKEN_JD.equals(token)){
                 code = "10013";
                 msg = "无效Token令牌";
             } else {
@@ -110,7 +114,7 @@ public class OrderNotifyService {
         return JdResult.build(code,msg,data);
     }
 
-    /*public static void main(String[] args) throws Exception {
+    /*public static void main(String[] args) throws exception {
         MqOrder mqOrder = new MqOrder();
         mqOrder.setBillId("10003129");
         mqOrder.setTimestamp("2015-10-16 13:23:30");

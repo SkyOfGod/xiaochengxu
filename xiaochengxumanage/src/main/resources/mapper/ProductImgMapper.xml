@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cailanzi.mapper.ProductImgMapper">
+
+    <select id="productImgComgrid" resultType="com.cailanzi.pojo.ProductImgUnion">
+        SELECT b.category_name categoryName,a.`name`,a.address
+        FROM product_img a
+        JOIN product_img_category b ON b.id=a.category_id
+        <where>
+            <if test="q!=null and q.trim()!=''">
+                AND a.`name` LIKE CONCAT ('%',#{q},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectDynamic"  resultType="com.cailanzi.pojo.entities.ProductImg">
+        SELECT id,category_id categoryId,name,address,create_time createTime
+        FROM product_img
+        <where>
+            <if test="name != null and name.trim()!=''">
+                AND NAME LIKE CONCAT('%',#{name},'%')
+            </if>
+        </where>
+    </select>
+
+</mapper>

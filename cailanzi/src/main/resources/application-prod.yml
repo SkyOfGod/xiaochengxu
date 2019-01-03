@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    password: root
+    url: jdbc:mysql://172.18.212.243:3306/program?useUnicode=true&characterEncoding=UTF8
+    username: root
+    type: com.zaxxer.hikari.HikariDataSource
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  rabbitmq:
+    host: 172.18.212.243
+
+mybatis:
+   mapperLocations: classpath:mapper/*.xml
+   typeAliasesPackage: com.cailanzi.pojo
+   mapUnderscoreToCamelCase: true
+
+logging:
+  level:
+    com:
+      cailanzi: info
+  file: myLogs/log
+
+

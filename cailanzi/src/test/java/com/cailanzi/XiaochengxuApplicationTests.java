@@ -3,20 +3,19 @@ package com.cailanzi;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.cailanzi.RabbitMQ.MessageNotify.pojo.JdOrderImport;
-import com.cailanzi.RabbitMQ.RabbitListener.OrderServiceListener;
+import com.cailanzi.rabbitMQ.messageNotify.pojo.JdOrderImport;
+import com.cailanzi.rabbitMQ.rabbitListener.OrderServiceListener;
 import com.cailanzi.mapper.OrderJdMapper;
 import com.cailanzi.mapper.ProductJdMapper;
 import com.cailanzi.mapper.ProductMapper;
 import com.cailanzi.pojo.OrderListInput;
+import com.cailanzi.pojo.ProductStatusJdImport;
+import com.cailanzi.pojo.SkuIdEntity;
 import com.cailanzi.pojo.entities.ProductJd;
 import com.cailanzi.service.OrderService;
 import com.cailanzi.service.ProductService;
 import com.cailanzi.service.ShopService;
-import com.cailanzi.utils.ConstantsUtil;
-import com.cailanzi.utils.HttpClientUtil;
-import com.cailanzi.utils.JdHttpCilentUtil;
-import com.cailanzi.utils.MD5Util;
+import com.cailanzi.utils.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +24,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -44,6 +40,31 @@ public class XiaochengxuApplicationTests {
 	private OrderServiceListener orderServiceListener;
 	@Autowired
 	private OrderJdMapper orderJdMapper;
+
+	@Test
+	public void getAccessToken(){
+		WxHttpClientUtil.getAccessToken();
+	}
+
+	@Test
+	public void testAsynProduct() throws Exception {
+		productService.asynProduct();
+	}
+
+	@Test
+	public void testProductStatusJd() throws Exception {
+		/*ProductStatusJdImport productStatusJdImport = new ProductStatusJdImport();
+		productStatusJdImport.setOutStationNo("11673746");
+
+		List<SkuIdEntity> skuIds = new ArrayList<>();
+		skuIds.add(new SkuIdEntity("2018807209"));
+		skuIds.add(new SkuIdEntity("2018806625"));
+		productStatusJdImport.setSkuIds(skuIds);
+		productStatusJdImport.setUserPin("jddj");
+
+		productService.getJdProductStatusList(productStatusJdImport,null);*/
+		productService.asynProductStatus();
+	}
 
 	@Test
 	public void testJSONtoBean(){
@@ -64,9 +85,10 @@ public class XiaochengxuApplicationTests {
 	@Test
 	public void testGetOrderListResultData() throws Exception {
 		OrderListInput orderListInput = new OrderListInput();
-		orderListInput.setDeliveryStationNo("11673747");//菜蓝子－扫把塘店
+		orderListInput.setDeliveryStationNo("11805772");
 		orderListInput.setPageSize(100);
 		orderListInput.setOrderStatus(ConstantsUtil.Status.READY);
+		orderListInput.setOrderId("822686242000441");
 
 		String result = orderServiceListener.getOrderListResultData(orderListInput);
 		JSONObject resultJson = JSON.parseObject(result);

@@ -1,6 +1,6 @@
 package com.cailanzi.controller;
 
-import com.cailanzi.Exception.ServiceException;
+import com.cailanzi.exception.ServiceException;
 import com.cailanzi.pojo.EasyUIResult;
 import com.cailanzi.pojo.SysResult;
 import com.cailanzi.pojo.UserImport;
@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 /**
@@ -30,18 +31,21 @@ public class UserController {
     /****************** 小程序管理 *********************/
 
     /**
-     * 小程序登录验证
+     * 小程序登录验证 并获取保存openId
      * @param username
      * @param password
      * @return
      */
     @RequestMapping(value = "web/login",method = RequestMethod.GET)
-    public SysResult login(String username, String password){
+    public SysResult login(String username, String password, String code) throws UnsupportedEncodingException {
         log.info("UserController login username={}",username);
-        if(StringUtils.isBlank(username)||StringUtils.isBlank(password)){
-            return SysResult.build(400,"数据不能为空");
+        SysResult sysResult;
+        try {
+            sysResult = userService.loginAndSaveCode(username,password,code);
+        }catch (ServiceException e){
+            return SysResult.build(400,e.getMessage());
         }
-        return userService.login(username,password,null);
+        return sysResult;
     }
 
     /**
@@ -70,10 +74,12 @@ public class UserController {
     @RequestMapping(value = "manageLogin",method = RequestMethod.POST)
     public SysResult manageLogin(String username, String password, HttpSession session){
         log.info("UserController manageLogin username={}",username);
-        if(StringUtils.isBlank(username)||StringUtils.isBlank(password)){
-            return SysResult.build(400,"数据不能为空");
+        SysResult sysResult;
+        try {
+            sysResult = userService.login(username,password,0);
+        }catch (ServiceException e){
+            return SysResult.build(400,e.getMessage());
         }
-        SysResult sysResult = userService.login(username,password,0);
         if(sysResult.getData()!=null){
             User user = (User) sysResult.getData();
             session.setAttribute("sign",user.getSign());
@@ -91,19 +97,30 @@ public class UserController {
 
     @RequestMapping("addUser")
     public SysResult addUser(User user){
-        log.info("UserController addUser start");
+        log.info("UserController addUser user = {}",user);
         try {
             userService.addUser(user);
         }catch (ServiceException e){
-            return SysResult.build(400,e.getMessage());
+            return SysResult.build(201,e.getMessage());
+        }
+        return SysResult.build(200);
+    }
+
+    @RequestMapping("editUser")
+    public SysResult editUser(User user){
+        log.info("UserController editUser user = {}",user);
+        try {
+            userService.editUser(user);
+        }catch (ServiceException e){
+            return SysResult.build(201,e.getMessage());
         }
         return SysResult.build(200);
     }
 
     @RequestMapping("deleteUser")
-    public SysResult deleteUser(String ids){
-        log.info("UserController addUser start");
-        userService.deleteUser(ids);
+    public SysResult deleteUser(String names){
+        log.info("UserController deleteUser String names={}",names);
+        userService.deleteUser(names);
         return SysResult.build(200);
     }
 

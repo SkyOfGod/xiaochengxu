@@ -1,15 +1,16 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <div style="width: 100%;height: 40px">
     到家门店编码:&nbsp;&nbsp;<input  class="easyui-textbox" id="status_list_stationNo">
+    商品名称:&nbsp;&nbsp;<input  class="easyui-textbox" id="status_list_skuName">
     可售状态:&nbsp;&nbsp;<input id="vendibilityCombo"/>
     <input type="hidden" id="vendibility"/>
 
     <button style="margin-left: 10px" class="easyui-linkbutton" iconCls="icon-search" onclick="itemStatusListSearch()">搜索</button>
 </div>
-<table id="item-status-list" style="width:100%;height:800px"></table>
+<table id="item-status-list" style="width:100%;height:700px"></table>
 
-<div id="edit" class="easyui-dialog" data-options="closed:true">
-    <form id="editForm" method="post">
+<div id="editItemStatus" class="easyui-dialog" data-options="closed:true">
+    <form id="editItemStatusForm" method="post">
         <table cellpadding="5">
             <input type="hidden" name="id">
             <tr>
@@ -23,8 +24,12 @@
                 <td><input class="easyui-textbox" name="skuId" style="width: 200px;" data-options="editable:false"/></td>
             </tr>
             <tr>
-                <td>可用库存数量:</td>
-                <td><input class="easyui-numberbox" name="usableQty" data-options="min:0,max:99999999,precision:0,required:true" /></td>
+                <td>商品价格:</td>
+                <td><input class="easyui-numberbox" name="price" data-options="min:0,max:99999,precision:0,required:true" />分</td>
+            </tr>
+            <tr>
+                <td>现货库存:</td>
+                <td><input class="easyui-numberbox" name="currentQty" data-options="min:0,max:999,precision:0,required:true" />个</td>
             </tr>
             <tr>
                 <td>可售状态:</td>
@@ -44,6 +49,7 @@
     $('#vendibilityCombo').combobox({
         valueField:'key',
         textField:'value',
+        editable:false,
         data: [{
             key: '',
             value: '全部'
@@ -91,16 +97,19 @@
             },'-',{
                 text : '编辑',
                 iconCls : 'icon-edit',
-                handler: function(){editProduct();}
+                handler: function(){editItemStatus();}
             }
         ],
         columns:[[
             {field:'id',checkbox:true},
             {field:'stationNo',title:'到家门店编码',width:100,align:'center'},
             {field:'skuId',title:'到家商品编码',width:100,align:'center'},
-            {field:'usableQty',title:'可用库存数量',width:100,align:'center'},
-            {field:'lockQty',title:'锁定库存数量',width:100,align:'center'},
-            {field:'orderQty',title:'预占库存数量',width:100,align:'center'},
+            {field:'name',title:'商品名称',width:450,align:'center'},
+            {field:'currentQty',title:'现货库存',width:100,align:'center'},
+            {field:'usableQty',title:'可用库存',width:100,align:'center'},
+            {field:'lockQty',title:'锁定库存',width:100,align:'center'},
+            {field:'orderQty',title:'预占库存',width:100,align:'center'},
+            {field:'price',title:'门店价格(分)',width:100,align:'center'},
             {field:'vendibility',title:'可售状态',width:70,align:'center',
                 formatter:function (value,row,index) {
                     if(value==0){
@@ -117,13 +126,14 @@
             param.pageNo = param.page;
             param.pageSize = param.rows;
             param.stationNo = $('#status_list_stationNo').val();
+            param.skuName = $('#status_list_skuName').val();
             param.vendibility = $("#vendibility").val();
             return true;
         }
     });
 
-    editProduct = function () {
-        var ids = getSelectionsIds();
+    editItemStatus = function () {
+        var ids = getItemStatusListSelectionsIds();
         if (ids.length == 0) {
             $.messager.alert('提示', '必须选择一条数据才能编辑!');
             return;
@@ -132,44 +142,48 @@
             $.messager.alert('提示', '只能选择一条数据!');
             return;
         }
-        $('#edit').dialog({
+        $("#editItemStatus").dialog({
             title: '编辑商品库存',
             width: 400,
-            height: 300,
+            height: 350,
             closed: false,
             cache: false,
             modal: true,
             buttons:[{
                 text:'保存',
                 handler:function(){
-                    var params = $("#editForm").serialize();
-                    $.post("/product/updateProductStatus", params, function(data) {
+                    $.messager.progress();
+                    var params = $("#editItemStatusForm").serialize();
+                    $.post("/product/updateProductStatusOfStorePriceVendibility", params, function(data) {
+                        $.messager.progress('close');
                         if (data.status == 200) {
                             $.messager.alert('提示', '修改商品库存成功!', 'info',
                                 function() {
-                                    $("#edit").dialog('close');
+                                    $("#editItemStatus").dialog('close');
                                     $("#item-status-list").datagrid("reload");
                                 });
+                        }else if(data.status == 201){
+                            $.messager.alert('提示', data.msg, 'warning');
                         }
                     });
                 }
             },{
                 text:'关闭',
-                handler:function(){$('#edit').dialog("close");}
+                handler:function(){$("#editItemStatus").dialog("close");}
             }],
             onBeforeClose: function () {
-                $("#editForm").form("clear");
+                $("#editItemStatusForm").form("clear");
             }
         });
         var data = $("#item-status-list").datagrid("getSelected");
-        $("#editForm").form("load",data);
+        $("#editItemStatusForm").form("load",data);
     }
 
     itemStatusListSearch = function () {
         $('#item-status-list').datagrid('load');
     }
 
-    getSelectionsIds = function() {
+    getItemStatusListSelectionsIds = function() {
         var itemList = $("#item-status-list");
         var sels = itemList.datagrid("getSelections");
         var ids = [];

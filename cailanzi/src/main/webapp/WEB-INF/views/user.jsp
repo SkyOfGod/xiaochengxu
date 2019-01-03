@@ -3,16 +3,15 @@
 	到家门店编码:&nbsp;&nbsp;<input  class="easyui-textbox" id="searchNo">
 	<button class="easyui-linkbutton" iconCls="icon-search" onclick="userSearch()">搜索</button>
 </div>
-<table id="user-list" style="width:100%;height:800px"></table>
+<table id="user-list" style="width:100%;height:700px"></table>
 
-<div id="addDialog" class="easyui-dialog" data-options="closed:true">
-	<form id="addForm" method="post">
+<div id="addUserDialog" class="easyui-dialog" data-options="closed:true">
+	<form id="addUserForm" method="post">
 		<table cellpadding="5">
 			<tr>
 				<td>用户名:</td>
 				<td>
 					<input class="easyui-textbox" type="text" name="username" data-options="required:true" style="width: 240px;"/>
-					<input type="hidden" name="price">
 				</td>
 			</tr>
 			<tr>
@@ -35,6 +34,28 @@
 						<option value="0">管理者</option>
 					</select>
 				</td>
+			</tr>
+			<tr>
+				<td>备注:</td>
+				<td><input class="easyui-textbox" type="text" name="remark"  style="width: 240px;"/></td>
+			</tr>
+		</table>
+	</form>
+</div>
+
+<div id="editUserDialog" class="easyui-dialog" data-options="closed:true">
+	<form id="editUserForm" method="post">
+		<table cellpadding="5">
+			<tr>
+				<td>用户名:</td>
+				<td>
+					<input type="hidden" name="id">
+					<input class="easyui-textbox" type="text" name="username" style="width: 240px;"/>
+				</td>
+			</tr>
+			<tr>
+				<td>备注:</td>
+				<td><input class="easyui-textbox" type="text" name="remark"  style="width: 240px;"/></td>
 			</tr>
 		</table>
 	</form>
@@ -74,6 +95,10 @@
             text : '新增',
             iconCls : 'icon-add',
             handler : function() {addUser();}
+        },'-',{
+            text : '编辑',
+            iconCls : 'icon-edit',
+            handler: function(){editUser();}
         },'-',
             {
                 text : '删除',
@@ -99,6 +124,8 @@
                     return value;
                 }
             },
+            {field:'remark',title:'备注',width:200,align:'center'},
+            {field:'createTime',title:'创建时间',width:150,align:'center'},
         ]],
         onBeforeLoad: function (param) {
             param.belongStationNo = $('#searchNo').val();
@@ -107,7 +134,7 @@
     });
 
     addUser = function () {
-        $('#addDialog').dialog({
+        $('#addUserDialog').dialog({
             title: '新增用户',
             width: 400,
             height: 300,
@@ -117,41 +144,86 @@
             buttons:[{
                 text:'保存',
                 handler:function(){
-                    if (!$('#addForm').form('validate')) {
+                    if (!$('#addUserForm').form('validate')) {
                         return false;
                     }
-                    var params = $("#addForm").serialize();
+                    var params = $("#addUserForm").serialize();
                     $.post("/user/addUser", params, function(data) {
                         if (data.status == 200) {
                             $.messager.alert('提示', '新增用户成功!', 'info',
                                 function() {
-                                    $("#addDialog").dialog('close');
+                                    $("#addUserDialog").dialog('close');
                                     $("#user-list").datagrid("reload");
                                 });
-                        }else if(data.status == 400){
+                        }else if(data.status == 201){
                             $.messager.alert('警告',data.msg,'warning');
                         }
                     });
                 }
             },{
                 text:'关闭',
-                handler:function(){$('#addDialog').dialog("close");}
+                handler:function(){$('#addUserDialog').dialog("close");}
             }],
             onBeforeClose: function () {
-                $("#addDialog").form("clear");
+                $("#addUserDialog").form("clear");
             }
         });
     }
 
+    editUser = function () {
+        var ids = getUserListSelectionsIds();
+        if (ids.length == 0) {
+            $.messager.alert('提示', '必须选择一条才能编辑!');
+            return;
+        }
+        if (ids.indexOf(',') > 0) {
+            $.messager.alert('提示', '只能选择一条数据!');
+            return;
+        }
+        $("#editUserDialog").dialog({
+            title: '编辑用户',
+            width: 400,
+            height: 300,
+            closed: false,
+            cache: false,
+            modal: true,
+            buttons:[{
+                text:'保存',
+                handler:function(){
+                    var params = $("#editUserForm").serialize();
+                    $.post("/user/editUser", params, function(data) {
+                        if (data.status == 200) {
+                            $.messager.alert('提示', '修改商品成功!', 'info',
+                                function() {
+                                    $("#editUserDialog").dialog('close');
+                                    $("#user-list").datagrid("reload");
+                                });
+                        }else if(data.status == 201){
+                            $.messager.alert('提示', data.msg, 'warning');
+                        }
+                    });
+                }
+            },{
+                text:'关闭',
+                handler:function(){$("#editUserDialog").dialog("close");}
+            }],
+            onBeforeClose: function () {
+                $("#editUserForm").form("clear");
+            }
+        });
+        var data = $("#user-list").datagrid("getSelected");
+        $("#editUserForm").form("load",data);
+    }
+
     deleteUser = function () {
-        var ids = getSelectionsIds();
+        var ids = getUserListSelectionsIds();
         if (ids.length == 0) {
             $.messager.alert('提示', '未选中数据!');
             return;
         }
-        $.messager.confirm('确认', '确定删除ID为 ' + ids + ' 的用户数据吗？', function(r) {
+        $.messager.confirm('确认', '删除选中用户的数据将会删除关联的商品数据？', function(r) {
             if (r) {
-                var params = {"ids" : ids};
+                var params = {"names" : ids};
                 $.post("/user/deleteUser", params, function(data) {
                     if (data.status == 200) {
                         $.messager.alert('提示', '删除用户成功!', 'info',
@@ -168,12 +240,12 @@
         $('#user-list').datagrid('load');
     }
 
-    getSelectionsIds = function() {
+    getUserListSelectionsIds = function() {
         var itemList = $("#user-list");
         var sels = itemList.datagrid("getSelections");
         var ids = [];
         for ( var i in sels) {
-            ids.push(sels[i].id);
+            ids.push(sels[i].username);
         }
         ids = ids.join(",");
         return ids;

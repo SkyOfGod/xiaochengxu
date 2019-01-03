@@ -13,6 +13,8 @@ public class ProductListInput {
     private String phone;
     //到家门店编码
     private String stationNo;
+    //到家门店编码
+    private String stationName;
     //到家商品编码
     private String skuId;
     //商家商品上下架状态(1:上架;2:下架;4:删除;)
@@ -22,14 +24,29 @@ public class ProductListInput {
 
     private String categoryId;
 
+    private String categoryPid;
+    //角色类型
+    private String type;
+
     //商品名称(支持模糊查询)
     private String skuName;
     //商品UPC编码
     private String upcCode;
     //当前页
-    private int pageNo;
+    private Integer pageNo;
     //分页大小
-    private int pageSize;
+    private Integer pageSize;
+
+    private Integer pageStart;
 
     private Set<String> skuIds;
+
+    private String skuPrice;
+
+    private String skuStore;
+
+    private String isFilterDel;
+
+    private String description;
+
 }

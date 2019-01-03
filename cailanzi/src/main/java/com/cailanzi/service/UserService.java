@@ -1,14 +1,15 @@
 package com.cailanzi.service;
 
-import com.cailanzi.Exception.ServiceException;
+import com.alibaba.fastjson.JSONObject;
+import com.cailanzi.exception.ServiceException;
+import com.cailanzi.mapper.ProductMapper;
 import com.cailanzi.mapper.UserMapper;
 import com.cailanzi.pojo.EasyUIResult;
 import com.cailanzi.pojo.SysResult;
 import com.cailanzi.pojo.UserImport;
-import com.cailanzi.pojo.entities.ProductJd;
+import com.cailanzi.pojo.entities.Product;
 import com.cailanzi.pojo.entities.User;
-import com.cailanzi.utils.MD5Util;
-import com.cailanzi.utils.UserThreadLocal;
+import com.cailanzi.utils.*;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.List;
 
@@ -28,15 +30,31 @@ public class UserService {
 
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private ProductMapper productMapper;
+
+    public SysResult loginAndSaveCode(String username, String password,String code) throws ServiceException, UnsupportedEncodingException {
+        login(username,password,null);
+
+        JSONObject jsonObject = WxHttpClientUtil.getOpenIdAndSessionKey(code);
+        String openId = jsonObject.getString("openid");
+        String sessionKey = jsonObject.getString("session_key");
+        userMapper.updateOpenIdAndSessionKeyByUsername(username,openId,sessionKey);
+        List<User> userList = userMapper.selectByUsername(username,null);
+        return SysResult.ok(userList.get(0));
+    }
 
     public SysResult login(String username, String password, Integer type) throws ServiceException{
+        if(StringUtils.isBlank(username)||StringUtils.isBlank(password)){
+            throw new ServiceException("数据不能为空");
+        }
         List<User> userList = userMapper.selectByUsername(username,type);
         if(userList.isEmpty()){
-            return SysResult.build(400,"用户名不存在");
+            throw new ServiceException("用户名不存在");
         }
         String passwordMd5 = MD5Util.getMD5String(password);
         if(!userList.get(0).getPassword().equals(passwordMd5)){
-            return SysResult.build(400,"密码不正确");
+            throw new ServiceException("密码不正确");
         }
         return SysResult.ok(userList.get(0));
     }
@@ -75,17 +93,32 @@ public class UserService {
         user.setCreateTime(new Date());
         String passwordMd5 = MD5Util.getMD5String(user.getPassword());
         user.setPassword(passwordMd5);
-        String signMD5 = MD5Util.getMD5String(user.getUsername()+user.getPassword());
+        String signMD5 = MD5Util.getMD5String(user.getUsername()+user.getPassword()+user.getType()+user.getBelongStationNo());
         user.setSign(signMD5);
         log.info("UserService addUser user={}", user);
         userMapper.insertSelective(user);
     }
 
-    public void deleteUser(String ids) {
-        log.info("UserService deleteUser ids={}", ids);
-        String[] arr = ids.split(",");
-        for (String id : arr) {
-            userMapper.deleteByPrimaryKey(id);
+    public void editUser(User user) {
+        //判断是否要修改product的数据
+        User old = userMapper.selectByPrimaryKey(user.getId());
+        if(!user.getUsername().equals(old.getUsername())){
+            productMapper.updatePhone(old.getUsername(),user.getUsername());
+        }
+        userMapper.updateByPrimaryKeySelective(user);
+    }
+
+    public void deleteUser(String names) {
+        log.info("UserService deleteUser ids={}", names);
+        String[] arr = names.split(",");
+        for (String name : arr) {
+            User user = new User();
+            user.setUsername(name);
+            userMapper.delete(user);
+
+            Product product = new Product();
+            product.setPhone(name);
+            productMapper.delete(product);
         }
     }
 
@@ -95,4 +128,6 @@ public class UserService {
         log.info("UserService comgridList return list={}", list);
         return list;
     }
+
+
 }

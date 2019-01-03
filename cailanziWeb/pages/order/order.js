@@ -2,84 +2,116 @@
 var app = getApp();
 Page({
   data: {
-    winWidth: 0,
-    winHeight: 0,
+    imgUrlPrefix: app.globalData.imgUrlPrefix,
     // tab切换  
     currentTab: 0,
     page: 0,
-    orders: null,//待备货
-    orders2: null,//待收货
-    orders3: null,//待配送
-    orders4: null,//已完成
+    orders0: null,//待备货
+    orders1: null,//待收货
+    orders2: null,//待配送
+    orders3: null,//已完成
+    orders4: null,//已退款
     isReadyer:false,//是否是备货员
     isSender:false,//是否是收货员
+    nowDate:null,//当前日期
+    readyDate: null,
+    readyEndDate: null,
+    finishDate: null,
+    finishTotal:0,
+    finishPrepay:0,
+    returnDate:null,
   },
   bindChange: function (e) {
-    var that = this;
-    that.setData({ currentTab: e.detail.current });
+    this.setData({ currentTab: e.detail.current });
+    this.flashOrderList(e.detail.current);
   },
   swichNav: function (e) {
-    var that = this;
-    if (that.data.currentTab === e.target.dataset.current) {
+    var current = e.target.dataset.current;
+    if (this.data.currentTab === current) {
       return false;
     } else {
-      var current = e.target.dataset.current;
-      that.setData({
-        currentTab: parseInt(current)
-      });
-      if (current == 0) {
-        that.loadOrderList();
-      }
-      if (current == 1) {
-        that.loadOrderList();
-        that.loadOrder2List();
-      }
-      if (current == 2) {
-        that.loadOrder2List();
-        that.loadOrder3List();
-      }
-      if (current == 3) {
-        that.loadOrder3List();
-        that.loadOrder4List();
-      }
+      this.setData({currentTab: parseInt(current)});
+      //自动触发bindChange()
+      // this.flashOrderList(current);
     };
   },
+  flashOrderList(current){
+    if (current == 0) {this.loadOrder0List();}
+    if (current == 1) {this.loadOrder1List();}
+    if (current == 2) {this.loadOrder2List();}
+    if (current == 3) {
+      // this.setData({ finishDate: this.data.nowDate });
+      this.loadOrder3List();
+    }
+    if (current == 4) {
+      // this.setData({ returnDate: this.data.nowDate });
+      this.loadOrder4List();
+    }
+  },
+
   //待备货
-  loadOrderList: function () {
+  loadOrder0List: function () {
     wx.showLoading({title: '加载中',icon: 'loading'});
     var that = this; 
     var userInfo = wx.getStorageSync('userInfo');
     wx.request({
-      url: app.globalData.urlPrefix + '/order/web/orderList',
+      url: app.globalData.urlPrefix + '/order/web/order0List',
+      method: 'POST',
+      data: {
+        type: userInfo.type,
+        username: userInfo.username,
+        belongStationNo: userInfo.belongStationNo,
+        startTime: that.data.readyDate,
+        endTime: that.data.readyEndDate
+      },
+      header: {"Content-Type": "application/x-www-form-urlencoded"},
+      success: function (res) {
+        if (res.data.data&&res.data.data.length>0){
+          that.setData({ orders0: res.data.data});
+        }else{
+          that.setData({orders0: null});
+        }
+        wx.hideLoading();
+      }, 
+      fail: function () {
+        wx.hideLoading();
+        wx.showToast({ title: '网络异常！', duration: 2000, icon: 'none' });
+      }
+    });
+
+  },
+  //待收货
+  loadOrder1List: function () {
+    wx.showLoading({title: '加载中',icon: 'loading'});
+    var that = this;
+    var userInfo = wx.getStorageSync('userInfo');
+    wx.request({
+      url: app.globalData.urlPrefix + '/order/web/order1List',
       method: 'POST',
       data: {
         type: userInfo.type,
         username: userInfo.username,
         belongStationNo: userInfo.belongStationNo
       },
-      header: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
+      header: {"Content-Type": "application/x-www-form-urlencoded"},
       success: function (res) {
-        if (res.data.data&&res.data.data.length>0){
-          that.setData({ orders: res.data.data});
-        }else{
-          that.setData({orders: null});
+        if (res.data.data && res.data.data.length > 0) {
+          that.setData({ orders1: res.data.data});
+        } else {
+          that.setData({orders1: null});
         }
         wx.hideLoading();
-      }, 
+      },
       fail: function () {
-        wx.showToast({
-          title: '网络异常！',
-          duration: 2000
-        });
+        wx.hideLoading();
+        wx.showToast({ title: '网络异常！', duration: 2000, icon: 'none'});
       }
     });
-
   },
-  //待收货
+
+  //待配送
   loadOrder2List: function () {
-    wx.showLoading({title: '加载中',icon: 'loading'});
+    wx.showLoading({ title: '加载中', icon: 'loading' });
     var that = this;
     var userInfo = wx.getStorageSync('userInfo');
     wx.request({
@@ -90,22 +122,23 @@ Page({
         username: userInfo.username,
         belongStationNo: userInfo.belongStationNo
       },
-      header: {"Content-Type": "application/x-www-form-urlencoded"},
+      header: { "Content-Type": "application/x-www-form-urlencoded" },
       success: function (res) {
         if (res.data.data && res.data.data.length > 0) {
-          that.setData({ orders2: res.data.data});
+          that.setData({ orders2: res.data.data });
         } else {
-          that.setData({orders2: null});
+          that.setData({ orders2: null });
         }
         wx.hideLoading();
       },
       fail: function () {
-        wx.showToast({title: '网络异常！',duration: 2000});
+        wx.hideLoading();
+        wx.showToast({ title: '网络异常！', duration: 2000, icon: 'none' });
       }
     });
   },
 
-  //待配送
+  //已完成
   loadOrder3List: function () {
     wx.showLoading({ title: '加载中', icon: 'loading' });
     var that = this;
@@ -116,24 +149,29 @@ Page({
       data: {
         type: userInfo.type,
         username: userInfo.username,
-        belongStationNo: userInfo.belongStationNo
+        belongStationNo: userInfo.belongStationNo,
+        startTime: that.data.finishDate, 
       },
       header: { "Content-Type": "application/x-www-form-urlencoded" },
       success: function (res) {
-        if (res.data.data && res.data.data.length > 0) {
-          that.setData({ orders3: res.data.data });
-        } else {
-          that.setData({ orders3: null });
+        if (res.data.data) {
+          if (res.data.data.length > 0){
+            that.setData({ orders3: res.data.data});
+          }else{
+            that.setData({ orders3: null });
+          }
+          that.setData({ finishTotal: res.data.count, finishPrepay: res.data.balance});
         }
         wx.hideLoading();
       },
       fail: function () {
-        wx.showToast({ title: '网络异常！', duration: 2000 });
+        wx.hideLoading();
+        wx.showToast({ title: '网络异常！', duration: 2000, icon: 'none' });
       }
     });
   },
 
-  //已完成
+  //退单
   loadOrder4List: function () {
     wx.showLoading({ title: '加载中', icon: 'loading' });
     var that = this;
@@ -144,32 +182,24 @@ Page({
       data: {
         type: userInfo.type,
         username: userInfo.username,
-        belongStationNo: userInfo.belongStationNo
+        belongStationNo: userInfo.belongStationNo,
+        startTime: that.data.returnDate,
       },
       header: { "Content-Type": "application/x-www-form-urlencoded" },
       success: function (res) {
-        if (res.data.data && res.data.data.length > 0) {
-          that.setData({ orders4: res.data.data });
-        } else {
-          that.setData({ orders4: null });
+        if (res.data.data) {
+          if (res.data.data.length > 0) {
+            that.setData({ orders4: res.data.data });
+          } else {
+            that.setData({ orders4: null });
+          }
         }
         wx.hideLoading();
       },
       fail: function () {
-        wx.showToast({ title: '网络异常！', duration: 2000 });
+        wx.hideLoading();
+        wx.showToast({ title: '网络异常！', duration: 2000, icon: 'none' });
       }
-    });
-  },
-
-  initSystemInfo: function () {
-    var that = this;
-    wx.getSystemInfo({
-      success: function (res) {
-        that.setData({
-          winWidth: res.windowWidth,
-          winHeight: res.windowHeight
-        });
-      } 
     });
   },
 
@@ -202,8 +232,7 @@ Page({
       header: {"Content-Type": "application/x-www-form-urlencoded"},
       success: function (res) {
         if (res.data.status == 200) {
-          that.loadOrderList();
-          that.loadOrder2List();
+          that.loadOrder1List();
           wx.showToast({
             title: '转待配送成功',
             icon: 'success',
@@ -222,7 +251,7 @@ Page({
       success: function (res) {
         if (res.confirm) {
           that.saveToStockout(e);
-        } else if (res.cancel) { }
+        } else if (res.cancel) {}
       }
     })
   },
@@ -243,8 +272,7 @@ Page({
       header: { "Content-Type": "application/x-www-form-urlencoded" },
       success: function (res) {
         if (res.data.status == 200) {
-          that.loadOrderList();
-          that.loadOrder2List();
+          that.loadOrder0List();
           wx.showToast({
             title: '设置成功',
             icon: 'success',
@@ -256,77 +284,118 @@ Page({
   },
 
   onLoad: function (options) {
+    this.initDate();
     if (app.validateUser()) {
-      this.initSystemInfo();
-      this.loadOrderList();
-      this.loadOrder2List();
+      this.loadOrder0List();
+      app.connectSocket();
+      this.onMessage();
     };
   },
 
-  onShow: function(){
-    if (wx.getStorageSync('userInfo').type == 1) {
-      this.setData({ isReadyer: true});
-    }else{
-      this.setData({ isReadyer: false});
+  onMessage: function(){
+    var that = this;
+    wx.onSocketMessage(function (res) {
+      console.log("收到服务器消息：" + res.data)
+      that.loadOrder0List();
+    })
+  },
+
+  onShow: function () {
+    var userInfo = wx.getStorageSync('userInfo');
+    if (userInfo) {
+      if (userInfo.type == 1) {
+        this.setData({ isReadyer: true });
+      } else {
+        this.setData({ isReadyer: false });
+      }
+      if (userInfo.type == 2) {
+        this.setData({ isSender: true });
+      } else {
+        this.setData({ isSender: false });
+      }
     }
-    if (wx.getStorageSync('userInfo').type == 2) {
-      this.setData({ isSender: true });
-    } else {
-      this.setData({ isSender: false });
-    }
+  },
+
+  initDate: function(){
+    var date = new Date();
+    var time = date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate();
+    this.setData({ nowDate:time,readyDate:time,readyEndDate:time,finishDate:time,returnDate:time });
   },
 
   onReachBottom: function () {
     var current = this.data.currentTab
-    if (current == 0) {
-      this.loadOrderList();
-    }
-    if (current == 1) {
-      this.loadOrder2List();
-    }
-    if (current == 2) {
-      this.loadOrder3List();
-    }
-    if (current == 3) {
-      this.loadOrder4List();
+    this.flashOrderList(current);
+  },
+
+  bindReadyDateChange: function (e) {
+    this.setData({ readyDate: e.detail.value });
+    this.loadOrder0List();
+  },
+  bindReadyEndDateChange: function (e) {
+    this.setData({ readyEndDate: e.detail.value });
+    this.loadOrder0List();
+  },
+  bindDateChange: function (e) {
+    this.setData({ finishDate: e.detail.value});
+    this.loadOrder3List();
+  },
+  bindReturnDateChange: function (e) {
+    this.setData({ returnDate: e.detail.value });
+    this.loadOrder4List();
+  },
+
+  formSubmit0: function (e) {
+    var id = e.currentTarget.dataset.orderid, list = this.data.orders0;
+    this.kindToggleInit(id, list);
+    this.setData({ orders0: list });
+    this.collectFormId(e.detail.formId);
+  },
+
+  formSubmit1: function (e) {
+    var id = e.currentTarget.dataset.orderid, list = this.data.orders1;
+    this.kindToggleInit(id, list);
+    this.setData({ orders1: list });
+    this.collectFormId(e.detail.formId);
+  },
+
+  formSubmit2: function (e) {
+    var id = e.currentTarget.dataset.orderid, list = this.data.orders2;
+    this.kindToggleInit(id, list);
+    this.setData({ orders2: list });
+    this.collectFormId(e.detail.formId);
+  },
+
+  formSubmit3: function (e) {
+    var id = e.currentTarget.dataset.orderid, list = this.data.orders3;
+    this.kindToggleInit(id, list);
+    this.setData({ orders3: list });
+    this.collectFormId(e.detail.formId); 
+  },
+
+  formSubmit4: function (e) {
+    var id = e.currentTarget.dataset.orderid, list = this.data.orders4;
+    this.kindToggleInit(id, list);
+    this.setData({ orders4: list });
+    this.collectFormId(e.detail.formId); 
+  },
+
+  kindToggleInit: function (id, list) {
+    for (var i = 0, len = list.length; i < len; ++i) {
+      if (list[i].orderId == id) {
+        list[i].open = !list[i].open
+      }
     }
   },
 
-  kindToggle: function (e) {
-    var id = e.currentTarget.dataset.orderid, list = this.data.orders;
-    for (var i = 0, len = list.length; i < len; ++i) {
-      if (list[i].orderId == id) {
-        list[i].open = !list[i].open
-      }
+  //保存formId
+  collectFormId: function(formId){
+    console.log(formId);
+    if ("the formId is a mock one" == formId){
+      return;
     }
-    this.setData({orders: list});
-  },
-  kindToggle2: function (e) {
-    var id = e.currentTarget.dataset.orderid, list = this.data.orders2;
-    for (var i = 0, len = list.length; i < len; ++i) {
-      if (list[i].orderId == id) {
-        list[i].open = !list[i].open
-      }
-    }
-    this.setData({ orders2: list });
-  },
-  kindToggle3: function (e) {
-    var id = e.currentTarget.dataset.orderid, list = this.data.orders3;
-    for (var i = 0, len = list.length; i < len; ++i) {
-      if (list[i].orderId == id) {
-        list[i].open = !list[i].open
-      }
-    }
-    this.setData({ orders3: list });
-  },
-  kindToggle4: function (e) {
-    var id = e.currentTarget.dataset.orderid, list = this.data.orders4;
-    for (var i = 0, len = list.length; i < len; ++i) {
-      if (list[i].orderId == id) {
-        list[i].open = !list[i].open
-      }
-    }
-    this.setData({ orders4: list });
+    wx.request({
+      url: app.globalData.urlPrefix + '/order/web/collectFormId?formId=' + formId,
+    })
   },
 
 })

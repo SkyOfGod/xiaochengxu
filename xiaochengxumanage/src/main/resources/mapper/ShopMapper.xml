@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cailanzi.mapper.ShopMapper">
+
+    <delete id="truncateShopJd">
+        TRUNCATE TABLE shop_jd
+    </delete>
+
+    <select id="getCompgirdList" resultType="com.cailanzi.pojo.entities.ShopJd">
+        SELECT phone,station_no stationNo,station_name stationName,city_name cityName,county_name countyName FROM shop_jd
+        <if test="q != null">
+            WHERE station_name LIKE CONCAT('%',#{q},'%')
+        </if>
+    </select>
+
+</mapper>

@@ -26,4 +26,5 @@ public class ProductOrderJd {
     private Integer skuCostPrice;
     private Float skuWeight;
     private Byte skuStatus;
+    private Integer promotionType;
 }

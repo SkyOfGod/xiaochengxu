@@ -17,4 +17,6 @@ public interface UserMapper extends MyMapper<User>{
     List<User> comgridList(String q);
 
     List<User> selectByUsername(@Param("username") String username,@Param("type") Integer type);
+
+    void updateOpenIdAndSessionKeyByUsername(@Param("username") String username,@Param("openId")  String openId,@Param("sessionKey")  String sessionKey);
 }

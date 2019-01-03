@@ -11,6 +11,7 @@ import java.util.List;
 @Data
 public class OrderUnion {
 
+    private Integer id;
     private String orderId;
     private Integer orderNum;
     private String produceStationNo;
@@ -21,15 +22,19 @@ public class OrderUnion {
     private String status;
     private String orderBuyerRemark;
     private Date createTime;
+    private Date updateTime;
+    private String orderStartTime;
 
     private Long skuId;
     private String skuName;
     private String skuCount;
     private String skuStorePrice;
     private Byte skuStatus;
+    private Integer promotionType;
 
     private Integer skuJdPrice;
     private Integer skuCostPrice;
     private Float skuWeight;
+    private String imgUrl;
 
 }

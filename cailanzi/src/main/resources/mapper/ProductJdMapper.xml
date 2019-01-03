@@ -3,40 +3,135 @@
 
 <mapper namespace="com.cailanzi.mapper.ProductJdMapper">
 
+    <select id="selectDynamic" resultType="com.cailanzi.pojo.entities.ProductJd">
+        SELECT id,sku_id skuId,out_sku_id outSkuId,sku_name skuName,sku_price skuPrice,upc_code upcCode,
+        category_id categoryId,shop_categories shopCategories,sell_cities sellCities,stock_num stockNum,
+        fixed_status fixedStatus,org_code orgCode,fixed_up_time fixedUpTime,fixed_down_time fixedDownTime,
+        sync_time syncTime,img_url imgUrl
+        FROM product_jd
+        <where>
+            <if test="skuId!=null and skuId.trim()!=''">
+                AND sku_id = #{skuId}
+            </if>
+            <if test="skuName!=null and skuName.trim()!=''">
+                AND sku_name LIKE CONCAT('%',#{skuName},'%')
+            </if>
+            <if test="fixedStatus!=null and fixedStatus.trim()!=''">
+                AND fixed_status = #{fixedStatus}
+            </if>
+        </where>
+    </select>
+
     <delete id="truncateProductJd">
         TRUNCATE TABLE product_jd
     </delete>
 
+    <!-- AND c.phone = #{username}在当前门店下商品被唯一关联 -->
     <select id="comgridJdList" resultType="com.cailanzi.pojo.entities.ProductJd">
-        SELECT a.sku_id skuId,a.sku_name skuName,a.sku_price skuPrice,b.usable_qty stockNum,b.vendibility fixedStatus,a.shop_categories shopCategories
+        SELECT a.sku_id skuId,a.sku_name skuName,b.price skuPrice,b.current_qty stockNum,b.vendibility fixedStatus,
+                a.shop_categories shopCategories,a.img_url imgUrl
         FROM product_jd a
         INNER JOIN product_status b ON b.sku_id=a.sku_id AND b.station_no = #{belongStationNo} AND b.vendibility=0
-        WHERE a.fixed_status = 1
+        LEFT JOIN product c ON c.sku_id = b.sku_id AND c.belong_station_no = b.station_no
+        WHERE a.fixed_status = 1 AND c.id IS NULL
         <if test="q != null">
           AND a.sku_name LIKE CONCAT('%',#{q},'%')
         </if>
     </select>
 
-    <select id="getProductsByCategoryId" resultType="com.cailanzi.pojo.ProductVo">
-        SELECT a.sku_id skuId,a.sku_name `name`,a.sku_price price,b.usable_qty num,b.vendibility `status`
+    <select id="getProductJdBySkuIds" resultType="com.cailanzi.pojo.entities.ProductJd">
+        SELECT a.sku_id skuId,a.sku_name skuName,b.price skuPrice,b.current_qty stockNum,a.shop_categories shopCategories
         FROM product_jd a
-        INNER JOIN product_status b ON b.sku_id=a.sku_id AND b.station_no = #{stationNo}
-        WHERE a.fixed_status = 1
-        <if test="categoryId != 0">
-          AND a.shop_categories LIKE CONCAT('%',#{categoryId},'%')
-        </if>
-        LIMIT #{startIndex,jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
+        INNER JOIN product_status b ON b.sku_id=a.sku_id AND b.station_no = #{belongStationNo}
+        LEFT JOIN product c ON c.sku_id = b.sku_id AND c.belong_station_no = b.station_no
+        WHERE c.id IS NULL
+        AND a.sku_id IN
+        <foreach collection="skuIds" item="temp" separator="," open="(" close=")">
+            #{temp}
+        </foreach>
     </select>
 
-    <select id="getProductsByPhone" resultType="com.cailanzi.pojo.ProductVo">
-        SELECT a.sku_id skuId,a.name `name`,a.price price,b.usable_qty num,b.vendibility `status`
-        FROM product a
-        INNER JOIN product_status b ON b.sku_id=a.sku_id AND b.station_no = #{stationNo}
-        WHERE a.is_sell = 0 AND a.phone = #{phone} AND a.belong_station_no = #{stationNo}
-        <if test="categoryId != 0">
-            AND a.shop_categories LIKE CONCAT('%',#{categoryId},'%')
-        </if>
-        LIMIT #{startIndex,jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
+    <select id="getProductsByCategoryId" resultType="com.cailanzi.pojo.ProductVo">
+        SELECT a.sku_id skuId,a.name `name`,a.price price,a.current_qty num,a.vendibility `status`,b.img_url imgUrl
+        <include refid="getProductsByCategoryIdSql"></include>
+        LIMIT #{pageStart,jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
     </select>
+
+    <select id="getProductsCountByCategoryId" resultType="Integer">
+        SELECT COUNT(*)
+        <include refid="getProductsByCategoryIdSql"></include>
+    </select>
+
+    <sql id="getProductsByCategoryIdSql">
+        FROM product_status a
+        INNER JOIN product_jd b ON b.sku_id=a.sku_id AND b.fixed_status = 1
+        <if test="categoryId != '0000000' and categoryId != 'null'">
+            AND b.shop_categories IN
+            <foreach collection="skuIds" separator="," item="temp" open="(" close=")">
+                #{temp}
+            </foreach>
+        </if>
+        WHERE a.station_no = #{stationNo}
+        <if test="skuName != 'null' and skuName.trim() != ''">
+            AND a.name LIKE CONCAT('%',#{skuName},'%')
+        </if>
+    </sql>
+
+    <select id="getProductsByPhone" resultType="com.cailanzi.pojo.ProductVo">
+        SELECT a.sku_id skuId,a.name `name`,a.price price,a.store_num num,a.is_sell `status`,b.img_url imgUrl
+        <include refid="getProductsByPhoneSql"></include>
+        LIMIT #{pageStart,jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
+    </select>
+
+    <select id="getProductsCountByPhone" resultType="Integer">
+        SELECT COUNT(*)
+        <include refid="getProductsByPhoneSql"></include>
+    </select>
+
+    <sql id="getProductsByPhoneSql">
+        FROM product a
+        INNER JOIN product_jd b ON b.sku_id=a.sku_id AND b.fixed_status = 1
+        WHERE a.phone = #{phone} AND a.belong_station_no = #{stationNo}
+        <if test="categoryId != '0000000' and categoryId != 'null'">
+            AND a.shop_categories IN
+            <foreach collection="skuIds" separator="," item="temp" open="(" close=")">
+                #{temp}
+            </foreach>
+        </if>
+        <if test="skuName != 'null' and skuName.trim() != ''">
+            AND a.name LIKE CONCAT('%',#{skuName},'%')
+        </if>
+    </sql>
+
+    <select id="selectByStationNoLeftJoinProductStatus" resultType="com.cailanzi.pojo.entities.ProductJd">
+        SELECT a.sku_id skuId,a.sku_name skuName,a.sku_price skuPrice FROM product_jd a
+        LEFT JOIN product_status b ON b.sku_id=a.sku_id
+        AND b.station_no = #{stationNo}
+        WHERE b.sku_id IS NULL AND a.fixed_status=1
+    </select>
+
+    <select id="productJdComgridExcludeInRuleProduct" resultType="com.cailanzi.pojo.entities.ProductJd">
+        SELECT a.sku_id skuId,a.sku_name skuName,a.sku_price skuPrice FROM product_jd a
+        LEFT JOIN rule_product b ON b.sku_id=a.sku_id
+        WHERE fixed_status=1 AND b.sku_id IS NULL
+        <if test="q !=  null and q.trim() != ''">
+            AND a.sku_name LIKE CONCAT('%',#{q},'%')
+        </if>
+    </select>
+
+    <update id="backupImgUrl">
+        INSERT INTO product_jd_bak(sku_id,img_url)
+        SELECT sku_id,img_url FROM product_jd
+    </update>
+
+    <update id="callImgUrl">
+        UPDATE product_jd a
+        JOIN product_jd_bak b ON b.sku_id=a.sku_id
+        SET a.img_url = b.img_url
+    </update>
+
+    <update id="truncateProductJdBak">
+        TRUNCATE TABLE product_jd_bak
+    </update>
 
 </mapper>

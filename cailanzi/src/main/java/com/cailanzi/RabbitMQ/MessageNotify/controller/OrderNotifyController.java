@@ -1,9 +1,9 @@
-package com.cailanzi.RabbitMQ.MessageNotify.controller;
+package com.cailanzi.rabbitMQ.messageNotify.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.cailanzi.RabbitMQ.MessageNotify.pojo.JdOrderImport;
-import com.cailanzi.RabbitMQ.MessageNotify.pojo.MqOrder;
-import com.cailanzi.RabbitMQ.MessageNotify.service.OrderNotifyService;
+import com.cailanzi.rabbitMQ.messageNotify.pojo.JdOrderImport;
+import com.cailanzi.rabbitMQ.messageNotify.pojo.MqOrder;
+import com.cailanzi.rabbitMQ.messageNotify.service.OrderNotifyService;
 import com.cailanzi.pojo.JdResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

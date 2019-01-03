@@ -4,8 +4,8 @@
 <mapper namespace="com.cailanzi.mapper.OrderShopMapper">
 
     <select id="getOrderShopPageList" resultType="com.cailanzi.pojo.entities.OrderShop">
-        SELECT id,username,belong_station_no belongStationNo,order_id orderId,sku_id skuId,
-        sku_name skuName,sku_count skuCount,sku_price skuPrice,status,create_time createTime,update_time updateTime
+        SELECT id,username,belong_station_no belongStationNo,order_id orderId,sku_id skuId,order_status orderStatus,
+        sku_name skuName,sku_count skuCount,sku_price skuPrice,sku_status skuStatus,create_time createTime,update_time updateTime
         FROM order_shop
         <where>
             <if test="username!=null and username.trim()!=''">
@@ -36,14 +36,19 @@
     </update>
 
     <!--
-    备货员端 获取待发货/待配送/配送中/已完成/退货订单
+    备货员端 获取待备货/待收货/待配送/已完成/退货订单
     -->
     <select id="getOrderShopList" resultType="OrderUnion">
         SELECT a.order_id orderId,a.order_num orderNum,b.sku_id skuId,b.sku_name skuName,
-        b.sku_count skuCount,b.sku_price skuStorePrice,b.sku_status skuStatus,a.order_buyer_remark orderBuyerRemark
+        b.sku_count skuCount,b.sku_price skuStorePrice,b.sku_status skuStatus,a.update_time updateTime,
+        a.order_buyer_remark orderBuyerRemark,a.create_time createTime,c.img_url imgUrl
         FROM order_jd a
         JOIN order_shop b ON b.order_id=a.order_id AND b.username = #{username}
-        WHERE a.produce_station_no = #{stationNo} AND b.order_status = #{orderStatus}
+        JOIN product_jd c ON c.sku_id=b.sku_id
+        WHERE a.produce_station_no = #{belongStationNo} AND b.order_status = #{orderStatus}
+        <if test="startTime != null and endTime != null">
+            AND a.update_time BETWEEN #{startTime} AND #{endTime}
+        </if>
     </select>
 
     <select id="getProductStatus" resultType="com.cailanzi.pojo.entities.OrderShop">
@@ -66,11 +71,11 @@
     </select>
 
     <select id="getOrderShopListInitData" resultType="com.cailanzi.pojo.entities.OrderShop">
-        SELECT c.phone username,a.produce_station_no belongStationNo,b.sku_id skuId,b.sku_name skuName,b.sku_count skuCount,c.price skuPrice
-        FROM order_jd a
-        JOIN product_order_jd b ON b.order_id = a.order_id
-        JOIN product c ON c.belong_station_no = a.produce_station_no AND c.sku_id=b.sku_id
-        WHERE a.order_id = #{orderId}
+        SELECT a.phone username,a.belong_station_no belongStationNo,a.sku_id skuId,a.`name` skuName,
+                a.price skuPrice,b.sku_count skuCount,b.order_id orderId
+        FROM product a
+        JOIN product_order_jd b ON b.sku_id = a.sku_id AND b.order_id = #{orderId}
+        JOIN order_jd c ON c.order_id = b.order_id AND c.produce_station_no = a.belong_station_no
     </select>
 
 </mapper>

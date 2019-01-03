@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cailanzi.mapper.ConfigMapper">
+
+    <select id="getValueByName" resultType="java.lang.String">
+        SELECT value FROM config
+        WHERE name = #{name}
+        ORDER BY create_time DESC
+        LIMIT 1
+    </select>
+
+    <update id="updateValueByName">
+        UPDATE config SET value=#{value},create_time = #{createTime}
+        WHERE name=#{name}
+    </update>
+
+    <select id="getOneFormId" resultType="java.lang.String">
+        SELECT form_id FROM form_id
+        WHERE is_valid = 0
+        ORDER BY create_time DESC
+        LIMIT 1
+    </select>
+
+    <update id="updateValidByFormId">
+        UPDATE form_id SET is_valid = 1
+        WHERE form_id = #{formId}
+    </update>
+
+</mapper>

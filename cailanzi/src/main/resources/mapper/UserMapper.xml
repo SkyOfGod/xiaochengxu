@@ -4,12 +4,15 @@
 <mapper namespace="com.cailanzi.mapper.UserMapper">
 
     <select id="comgridList" resultType="com.cailanzi.pojo.entities.User">
-        SELECT username,belong_station_no belongStationNo,belong_station_name belongStationName FROM `user`
-        WHERE type <![CDATA[ <> ]]> 0
+        SELECT username,belong_station_no belongStationNo,belong_station_name belongStationName,
+         remark FROM `user`
+        WHERE type = 1
     </select>
 
     <select id="selectByUsername" resultType="com.cailanzi.pojo.entities.User">
-        SELECT username,password,sign,type,belong_station_no belongStationNo,belong_station_name belongStationName FROM `user`
+        SELECT username,password,sign,type,belong_station_no belongStationNo,belong_station_name belongStationName,
+        open_id openId,session_key sessionKey,remark remark,create_time createTime
+        FROM `user`
         WHERE username = #{username}
         <if test="type==null">
             AND type <![CDATA[ <> ]]> 0
@@ -18,4 +21,10 @@
             AND type = #{type}
         </if>
     </select>
+
+    <update id="updateOpenIdAndSessionKeyByUsername">
+        UPDATE user SET open_id = #{openId},session_key=#{sessionKey}
+        WHERE username = #{username} AND type <![CDATA[ <> ]]> 0
+    </update>
+
 </mapper>

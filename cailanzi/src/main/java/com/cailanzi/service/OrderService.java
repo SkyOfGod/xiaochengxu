@@ -1,26 +1,19 @@
 package com.cailanzi.service;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.cailanzi.Async.OrderAsync;
-import com.cailanzi.Exception.ServiceException;
 import com.cailanzi.mapper.*;
 import com.cailanzi.pojo.*;
 import com.cailanzi.pojo.entities.*;
 import com.cailanzi.utils.ConstantsUtil;
-import com.cailanzi.utils.JdHttpCilentUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.sun.javafx.scene.control.skin.VirtualFlow;
-import jdk.nashorn.internal.ir.ReturnNode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.*;
-import java.util.concurrent.TransferQueue;
 
 /**
  * Created by v-hel27 on 2018/8/7.
@@ -39,31 +32,55 @@ public class OrderService {
     private OrderShopMapper orderShopMapper;
     @Autowired
     private OrderJdMapper orderJdMapper;
+    @Autowired
+    private FormIdMapper formIdMapper;
+    @Autowired
+    private UserBalanceDayMapper userBalanceDayMapper;
 
-    public SysResult getWebOrderList(OrderListInput orderListInput) throws Exception {
+    public SysResult getWebOrder0List(OrderListInput orderListInput) throws Exception {
         if(StringUtils.isBlank(orderListInput.getUsername())||StringUtils.isBlank(orderListInput.getBelongStationNo())
                 ||StringUtils.isBlank(orderListInput.getType())){
             return SysResult.build(400);
         }
+        if(StringUtils.isNotBlank(orderListInput.getEndTime())){
+            orderListInput.setEndTime(orderListInput.getEndTime()+" 23:59:59");
+        }
         return getWebOrderShopListBasic(orderListInput,ConstantsUtil.Status.READY);
     }
 
-    public SysResult getWebOrder2List(OrderListInput orderListInput) {
+    public SysResult getWebOrder1List(OrderListInput orderListInput) {
         return getWebOrderShopListBasic(orderListInput,ConstantsUtil.Status.DELIVERY);
     }
 
-    public SysResult getWebOrder3List(OrderListInput orderListInput) {
+    public SysResult getWebOrder2List(OrderListInput orderListInput) {
         return getWebOrderShopListBasic(orderListInput,ConstantsUtil.Status.DELIVERY_TO);
     }
 
-    public SysResult getWebOrder4List(OrderListInput orderListInput) {
+    public SysResult getWebOrder3List(OrderListInput orderListInput) {
+        if(StringUtils.isNotBlank(orderListInput.getStartTime())){
+            orderListInput.setEndTime(orderListInput.getStartTime()+" 23:59:59");
+        }
         return getWebOrderShopListBasic(orderListInput,ConstantsUtil.Status.FINISH);
+    }
+
+    public SysResult getWebOrder4List(OrderListInput orderListInput) {
+        if(StringUtils.isNotBlank(orderListInput.getStartTime())){
+            orderListInput.setEndTime(orderListInput.getStartTime()+" 23:59:59");
+        }
+        return getWebOrderShopListBasic(orderListInput,ConstantsUtil.Status.QUIT);
     }
 
     public EasyUIResult getOrderList(OrderListInput orderListInput) {
         PageHelper.startPage(orderListInput.getPageNo(),orderListInput.getPageSize());
-        List<OrderJdVo> list = orderMapper.getOrderList(orderListInput);
-        PageInfo<OrderJdVo> pageInfo = new PageInfo<>(list);
+        List<OrderUnion> list = orderJdMapper.getOrderList(orderListInput);
+        PageInfo<OrderUnion> pageInfo = new PageInfo<>(list);
+        return new EasyUIResult(pageInfo.getTotal(),pageInfo.getList());
+    }
+
+    public EasyUIResult getOrderProductList(OrderListInput orderListInput) {
+        PageHelper.startPage(orderListInput.getPageNo(),orderListInput.getPageSize());
+        List<OrderUnion> list = orderMapper.getOrderProductList(orderListInput);
+        PageInfo<OrderUnion> pageInfo = new PageInfo<>(list);
         return new EasyUIResult(pageInfo.getTotal(),pageInfo.getList());
     }
 
@@ -99,7 +116,10 @@ public class OrderService {
             }
         }
         if(flag){
-            orderJdMapper.updateOrderStatusByOrderId(orderId,ConstantsUtil.Status.DELIVERY);
+            orderListInput.setOrderStatus(ConstantsUtil.Status.DELIVERY);
+            orderListInput.setUpdateTime(new Date());
+            orderListInput.setUsername(null);
+            orderJdMapper.updateOrderStatusByOrderId(orderListInput);
         }
     }
 
@@ -112,36 +132,57 @@ public class OrderService {
     }
 
     private SysResult getWebOrderShopListBasic(OrderListInput orderListInput,String orderStatus) {
-        String username = orderListInput.getUsername();
-        String stationNo = orderListInput.getBelongStationNo();
+        orderListInput.setOrderStatus(orderStatus);
         List<OrderUnion> list = null;
         if(ConstantsUtil.UserType.READYER.equals(orderListInput.getType())){
-            list = orderShopMapper.getOrderShopList(username,stationNo,orderStatus);
+            list = orderShopMapper.getOrderShopList(orderListInput);
         }else if(ConstantsUtil.UserType.SENDER.equals(orderListInput.getType())){
-            list = orderMapper.getOrderShopJdList(stationNo,orderStatus);
+            list = orderMapper.getOrderJdList(orderListInput);
         } else {
             list = new ArrayList<>();
         }
         Map<String,OrderJdVo> map = getOrderJdVoMap(list);
-        return SysResult.ok(map.values());
+        Collection<OrderJdVo> collection = map.values();
+        int total = 0;
+        int balance = 0;
+        if(ConstantsUtil.Status.FINISH.equals(orderStatus)){
+            for(OrderJdVo orderJdVo: collection){
+                total += orderJdVo.getCostTotal();
+            }
+           /* String username = orderListInput.getUsername();
+//            Integer temp = userBalanceDayMapper.getBalance(username, LocalDate.now());
+            UserBalanceDay userBalanceDay = new UserBalanceDay();
+            userBalanceDay.setUsername(username);
+            userBalanceDay.setCreateDate(LocalDate.now());
+            UserBalanceDay temp = userBalanceDayMapper.selectOne(userBalanceDay);
+            if(temp != null){
+                balance = temp.getBalance();
+            }*/
+        }
+        return SysResult.ok(collection,total,balance);
     }
 
     private Map<String,OrderJdVo> getOrderJdVoMap(List<OrderUnion> list) {
         Map<String,OrderJdVo> map = new HashMap<>();
         for (OrderUnion union : list) {
             String orderId = union.getOrderId();
+            ProductOrderJdVo productOrderJdVo = getProductOrderJdVo(union);
             if(map.containsKey(orderId)){
                 OrderJdVo temp = map.get(orderId);
-                temp.getProduct().add(getProductOrderJdVo(union));
+                temp.setCostTotal(temp.getCostTotal()+productOrderJdVo.getCost());
+                temp.getProduct().add(productOrderJdVo);
             }else {
                 List<ProductOrderJdVo> productOrderJdVoList = new ArrayList<>();
-                productOrderJdVoList.add(getProductOrderJdVo(union));
+                productOrderJdVoList.add(productOrderJdVo);
 
                 OrderJdVo temp = new OrderJdVo();
+                temp.setCreateTime(union.getCreateTime());
+                temp.setUpdateTime(union.getUpdateTime());
                 temp.setOrderId(orderId);
                 temp.setOrderNum(union.getOrderNum());
                 temp.setOrderBuyerRemark(union.getOrderBuyerRemark());
                 temp.setProduct(productOrderJdVoList);
+                temp.setCostTotal(productOrderJdVo.getCost());
 
                 map.put(orderId,temp);
             }
@@ -156,7 +197,34 @@ public class OrderService {
         productOrderJdVo.setSkuCount(union.getSkuCount());
         productOrderJdVo.setSkuStorePrice(union.getSkuStorePrice());
         productOrderJdVo.setStatus(union.getSkuStatus()+"");
+        productOrderJdVo.setImgUrl(union.getImgUrl());
+        try {
+            productOrderJdVo.setCost(Integer.parseInt(union.getSkuCount())*Integer.parseInt(union.getSkuStorePrice()));
+        }catch (Exception e){
+            log.info("计算商品总价转换异常：",e);
+        }
         return productOrderJdVo;
     }
+
+    @Transactional
+    public SysResult deleteOrder(String orderId) {
+        OrderJd orderJd = new OrderJd();
+        orderJd.setOrderId(orderId);
+        orderJdMapper.delete(orderJd);
+
+        ProductOrderJd productOrderJd = new ProductOrderJd();
+        productOrderJd.setOrderId(orderId);
+        productOrderJdMapper.delete(productOrderJd);
+        return SysResult.build(200);
+    }
+
+    public void collectFormId(String formId) {
+        FormId formIdEntity = new FormId();
+        formIdEntity.setFormId(formId);
+        formIdEntity.setIsValid((byte)0);
+        formIdEntity.setCreateTime(new Date());
+        formIdMapper.insert(formIdEntity);
+    }
+
 
 }

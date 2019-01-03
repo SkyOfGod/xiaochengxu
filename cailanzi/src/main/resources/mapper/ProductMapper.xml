@@ -6,7 +6,7 @@
     <select id="selectDynamic" resultType="com.cailanzi.pojo.entities.Product">
         SELECT id,phone,belong_station_no belongStationNo,belong_station_name belongStationName,
         sku_id skuId,`name`,shop_categories shopCategories,price,store_num storeNum,is_sell isSell,
-        description,img_url imgUrl,create_time createTime,update_time updateTime
+        description,create_time createTime,update_time updateTime
         FROM product
         <where>
             <if test="phone!=null and phone.trim()!=''">
@@ -33,6 +33,33 @@
         AND b.sku_id=a.sku_id AND b.username = #{username}
         SET a.sku_status = b.sku_status
         WHERE a.order_id = #{orderId}
+    </update>
+
+    <update id="updateProductOfStorePriceVendibility">
+        UPDATE product
+        <set>
+            update_time = #{updateTime},
+            <if test="price!=null">
+                price=#{price},
+            </if>
+            <if test="storeNum!=null">
+                store_num=#{storeNum},
+            </if>
+            <if test="isSell!=null">
+                is_sell=#{isSell},
+            </if>
+        </set>
+        WHERE belong_station_no=#{belongStationNo} AND sku_id=#{skuId} AND phone=#{phone}
+    </update>
+
+    <select id="getRateBySkuId" resultType="Integer">
+        SELECT rate FROM rule a
+        JOIN rule_product b ON b.rule_id=a.id AND b.sku_id=#{skuId}
+    </select>
+
+    <update id="updatePhone">
+        UPDATE product SET phone=#{newUsername}
+        WHERE phone=#{oldUsername}
     </update>
 
 </mapper>

@@ -27,9 +27,4 @@ public class ConfigController {
         return configService.saveToken(request);
     }
 
-    @RequestMapping(value = "getNewToken",method = RequestMethod.POST)
-    public String getNewToken(){
-        return JdHttpCilentUtil.JD_TAKEN;
-    }
-
 }

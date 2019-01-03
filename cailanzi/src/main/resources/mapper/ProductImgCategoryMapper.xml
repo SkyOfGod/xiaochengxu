@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cailanzi.mapper.ProductImgCategoryMapper">
+
+    <select id="imgCategoryComgrid" resultType="com.cailanzi.pojo.entities.ProductImgCategory">
+        SELECT id,category,category_name categoryName,belong_file belongFile
+        FROM product_img_category
+        <where>
+            <if test="q!=null and q.trim()!=''">
+                AND category_name LIKE CONCAT ('%',#{q},'%')
+            </if>
+        </where>
+    </select>
+
+</mapper>

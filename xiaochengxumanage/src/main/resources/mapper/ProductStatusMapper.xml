@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cailanzi.mapper.ProductStatusMapper">
+
+    <update id="updateProductStatusOfStorePriceVendibility" parameterType="com.cailanzi.pojo.entities.ProductStatus">
+        UPDATE product_status
+        <set>
+            create_time=NOW(),
+            <if test="currentQty!=null">
+                current_qty=#{currentQty},
+            </if>
+            <if test="vendibility!=null">
+                vendibility=#{vendibility},
+            </if>
+            <if test="price!=null">
+                price=#{price},
+            </if>
+        </set>
+        WHERE station_no=#{stationNo} AND sku_id=#{skuId}
+    </update>
+
+    <select id="selectDynamic" resultType="com.cailanzi.pojo.entities.ProductStatus">
+        SELECT station_no stationNo,sku_id skuId,`name`,current_qty currentQty,usable_qty usableQty,
+        lock_qty lockQty,order_qty orderQty,vendibility,price,create_time createTime
+        FROM product_status
+        <where>
+            <if test="skuName!=null and skuName.trim()!=''">
+                AND `name` LIKE CONCAT('%',#{skuName},'%')
+            </if>
+            <if test="stationNo!=null and stationNo.trim()!=''">
+                AND station_no = #{stationNo}
+            </if>
+            <if test="vendibility!=null and vendibility.trim()!=''">
+                AND vendibility = #{vendibility}
+            </if>
+        </where>
+    </select>
+
+</mapper>

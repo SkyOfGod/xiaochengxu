@@ -10,6 +10,11 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import java.util.concurrent.Executor;
 
 /**
  * rabbitMQ自动配置
@@ -22,7 +27,9 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @SpringBootApplication
 @EnableAsync
 @EnableRabbit//开启基于注解的监听
-public class XiaochengxuApplication  extends SpringBootServletInitializer {
+@EnableTransactionManagement
+@EnableScheduling
+public class XiaochengxuApplication extends SpringBootServletInitializer {
 
 	public static void main(String[] args) {
 		SpringApplication.run(XiaochengxuApplication.class, args);
@@ -41,5 +48,17 @@ public class XiaochengxuApplication  extends SpringBootServletInitializer {
 	public MessageConverter messageConverter(){
 		return new Jackson2JsonMessageConverter();
 	}
+
+	@Bean
+	public Executor taskExecutor() {
+		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+		executor.setCorePoolSize(10);
+		executor.setMaxPoolSize(20);
+		executor.setQueueCapacity(10);
+		executor.initialize();
+		return executor;
+	}
+
+
 
 }

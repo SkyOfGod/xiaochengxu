@@ -1,8 +1,8 @@
 package com.cailanzi;
 
 import com.alibaba.fastjson.JSONObject;
-import com.cailanzi.RabbitMQ.MessageNotify.pojo.MqOrder;
-import com.cailanzi.RabbitMQ.RabbitListener.OrderServiceListener;
+import com.cailanzi.rabbitMQ.messageNotify.pojo.MqOrder;
+import com.cailanzi.rabbitMQ.rabbitListener.OrderServiceListener;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -24,7 +24,7 @@ public class RabbitMQtest {
      * 1、点播
      */
     @Test
-    public void contextLoads() {
+    public void send() {
         //message需要自己构造一个；定义消息体内容和消息头
         //rabbitTemplate.send(exchage,routeKey,message);
 
@@ -33,10 +33,10 @@ public class RabbitMQtest {
         /*Map<String,Object> map = new HashMap<>();
         map.put("msg","这是第www个消息");
         map.put("data", Arrays.asList("helloworld",123,true));*/
-        String data = "{'billId':'821461295000141','statusId':'32000','timestamp':'2015-10-16 13:23:30'}";
+        String data = "{'billId':'822686242000441','statusId':'32000','timestamp':'2015-10-16 13:23:30'}";
         MqOrder mqOrder = JSONObject.toJavaObject(JSONObject.parseObject(data), MqOrder.class);
         //默认是SimpleMessageConverter（java的序列化格式，在rabbitMQ管理后台看数据是乱码）
-        rabbitTemplate.convertAndSend("exchange.direct","order.delivery.to", mqOrder);
+        rabbitTemplate.convertAndSend("exchange.direct","order.finish", mqOrder);
 //        rabbitTemplate.convertAndSend("exchange.direct","order.finish", mqOrder);
 //        rabbitTemplate.convertAndSend("exchange.direct","order.quit.to", mqOrder);
 
@@ -44,7 +44,7 @@ public class RabbitMQtest {
 
     @Test
     public void receive(){
-        Object o = rabbitTemplate.receiveAndConvert("order.quit.to");
+        Object o = rabbitTemplate.receiveAndConvert("order.quit");
         System.out.println(o.getClass());
         System.out.println(o);
     }
@@ -55,9 +55,9 @@ public class RabbitMQtest {
     @Test
     public void testlistener() throws Exception {
         MqOrder mqOrder = new MqOrder();
-        mqOrder.setBillId("821461295000141");
+        mqOrder.setBillId("822686242000441");
         mqOrder.setStatusId("32000");
-        orderServiceListener.addOrder(mqOrder);
+        orderServiceListener.orderCreateOne(mqOrder);
     }
 
 }

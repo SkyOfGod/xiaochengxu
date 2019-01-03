@@ -3,8 +3,10 @@ package com.cailanzi.mapper;
 import com.cailanzi.pojo.OrderListInput;
 import com.cailanzi.pojo.ProductListInput;
 import com.cailanzi.pojo.entities.Product;
+import com.cailanzi.pojo.entities.ProductJd;
 import com.cailanzi.utils.MyMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Set;
@@ -18,4 +20,10 @@ public interface ProductMapper extends MyMapper<Product>{
     List<Product> selectDynamic(ProductListInput productListInput);
 
     void updateProductStatusEqualOrderShop(OrderListInput orderListInput);
+
+    void updateProductOfStorePriceVendibility(Product product);
+
+    Integer getRateBySkuId(Long skuId);
+
+    void updatePhone(@Param("oldUsername") String oldUsername,@Param("newUsername") String newUsername);
 }

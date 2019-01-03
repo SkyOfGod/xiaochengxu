@@ -1,19 +1,14 @@
 package com.cailanzi.utils;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.cailanzi.Exception.ServiceException;
+import com.cailanzi.exception.ServiceException;
 import com.cailanzi.mapper.ConfigMapper;
 import com.cailanzi.service.ConfigService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.SpringApplication;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -26,19 +21,24 @@ import java.util.Map;
 @Slf4j
 public class JdHttpCilentUtil {
 
-    public final static String APP_KEY = "6bd9123fd3224c4299e06c9a9651a5cf";
-
-    public final static String APP_SECRET = "810f1b6b35fa4d9d8898c551387f353e";
-
-    public static String JD_TAKEN = "8bf2ba29-573a-434c-896c-4e2926926925";
+    @Autowired
+    private ConfigService configService;
 
     public final static String V = "1.0";
 
     public final static String FORMAT = "json";
 
+    public static String APP_KEY ;
+
+    public static String APP_SECRET ;
+
+    public static String TAKEN_JD ;
+
     static {
         ConfigMapper configMapper = SpringContextUtil.getBean(ConfigMapper.class);
-        JD_TAKEN = configMapper.getNewToken();
+        APP_KEY = configMapper.getValueByName("app_key_jd");
+        APP_SECRET = configMapper.getValueByName("app_secret_jd");
+        TAKEN_JD = configMapper.getValueByName("token_jd");
     }
 
     public static JSONObject doGetAndGetData(String url,String jdParamJson,String successCode,String successCodeKey,String msgKey) throws Exception {
@@ -86,7 +86,7 @@ public class JdHttpCilentUtil {
      * successCode="0",successCodeKey="code",msgKey="msg"
      * @param url
      * @param jdParamJson
-     * @return
+     * @return result的data数据（效验过两层的“code”是否等于0）
      * @throws Exception
      */
     public static JSONObject doGetAndGetData(String url,String jdParamJson) throws Exception {
@@ -105,12 +105,12 @@ public class JdHttpCilentUtil {
      */
     private static JSONObject doGetAndGetDataBasic(String url,String jdParamJson) throws Exception {
         JSONObject result = JSONObject.parseObject(doGet(url,jdParamJson));
-        log.info("JdHttpCilentUtil doGet result={}", result);
+//        log.info("JdHttpCilentUtil doGet result={}", result);
         if(!"0".equals(result.getString("code"))){
             throw new ServiceException(result.getString("msg"));
         }
         JSONObject data = JSONObject.parseObject(result.getString("data"));
-        log.info("JdHttpCilentUtil doGetAndGetData data={}", data);
+//        log.info("JdHttpCilentUtil doGetAndGetData data={}", data);
         return data;
     }
 
@@ -129,7 +129,7 @@ public class JdHttpCilentUtil {
         param.put("v",V);
         param.put("format",FORMAT);
         param.put("app_key",APP_KEY);
-        param.put("token",JD_TAKEN);
+        param.put("token",TAKEN_JD);
         param.put("jd_param_json",jdParamJson);
         param.put("timestamp",timestamp);
         String sign = JdHelper.getSign(param,APP_SECRET);
@@ -139,7 +139,7 @@ public class JdHttpCilentUtil {
         map.put("format",FORMAT);
         map.put("app_key",APP_KEY);
         map.put("app_secret",APP_SECRET);
-        map.put("token",JD_TAKEN);
+        map.put("token",TAKEN_JD);
         map.put("jd_param_json",jdParamJson);
         map.put("timestamp",timestamp);
         map.put("sign",sign);
@@ -149,7 +149,7 @@ public class JdHttpCilentUtil {
     }
 
     /**
-     * 将对象转为json对象格式
+     * 将java实体对象转为json对象格式
      * @param t
      * @param <T>
      * @return

@@ -17,16 +17,20 @@
          	<li>
          		<span>商品管理</span>
          		<ul>
-	         		<li data-options="attributes:{'url':'/page/item-add'}">新增商品</li>
-	         		<li data-options="attributes:{'url':'/page/item-list'}">查询商品</li>
-	         		<li data-options="attributes:{'url':'/page/item-jd-list'}">查询商品-京东</li>
-					<li data-options="attributes:{'url':'/page/item-status-list'}">查询商品库存</li>
+					<li data-options="attributes:{'url':'/page/item-add'}">新增商品-商户</li>
+					<li data-options="attributes:{'url':'/page/item-list'}">查询商品-商户</li>
+					<li data-options="attributes:{'url':'/page/item-jd-list'}">查询商品-京东</li>
+					<li data-options="attributes:{'url':'/page/item-status-list'}">查询商品-京东库存</li>
+					<li data-options="attributes:{'url':'/page/item-category-list'}">查询商品类目</li>
+					<li data-options="attributes:{'url':'/page/item-img-list'}">查询商品图片</li>
+					<li data-options="attributes:{'url':'/page/item-img-category-list'}">查询商品图片类目</li>
 	         	</ul>
          	</li>
          	<li>
          		<span>订单管理</span>
          		<ul>
 	         		<li data-options="attributes:{'url':'/page/order'}">查询订单</li>
+	         		<li data-options="attributes:{'url':'/page/order-item'}">查询订单-商品</li>
 	         		<li data-options="attributes:{'url':'/page/order-shop'}">查询订单-商户</li>
 	         	</ul>
          	</li>
@@ -35,6 +39,15 @@
          		<ul>
 	         		<li data-options="attributes:{'url':'/page/shop'}">查询门店</li>
 	         		<li data-options="attributes:{'url':'/page/user'}">查询用户</li>
+					<li data-options="attributes:{'url':'/page/user-balance'}">商户余额</li>
+					<li data-options="attributes:{'url':'/page/user-charge-log'}">充值记录</li>
+	         	</ul>
+         	</li>
+         	<li>
+         		<span>规则管理</span>
+         		<ul>
+	         		<li data-options="attributes:{'url':'/page/rule'}">查询规则</li>
+	         		<li data-options="attributes:{'url':'/page/rule-item'}">查询规则-商品</li>
 	         	</ul>
          	</li>
          </ul>
